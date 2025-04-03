@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node main.js",
-    "dev": "nodemon main.js"
+    "dev": "nodemon main.js",
+    "deploy": "pm2 restart main.js --watch --log"
   },
   "author": "--UPDATE Company--Mihajlo Cekic & Mihajlo Mirkovic",
   "license": "ISC",
@@ -26,6 +27,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.14.0",
     "nodemon": "^3.1.9",
+    "pm2": "^6.0.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.17.0"

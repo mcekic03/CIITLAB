@@ -106,9 +106,7 @@ router.post('/updateSkills/:userId', auth, async(req, res) => {
   const { userId } = req.params; // Uzmi userId iz URL-a
   const { skills } = req.body;  // Uzmi skills iz tela zahteva
 
-  // Ispisi podatke u konzolu
-  console.log(`User ID: ${userId}`);
-  console.log(`Skills: ${JSON.stringify(skills)}`);
+  // Ispisi podatke u konzol
 
   try {
     // Pozovi statičku metodu klase Skill

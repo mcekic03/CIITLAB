@@ -50,7 +50,7 @@ class Sentence {
   //njega delujemo, sentiment je star iz baze i na osnovu p i n se menja u bazi ako ima potrebe
   //to treba zovemo u rutu kada korisnik svaki put klikne da glasa na klijnetu izvrsava se promena sentensa na klijentu i radi se
   //api poziv koji vrca taj sentense ovde na proveru i upis
-  static async updateSentence(sentence) {
+  static async updateSentence(sentence,user_id) {
     try {
       console.log('recenica koja je stigla sa klijenta')
       console.log(sentence);
@@ -109,11 +109,29 @@ class Sentence {
       if (updateQuery) {
         await db.promise().query(updateQuery, updateValues);
         console.log(`Uspešno ažuriran status za rečenicu sa ID-em ${id}`);
+        await this.insertSentimentAnalysis(id,user_id);
       } else {
         console.log('Nema potrebe za ažuriranjem rečenice sa ID-em', id);
       }
+
+
+
+
+
+
     } catch (error) {
       throw new Error('Greška pri ažuriranju rečenice: ' + error.message);
+    }
+  }
+
+  static async insertSentimentAnalysis(id,user_id){
+    try {
+      const query = `INSERT INTO sentiment_analysis (annotator_id, sentence_id,created_at) 
+                      VALUES (?,? , NOW());`
+                      
+      await db.promise().query(query,[user_id,id]);
+    } catch (error) {
+      throw new Error('Greška pri unosu sentimenta: ' + error.message);
     }
   }
 
@@ -160,6 +178,20 @@ class Sentence {
     }
   }
 
+  static async getNotProcessSentences() {
+    try {
+      const query = `
+        SELECT * FROM sentences 
+        WHERE status = 0
+      `;
+      const [rows] = await db.promise().query(query);
+      return rows; // Vraća sve recenice koje zadovoljavaju uslove
+    } catch (error) {
+      throw new Error('Error getting sentences with status 0: ' + error.message);
+    }
+  }
+  
+
   static async generateCSV(type) {
     try {
       let rows = null;
@@ -170,6 +202,9 @@ class Sentence {
       //ako je neodredjena
       else if(type === 3){
         rows = await this.getNotSureSentences();
+      }
+      else if(type === 0){
+        rows = await this.getNotProcessSentences();
       }
 
       // SQL upit za izlistavanje svih recenica sa statusom 2
@@ -184,7 +219,7 @@ class Sentence {
       const csv = parse(rows);
 
       // Definišemo putanju za fajl
-      const filePath = path.join(__dirname, '../temp', `sentences_status_2_${Date.now()}.csv`);
+      const filePath = path.join(__dirname, '../temp', `sentences_status_${type}_${Date.now()}.csv`);
 
       // Upisujemo CSV u fajl
       fs.writeFileSync(filePath, csv);
@@ -194,6 +229,36 @@ class Sentence {
     } catch (error) {
       throw new Error('Greška pri generisanju CSV fajla: ' + error.message);
     }
+  }
+
+  static async getCountDoneSentences(){
+    try {
+      const query = `select count(*) as 'count' from sentences where status = 2`;
+      const [rows] = await db.promise().query(query);
+      return rows[0].count;
+    } catch (error) {
+      throw new Error('Greška pri dobijanju broja gotovih recenica: ' + error.message);
+    }
+  }
+
+  static async getCountNotSureSentences(){
+    try {
+      const query = `select count(*) as 'count' from sentences where status = 3`;
+      const [rows] = await db.promise().query(query);
+      return rows[0].count;
+    } catch (error) {
+      throw new Error('Greška pri dobijanju broja neodredjenih recenica: ' + error.message);
+    }
+  }
+
+  static async getCountFreeSentences(){
+    try {
+      const query = `select count(*) as 'count' from sentences where status = 0`;
+      const [rows] = await db.promise().query(query);
+      return rows[0].count;
+    } catch (error) {
+      throw new Error('Greška pri dobijanju broja slobodnih recenica: ' + error.message);
+    } 
   }
 
 }

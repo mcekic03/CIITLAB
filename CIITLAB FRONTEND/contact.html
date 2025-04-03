@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CIITLAB - Contact Us</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/contact.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">
+            <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
+          </a>
+        </div>
+       
+        </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <div class="dropdown">
+            <a href="#" class="dropdown-trigger">Topics</a>
+            <div class="dropdown-content">
+              <a href="artificial-intelligence.html">Artifical Intelligence</a>
+              <a href="nlp.html">NLP</a>
+              <a href="#">Logic Design and Spectral Technics</a>
+              <a href="#">Signal Processing</a>
+              <a href="#">Web Programming</a>
+              
+            </div>
+          </div>
+          
+          <a href="news.html">News</a>
+          <a href="researchers.html">Researchers</a>
+          <a href="students.html">PhD Students</a>
+          <a href="contact.html" class="active">Contact Us</a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+      <!-- Page Title -->
+      <div class="page-title">
+        <h1>Contact Us</h1>
+        <div class="title-underline"></div>
+      </div>
+      
+      <!-- Contact Section -->
+      <div class="contact-card">
+        <!-- Contact Info Banner -->
+        <div class="contact-banner">
+          <div class="banner-content">
+            <div class="banner-text">
+              <h2>Get in Touch</h2>
+              <p>We'd love to hear from you. Here's how you can reach us.</p>
+            </div>
+            <div class="banner-icons">
+              
+              <a href="tel:+381 18 529 523" class="icon-link">
+                <i class="fas fa-phone"></i>
+              </a>
+              <a href="https://maps.app.goo.gl/qzsygeRcoVK68nVE8" target="_blank" class="icon-link">
+                <i class="fas fa-map-marker-alt"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Contact Content -->
+
+            
+            <!-- Contact Info & Map -->
+            <div class="contact-info-container">
+              <div class="info-card">
+                <h3>Contact Information</h3>
+                <div class="info-list">
+                  <div class="info-item">
+                    <div class="info-icon">
+                      <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="info-text">
+                      <h4>Address</h4>
+                      <p>Aleksandra Medvedeva 4, Niš 18000</p>
+                    </div>
+                  </div>
+                  
+                  <div class="info-item">
+                    <div class="info-icon">
+                      <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="info-text">
+                      <h4>Phone</h4>
+                      <p>+381 18 529 523</p>
+                      <p>+381 18 529 530</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Map -->
+              <div class="map-container">
+                <h3>Our Location</h3>
+                <div class="map-wrapper">
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3571.0488920872!2d21.889947076617613!3d43.33129987319022!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4755b733e02e006f%3A0x2fd8f95c1eacfcfb!2sFaculty%20of%20Electronic%20Engineering!5e1!3m2!1sen!2srs!4v1742897080501!5m2!1sen!2srs" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                  </iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Phone: +381 18 529 523</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +381 18 529 530</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="researchers.html">Researchers</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // Set current year in footer
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+      
+      // Mobile menu toggle
+      document.getElementById('mobile-menu-button').addEventListener('click', function() {
+        document.getElementById('mobile-menu').classList.toggle('show');
+      });
+      
+      // Mobile dropdowns
+      document.querySelectorAll('.mobile-dropdown-trigger').forEach(button => {
+        button.addEventListener('click', function() {
+          const content = this.nextElementSibling;
+          content.classList.toggle('show');
+          this.querySelector('i').classList.toggle('fa-chevron-down');
+          this.querySelector('i').classList.toggle('fa-chevron-up');
+        });
+      });
+      
+      // Contact form submission
+      document.getElementById('contactForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const response = document.getElementById('response');
+        response.classList.add('show');
+        this.reset();
+        
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          response.classList.remove('show');
+        }, 5000);
+      });
+    </script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>

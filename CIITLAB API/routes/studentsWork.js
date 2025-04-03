@@ -193,7 +193,6 @@ router.post('/create/:id',auth,checkRole('researcher','admin'), async (req, res)
     const mentor_id = req.params.id;
     const workData = req.body;
     
-    console.log(workData,mentor_id);
     
     // Validacija obaveznih polja
     if (!workData.firstName || !workData.lastName || !workData.title || 

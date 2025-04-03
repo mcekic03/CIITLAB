@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Researchers - CIITLAB</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="header">
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">
+            <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
+          </a>
+        </div>
+       
+        </div>
+        <div class="nav-links">
+          <a href="index.html" >Home</a>
+          <div class="dropdown">
+            <a href="#" class="dropdown-trigger">Topics</a>
+            <div class="dropdown-content">
+              <a href="artificial-intelligence.html">Artifical Intelligence</a>
+              <a href="nlp.html">NLP</a>
+              <a href="#">Logic Design and Spectral Technics</a>
+              <a href="#">Signal Processing</a>
+              <a href="#">Web Programming</a>
+              
+            </div>
+          </div>
+          
+          <a href="news.html">News</a>
+          <a href="researchers.html" class="active">Researchers</a>
+          <a href="students.html">PhD Students</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="researchers-page">
+      <section class="page-header">
+        <h1>Our Researchers</h1>
+        <p>Meet the talented team behind our research initiatives</p>
+      </section>
+
+      <section class="researchers-grid">
+        <!-- Researchers will be loaded dynamically via JavaScript -->
+      </section>
+      <br>
+      <section class="page-header">
+        <h1>Former Researchers</h1>
+        <p>Meet the researchers whose work laid the foundation for our success</p>
+      </section>
+      <section class="older-researchers-grid">
+        <div class="researcher-card">
+          <div class="researcher-image">
+              <img src="uploads/Milena-Stankovic.png" alt="Milena Stankovic" />
+          </div>
+          <div class="researcher-info">
+              <h3>Milena Stankovic</h3>
+              <p class="email"> milena.stankovic@elfak.ni.ac.rs </p>
+              <p class="researcher-excerpt">
+                Full professor, Founder of the Laboratory
+              </p>
+          </div>
+        </div>
+      <div class="researcher-card">
+        <div class="researcher-image">
+            <img src="uploads/Radomir-Stankovic.jpeg" alt="Radomir Stankovic" />
+        </div>
+        <div class="researcher-info">
+            <h3>Radomir Stankovic</h3>
+            <p class="email"> radomir.stankovic@elfak.ni.ac.rs </p>
+            <p class="researcher-excerpt">
+              Full professor, Laboratory Senior Member
+           </p>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Phone: +381 18 529 523</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +381 18 529 530</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="researchers.html">Researchers</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/researchers.js"></script>
+  </body>
+</html>

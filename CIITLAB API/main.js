@@ -1,8 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const path = require('path');
-const db = require('./config/db');
 const os = require('os');
 const routeLogger = require('./middleware/routelog');
 const errorHandler = require('./middleware/error');
@@ -10,6 +8,7 @@ const swaggerUi = require('swagger-ui-express');
 const specs = require('./config/swagger');
 
 dotenv.config();
+
 
 const app = express();
 app.use(cors());

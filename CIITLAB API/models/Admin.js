@@ -1,5 +1,10 @@
 const { type } = require("express/lib/response");
 const db = require("../config/db");
+const User = require("./User");
+const fs = require('fs');
+const { parse } = require('json2csv');
+const path = require('path');
+const Publication = require("./Publication");
 
 
 
@@ -30,17 +35,38 @@ class Admin {
         return rows[0].total;
     }
 
-    // Broj publikacija
-    static async getTotalPublicationsFor(id) {
-        const query = `SELECT COUNT(*) AS total FROM publications where user_id = ?`;
-        const [rows] = await db.promise().query(query,[id]);
+    static async getTotalAnotators1() {
+        const query = `SELECT COUNT(*) AS total FROM users where role in ('anotator1')`;
+        const [rows] = await db.promise().query(query);
+  
+         // Vraća prvi korisnik koji odgovara
         return rows[0].total;
     }
 
+    // Broj publikacija
+    static async getTotalPublicationsFor(id) {
+
+        console.log(id);
+        const pub = await Publication.getPublicationsByUser(id);
+        if (pub) {
+            const count = await Publication.prebrojSveRedove(pub[0].url);
+            return count;
+        }
+        return 0;
+
+    }
+
     static async  getTotalPublications() {
-        const query = `SELECT COUNT(*) AS total FROM publications`;
+        const query = `SELECT url FROM publications`;
+
         const [rows] = await db.promise().query(query);
-        return rows[0].total;
+
+        let total = 0;
+        for (let row of rows) {
+            const count = await Publication.prebrojSveRedove(row.url);
+            total += count;
+        }   
+        return total;
     }
 
     // Broj resursa
@@ -139,7 +165,7 @@ class Admin {
           throw new Error('Error during password hashing or database operation');
         }
     }
-
+   
 //podlogika za aktivnosti//////////////////////////
 
     static async getRelatedData(rows) {
@@ -174,7 +200,6 @@ class Admin {
                     data = null; // Ako tip nije prepoznat, ništa ne radimo
                     break;
             }
-            console.log(data);
             // Ako smo dobili podatke, dodajemo ih u rezultate
             if (data) {
                 results.push({
@@ -184,7 +209,6 @@ class Admin {
                 });
             }
         }
-        console.log(results);
         return results; // Vraćamo sve rezultate
     }
 
@@ -235,7 +259,55 @@ class Admin {
     static isHash(password){
         // Provera da li lozinka izgleda kao bcrypt hash (počinje sa "$2a$" ili "$2b$")
         return password.startsWith('$2a$') || password.startsWith('$2b$');
-      };
+    }
+
+    // sentiment_analysis dashboard
+    static async getSentimentCountPerAnnotator() {
+        const query = `
+            SELECT 
+                u.id AS annotator_id, 
+                CONCAT(u.firstName, ' ', u.lastName) AS annotator, 
+                COUNT(sa.sentence_id) AS total_sentences,
+                MAX(sa.created_at) AS last_time
+                FROM sentiment_analysis sa
+                JOIN users u ON sa.annotator_id = u.id
+                GROUP BY sa.annotator_id, annotator;
+        `;
+        const [rows] = await db.promise().query(query);
+        return rows;
+    }
+      
+    static async AnotatorGenerateCSV(user_id) {
+        try {
+            const query = `select sa.created_at,s.sentence,s.sentiment,s.status from sentiment_analysis sa 
+                            join sentences s on sa.sentence_id = s.id
+                            where annotator_id = ?`;
+
+            const [rows] = await db.promise().query(query,[user_id]);
+
+            if (rows.length === 0) {
+                throw new Error("Nema podataka sa statusom 2");
+            }
+      
+            // Konvertujemo rezultate u CSV format
+            const csv = parse(rows);
+      
+            // Definišemo putanju za fajl
+            const filePath = path.join(__dirname, '../temp', `sentences_foruser_${user_id}_${Date.now()}.csv`);
+      
+            // Upisujemo CSV u fajl
+            fs.writeFileSync(filePath, csv);
+      
+            // Vraćamo putanju fajla
+            return filePath;
+        } catch (error) {
+            throw new Error('Greška pri generisanju CSV fajla: ' + error.message);
+        }
+    }
+    
+      
+
+    
     
 
 
