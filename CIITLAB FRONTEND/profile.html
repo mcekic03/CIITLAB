@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Researcher profile page for CIITLAB" />
+    <title>Profile - CIITLAB</title>
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="css/style.css" as="style" />
+    <link rel="preload" href="js/researcher-profile.js" as="script" />
+    <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      media="print"
+      onload="this.media='all'"
+    />
+
+    <!-- Defer non-critical JavaScript -->
+    <script src="js/auth.js" defer></script>
+    <script src="js/researcher-profile.js" defer></script>
+    <script src="js/resource-handler.js" defer></script>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">
+            <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
+          </a>
+        </div>
+       
+        </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <div class="dropdown">
+            <a href="#" class="dropdown-trigger">Topics</a>
+            <div class="dropdown-content">
+              <a href="artificial-intelligence.html">Artifical Intelligence</a>
+              <a href="nlp.html">NLP</a>
+              <a href="#">Logic Design and Spectral Technics</a>
+              <a href="#">Signal Processing</a>
+              <a href="#">Web Programming</a>
+              
+            </div>
+          </div>
+          
+          <a href="news.html">News</a>
+          <a href="researchers.html">Researchers</a>
+          <a href="students.html">PhD Students</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="researcher-profile-page">
+      <!-- Profile Header Section -->
+      <section class="profile-header-section">
+        <div class="profile-header">
+          <div class="profile-image-container">
+            <div class="researcher-profile-image">
+              <img
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlZWUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjM1IiByPSIyNSIgZmlsbD0iIzk5OSIvPjxwYXRoIGQ9Ik01MCA3MGMtMjcuNjE0IDAtNTAgMjIuMzg2LTUwIDUwaDEwMGMwLTI3LjYxNC0yMi4zODYtNTAtNTAtNTB6IiBmaWxsPSIjOTk5Ii8+PC9zdmc+"
+                alt="Profile Image"
+                loading="lazy"
+                class="researcher-profile-image"
+              />
+              <div class="profile-image-overlay">
+                <button class="change-image-btn" onclick="toggleEditMode()" aria-label="Change profile picture">
+                  <i class="fas fa-camera"></i>
+                  <span>Promeni sliku</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="profile-info">
+            <div class="profile-header-actions">
+              <h1>Loading...</h1>
+              <div class="profile-stats">
+                <div class="stat-item">
+                  <i class="fas fa-book" aria-hidden="true"></i>
+                  <span class="publications-count">0</span> Publications
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-folder-open" aria-hidden="true"></i>
+                  <span class="education-count">0</span> Resources
+                </div>
+              </div>
+            </div>
+            <p class="email">Loading...</p>
+            <p class="bio">Loading...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Content Section -->
+      <section class="profile-content">
+        <div class="profile-grid">
+          <!-- Left Column -->
+          <div class="profile-main">
+            <!-- About Section -->
+           
+            <!-- Education Section -->
+            <div class="profile-section">
+              <div class="section-header">
+                <h2>
+                  <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                  Education
+                </h2>
+                <button
+                  class="btn btn-outline edit-education-btn"
+                  onclick="toggleEducationEdit()"
+                  style="display: none"
+                  aria-label="Edit education"
+                >
+                  <i class="fas fa-edit" aria-hidden="true"></i> Edit
+                </button>
+              </div>
+              <div class="section-content">
+                <div class="education-list">
+                  <p class="no-education">No education listed</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Publications Section -->
+            <div class="profile-section">
+              <div class="section-header">
+                <h2>
+                  <i class="fas fa-book" aria-hidden="true"></i> Publications
+                </h2>
+                <button
+                  class="btn btn-outline edit-section-btn"
+                  onclick="togglePublicationsEdit()"
+                  style="display: none"
+                  aria-label="Edit publications"
+                >
+                  <i class="fas fa-edit" aria-hidden="true"></i> Edit
+                </button>
+              </div>
+              <div class="section-content">
+                <div class="publications-list">
+                  <p class="no-publications">No publications listed</p>
+                </div>
+              </div>
+            </div>
+            <div class="profile-section">
+              <div class="section-header">
+                <h2>
+                  <i class="fas fa-briefcase" aria-hidden="true"></i> Students Work
+                </h2>
+                <div class="stat-item">
+                  <i class="fas fa-briefcase" aria-hidden="true"></i>
+                  <span class="studentsWork-count">0</span> Students Work
+                </div>
+                <button
+                  class="btn btn-outline edit-section-btn"
+                  onclick="toggleStudentsWorkEdit()"
+                  style="display: none"
+                  aria-label="Edit Students Work"
+                >
+                  <i class="fas fa-plus" aria-hidden="true"></i> Add
+                </button>
+              </div>
+              <div class="section-content">
+                <div class="studentsWork-list">
+                  <p class="no-studentsWork">No Students Work listed</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="profile-sidebar">
+            <!-- Skills Section -->
+            <div class="profile-section">
+              <div class="section-header">
+                <h2><i class="fas fa-tools" aria-hidden="true"></i> Skills</h2>
+                <button
+                  class="btn btn-outline edit-section-btn"
+                  onclick="toggleSkillsEdit()"
+                  style="display: none"
+                  aria-label="Edit skills"
+                >
+                  <i class="fas fa-edit" aria-hidden="true"></i> Edit
+                </button>
+              </div>
+              <div class="section-content">
+                <div class="skills-list">
+                  <!-- Skills will be populated here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Resources Section -->
+            <div class="profile-section">
+              <div class="section-header">
+                <h2>
+                  <i class="fas fa-folder-open" aria-hidden="true"></i>
+                  Resources
+                </h2>
+                <button
+                  class="btn btn-outline edit-section-btn"
+                  onclick="toggleResourcesEdit()"
+                  style="display: none"
+                  aria-label="Add resource"
+                >
+                  <i class="fas fa-plus" aria-hidden="true"></i> Add
+                </button>
+              </div>
+              <div class="section-content">
+                <div class="resources-list">
+                  <!-- Resources will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Edit Modal -->
+      <div id="editModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Edit Profile</h2>
+            <button
+              class="close-btn"
+              onclick="closeModal()"
+              aria-label="Close modal"
+            >
+              &times;
+            </button>
+          </div>
+
+          <!-- Profile Edit Form -->
+          <form id="profileEditForm" class="edit-form">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                required
+                autocomplete="given-name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                required
+                autocomplete="family-name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                autocomplete="email"
+              />
+            </div>
+            <div class="form-group">
+              <label for="bio">Bio</label>
+              <textarea
+                id="bio"
+                name="bio"
+                rows="4"
+                required
+                autocomplete="off"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="profileImage">Profile Image</label>
+              <input
+                type="file"
+                id="profileImage"
+                name="profileImage"
+                accept="image/*"
+                aria-describedby="profileImageHelp"
+                onchange="UI.handleImagePreview(event)"
+              />
+              <small id="profileImageHelp" class="form-text">
+                Maximum file size: 5MB. Supported formats: JPEG, PNG, JPG
+              </small>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+              </button>
+            </div>
+          </form>
+
+          <!-- Education Edit Form -->
+          <form id="educationEditForm" class="edit-form" style="display: none">
+            <div class="modal-header">
+              <h2>Edit Education</h2>
+              <button
+                type="button"
+                class="close-btn"
+                onclick="closeModal()"
+                aria-label="Close modal"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="education-inputs">
+              <!-- Education input groups will be added here dynamically -->
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-outline"
+                onclick="handleAddEducation()"
+              >
+                <i class="fas fa-plus" aria-hidden="true"></i> Add Education
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+              </button>
+            </div>
+          </form>
+
+          <!-- Publications Edit Form -->
+          <form
+            id="publicationsEditForm"
+            class="edit-form"
+            style="display: none"
+          >
+            <div class="modal-header">
+              <h2>Edit Publications Link</h2>
+              <button
+                type="button"
+                class="close-btn"
+                onclick="closeModal()"
+                aria-label="Close modal"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="publications-inputs">
+              <!-- Publication input groups will be added here dynamically -->
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+              </button>
+            </div>
+          </form>
+
+          <form
+            id="studentsWorkEditForm"
+            class="edit-form"
+            style="display: none"
+          >
+            <div class="modal-header">
+              <h2>Edit Students Work</h2>
+              <button
+                type="button"
+                class="close-btn"
+                onclick="closeModal()"
+                aria-label="Close modal"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="studentsWork-inputs">
+              <!-- Publication input groups will be added here dynamically -->
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+              </button>
+            </div>
+          </form>
+
+          <!-- Skills Edit Form -->
+          <form id="skillsEditForm" class="edit-form" style="display: none">
+            <div class="modal-header">
+              <h2>Edit Skills</h2>
+              <button
+                type="button"
+                class="close-btn"
+                onclick="closeModal()"
+                aria-label="Close modal"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="form-group">
+              <label for="skills">Skills (comma-separated)</label>
+              <textarea
+                id="skills"
+                name="skills"
+                rows="4"
+                placeholder="e.g., Machine Learning, Data Analysis, Python, R"
+              ></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+              </button>
+            </div>
+          </form>
+
+          <!-- Skills Edit Form -->
+          <form id="skillsEditForm" class="edit-form" style="display: none">
+            <div class="modal-header">
+              <h2>Edit Skills</h2>
+              <button
+                type="button"
+                class="close-btn"
+                onclick="closeModal()"
+                aria-label="Close modal"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="form-group">
+              <label for="skills">Skills (comma-separated)</label>
+              <textarea
+                id="skills"
+                name="skills"
+                rows="4"
+                placeholder="e.g., Machine Learning, Data Analysis, Python, R"
+              ></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Education Form Template -->
+      <template id="educationFormTemplate">
+        <div class="education-input-group">
+          <div class="form-group">
+            <label>Degree</label>
+            <input type="text" name="degree" required />
+          </div>
+          <div class="form-group">
+            <label>Institution</label>
+            <input type="text" name="institution" required />
+          </div>
+          <div class="form-group">
+            <label>Year</label>
+            <input type="number" name="year" required />
+          </div>
+          <button type="button" class="btn-icon remove-education">
+            <i class="fas fa-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+      </template>
+
+      <!-- Publication Form Template -->
+      <template id="publicationFormTemplate">
+        <div class="publication-input-group">
+          <div class="form-group">
+            <label>Link</label>
+            <input type="url" name="title" placeholder="https://enauka.gov.rs/" required />
+          </div>
+          <button type="button" class="btn-icon remove-publication">
+            <i class="fas fa-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+      </template>
+
+      <!-- Students Work Form Template -->
+      <template id="studentsWorkFormTemplate">
+        <div class="studentsWork-input-group">
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" name="title" id="title" required />
+            <label>Description</label>
+            <textarea name="description" id="description" required></textarea>
+            <label>First Name</label>
+            <input type="text" name="firstName" id="firstName" required />
+            <label>Last Name</label>
+            <input type="text" name="lastName" id="lastName" required />
+            <label>Graduation Year</label>
+            <input type="number" name="graduationYear" id="graduationYear" required />
+            <label>Link</label>
+            <input type="url" name="link" placeholder="https://example.com/studentsWork" required />
+          </div>
+          <button type="button" class="btn-icon remove-studentsWork">
+            <i class="fas fa-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+      </template>
+
+      <!-- Resource Upload Modal -->
+      <div id="resourceUploadModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Add Resource Link</h2>
+            <button
+              class="close-btn"
+              onclick="closeModal()"
+              aria-label="Close modal"
+            >
+              &times;
+            </button>
+          </div>
+          <form id="resourceUploadForm" class="edit-form">
+            <div class="form-group">
+              <label for="resourceTitle">Title *</label>
+              <input
+                type="text"
+                id="resourceTitle"
+                name="title"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="resourceDescription">Description *</label>
+              <textarea
+                id="resourceDescription"
+                name="description"
+                class="form-control"
+                rows="3"
+                required
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="resourceUrl">Resource URL *</label>
+              <input
+                type="url"
+                id="resourceUrl"
+                name="url"
+                class="form-control"
+                placeholder="https://example.com/resource"
+                required
+              />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus" aria-hidden="true"></i> Add Resource
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <!-- Students Work Upload Modal -->
+    <div id="studentsWorkUploadModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Add Students Work</h2>
+          <button
+            class="close-btn"
+            onclick="closeModal()"
+            aria-label="Close modal"
+          >
+            &times;
+          </button>
+        </div>
+        <form id="studentsWorkUploadForm" class="edit-form">
+          <div class="form-group">
+            <label for="studentsWorkTitle">Title *</label>
+            <input type="text" id="studentsWorkTitle" name="title" required />
+          </div>
+          <div class="form-group">
+            <label for="studentsWorkFirstName">First Name *</label>
+            <input type="text" id="studentsWorkFirstName" name="firstName" required />
+          </div>
+          <div class="form-group">
+            <label for="studentsWorkLastName">Last Name *</label>
+            <input type="text" id="studentsWorkLastName" name="lastName" required />
+          </div>
+          <div class="form-group">
+            <label for="studentsWorkDescription">Description *</label>
+            <textarea name="description" id="studentsWorkDescription" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="studentsWorkUrl">Students Work URL *</label>
+            <input type="url" id="studentsWorkUrl" name="url" required />
+          </div>
+          <div class="form-group">
+            <label for="studentsWorkGraduationYear">Graduation Year *</label>
+            <input type="number" id="studentsWorkGraduationYear" name="graduationYear" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-plus" aria-hidden="true"></i> Add Students Work
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Phone: +381 18 529 523</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +381 18 529 530</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="researchers.html">Researchers</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
+      </div>
+    </footer>
+    <script src="js/main.js"></script>
+  </body>
+</html>

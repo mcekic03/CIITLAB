@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Researcher Login - CIITLAB</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">
+            <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
+          </a>
+        </div>
+       
+        </div>
+        <div class="nav-links">
+          <a href="index.html" class="active">Home</a>
+          <div class="dropdown">
+            <a href="#" class="dropdown-trigger">Topics</a>
+            <div class="dropdown-content">
+              <a href="artificial-intelligence.html">Artifical Intelligence</a>
+              <a href="nlp.html">NLP</a>
+              <a href="#">Logic Design and Spectral Technics</a>
+              <a href="#">Signal Processing</a>
+              <a href="#">Web Programming</a>
+              
+            </div>
+          </div>
+          
+          <a href="news.html">News</a>
+          <a href="researchers.html">Researchers</a>
+          <a href="students.html">PhD Students</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="login-container">
+      <div class="login-box">
+        <h2>Researcher Login</h2>
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" required autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              required
+              autocomplete="current-password"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <div id="error-message" class="error-message"></div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Phone: +381 18 529 523</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +381 18 529 530</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="researchers.html">Researchers</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script>
+      async function handleLogin(event) {
+        console.log('aaa');
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('error-message');
+        const submitButton = event.target.querySelector(
+          'button[type="submit"]'
+        );
+        const originalButtonText = submitButton.textContent;
+
+        try {
+          submitButton.disabled = true;
+          submitButton.textContent = 'Logging in...';
+
+          // Clear localStorage before attempting login
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('user');
+          console.log('Cleared localStorage data before login');
+
+          const response = await fetch('http://160.99.40.221:3500/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Login error');
+          }
+          console.log(data);
+          console.log('Login successful, received data:');
+
+          // Prepare user object for setAuth
+          const user = {
+            _id: data.user._id || data.user.id,
+            firstName: data.user.firstName,
+            lastName: data.user.lastName,
+            email: data.user.email,
+            role: data.user.role,
+          };
+
+          // Save user data and token
+          authState.setAuth(user, data.token);
+
+          // Check if userId is saved in localStorage
+          console.log(
+            'After setAuth - userId in localStorage:',
+            localStorage.getItem('userId')
+          );
+
+          // Redirect to profile
+          window.location.href = 'profile.html';
+        } catch (error) {
+          console.error('Login error:', error);
+          errorMessage.textContent = error.message;
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = originalButtonText;
+        }
+      }
+    </script>
+  </body>
+</html>

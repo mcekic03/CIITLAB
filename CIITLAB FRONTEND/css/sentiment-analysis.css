@@ -1,0 +1,295 @@
+:root {
+  --accent-positive: #4caf50;
+  --accent-negative: #f44336;
+  --accent-neutral: #636e72;
+  --confirm-color: #636e72;
+  --transition-speed: 0.3s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+
+/* Sentiment App */
+.sentiment-app {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateY(30px);
+  background-color: #f4f4f4;
+  color: rgb(129, 129, 129);
+  padding: 2rem;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 800px;
+  max-height: fit-content;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.sentiment-app.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Demo Container */
+.demo-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.demo-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.demo-button {
+  background: linear-gradient(135deg, #ff9800, #e65100);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+}
+
+.demo-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Sentiment Overlay */
+.sentiment-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: all var(--transition-speed) ease;
+}
+
+.sentiment-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  overflow: hidden;
+}
+
+/* Sentiment Card */
+.sentiment-card {
+  background-color: #f4f4f4;
+  border-radius: 16px;
+  width: 800px;
+  max-width: 100%;
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(240, 240, 240, 0.3);
+  transform: scale(0.7);
+  opacity: 0;
+  transition: all var(--transition-speed)
+    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  bottom: 8rem;
+  overflow: hidden;
+}
+
+.sentiment-overlay.active .sentiment-card {
+  transform: scale(1);
+  opacity: 1;
+  overflow: hidden;
+}
+
+/* Sentiment Header */
+.sentiment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.sentiment-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #333;
+}
+
+.sentiment-header .sentiment-icon {
+  font-size: 2rem;
+}
+
+.sentiment-icon {
+  background: linear-gradient(135deg, #ff9800, #e65100);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Sentiment Sentence */
+.sentiment-sentence {
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  border: 1px solid #eee;
+}
+
+/* Sentiment Actions */
+.sentiment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.sentiment-btn {
+  flex: 1 0 auto;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all var(--transition-speed) ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  color: white;
+  min-width: 120px;
+}
+
+.sentiment-btn.active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid #fff;
+}
+
+.sentiment-btn-positive {
+  border: 2px solid #00bb4b;
+  color: #00bb4b;
+}
+
+.sentiment-btn-negative {
+  border: 2px solid #ff4141;
+  color: #ff4141;
+}
+
+.sentiment-btn-neutral {
+  border: 2px solid #504c4c;
+  color: #504c4c;
+  flex: 1 0 auto;
+}
+
+.sentiment-btn-positive.active {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+}
+
+.sentiment-btn-negative.active {
+  background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+  color: white;
+}
+
+.sentiment-btn-neutral.active {
+  background: linear-gradient(135deg, #686565 0%, #505050 100%);
+  color: white;
+}
+
+.sentiment-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Confirm Container */
+.confirm-container {
+  padding-top: 15px;
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid #eee;
+}
+
+.sentiment-btn-confirm {
+  background: linear-gradient(135deg, #ff9800, #e65100);
+  display: none;
+  width: 100%;
+  max-width: 200px;
+}
+
+/* Close Button */
+.close-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color var(--transition-speed) ease;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+/* Animations */
+.sentiment-card.pulse {
+  animation: pulse 0.5s ease-out;
+}
+
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 153, 28, 0.947);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(255, 153, 28, 0.947);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 153, 28, 0.373);
+  }
+}
+
+/* Progress Bar */
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  transition: width var(--transition-speed) linear;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sentiment-actions {
+    flex-direction: column;
+  }
+  
+  .sentiment-btn {
+    width: 100%;
+  }
+  
+  .sentiment-header h2 {
+    font-size: 1.5rem;
+  }
+}

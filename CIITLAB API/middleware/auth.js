@@ -20,8 +20,6 @@ const auth = (req, res, next) => {
 // Funkcija za proveru uloga korisnika
 const checkRole = (...roles) => {
   return (req, res, next) => {
-    console.log('User role:', req.user.role);
-    console.log('Roles:', roles);
     if (!req.user) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
