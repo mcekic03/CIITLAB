@@ -8,7 +8,7 @@ class User {
     try {
       const hashedPassword = await bcrypt.hash(password, 10); // Šifrovanje lozinke
 
-      const query = `INSERT INTO users (first_name, last_name, email, password, role, bio, profile_image, status) 
+      const query = `INSERT INTO users (firstName, lastName, email, password, role, bio, profileImage, status) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
       const [results] = await db.promise().query(query, [firstName, lastName, email, hashedPassword, role, bio, profileImage, status]);
 
@@ -202,8 +202,8 @@ class User {
   }
 
   // Azuriranje profila korisnika
-  static async updateProfile(id, updates) {
-    const allowedUpdates = ['first_name', 'last_name', 'email', 'bio', 'profile_image', 'status'];
+  static async updateUser(id, updates) {
+    const allowedUpdates = ['firstName', 'lastName', 'email', 'bio', 'profileImage','role', 'status','password'];
     const updatesKeys = Object.keys(updates);
 
     // Provera da li su svi update-ovi dozvoljeni

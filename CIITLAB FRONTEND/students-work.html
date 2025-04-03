@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resources - CIITLAB</title>
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/resources.css" />
+    <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">
+            <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
+          </a>
+        </div>
+       
+        </div>
+        <div class="nav-links">
+          <a href="index.html" class="active">Home</a>
+          <div class="dropdown">
+            <a href="#" class="dropdown-trigger">Topics</a>
+            <div class="dropdown-content">
+              <a href="artificial-intelligence.html">Artifical Intelligence</a>
+              <a href="nlp.html">NLP</a>
+              <a href="#">Logic Design and Spectral Technics</a>
+              <a href="#">Signal Processing</a>
+              <a href="#">Web Programming</a>
+              
+            </div>
+          </div>
+          
+          <a href="news.html">News</a>
+          <a href="researchers.html">Researchers</a>
+          <a href="students.html">PhD Students</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="resources-section">
+        <div class="resources-header">
+          <h1>Students Work</h1>
+          <button
+            id="addResourceBtn"
+            class="btn btn-primary"
+            style="display: none"
+          >
+            <i class="fas fa-plus"></i> Add resource
+          </button>
+        </div>
+        <div class="resources-list">
+          <!-- Resources will be loaded dynamically here -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Resource Upload Modal -->
+    <div id="resourceUploadModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Add resource</h2>
+          <button
+            class="close-btn"
+            onclick="ResourceHandler.closeResourceModal()"
+            aria-label="Close"
+          >
+            &times;
+          </button>
+        </div>
+        <form id="resourceUploadForm" class="edit-form">
+          <div class="form-group">
+            <label for="resourceTitle">Title *</label>
+            <input
+              type="text"
+              id="resourceTitle"
+              name="title"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="resourceDescription">Description *</label>
+            <textarea
+              id="resourceDescription"
+              name="description"
+              class="form-control"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="resourceUrl">Resource URL *</label>
+            <input
+              type="url"
+              id="resourceUrl"
+              name="url"
+              class="form-control"
+              placeholder="https://example.com/resource"
+              required
+            />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-plus" aria-hidden="true"></i> Add resource
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p>Phone: +381 18 529 523</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +381 18 529 530</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="researchers.html">Researchers</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/resource-handler.js"></script>
+    <script>
+      // Initialize authentication when page loads
+      document.addEventListener('DOMContentLoaded', function () {
+        authState.init();
+        ResourceHandler.init();
+      });
+    </script>
+  </body>
+</html>

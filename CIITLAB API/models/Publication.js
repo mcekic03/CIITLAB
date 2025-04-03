@@ -78,10 +78,10 @@ class Publication {
     }
   }
 
-  // Brisanje publikacije
+  // Brisanje publikacije    
   static async deletePublication(id) {
     try {
-      const query = 'DELETE FROM Publications WHERE user_id = ?';
+      const query = 'DELETE FROM publications WHERE user_id = ?';
       const [result] = await db.promise().query(query, [id]);
       return { success: true, message: 'Publication deleted successfully', affectedRows: result.affectedRows };
     } catch (error) {
@@ -98,8 +98,6 @@ class Publication {
     while (nastavi) {
         try {
             const url = `${link}?startall=${start}`;
-            console.log(`Preuzimam podatke sa: ${url}`);
-            console.log(url);
             const { data } = await axios.get(url);
             const $ = cheerio.load(data);
 
@@ -117,7 +115,6 @@ class Publication {
         }
     }
 
-    console.log(`Ukupan broj redova u tabeli: ${ukupnoRedova-1}`);
     let broj = ukupnoRedova-1;
     return broj;
   }

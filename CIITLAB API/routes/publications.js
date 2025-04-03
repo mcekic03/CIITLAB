@@ -113,21 +113,20 @@ router.get('/find/:userId', async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.post('/update/:id',auth, async (req, res) => {
-  const { id } = req.params;
+router.post('/update/:user_id',auth, async (req, res) => {
+  const { user_id } = req.params;
   const { publications } = req.body;
-
+  console.log(publications);
   if(!publications[0]){
-    Publication.deletePublication(id);
+    Publication.deletePublication(user_id);
     return res.status(200).json({ message: 'publications is deleted.' });
   }
 
   if (!publications) {
     return res.status(400).json({ error: 'publications is required.' });
   }
-  console.log(publications[0]);
   try {
-    const updatedPublication = await Publication.updatePublicationUrl(id, publications[0].url);
+    const updatedPublication = await Publication.updatePublicationUrl(user_id, publications[0].url);
     res.status(200).json(updatedPublication); // Vraća ažuriranu publikaciju
   } catch (error) {
     res.status(500).json({ error: error.message });
