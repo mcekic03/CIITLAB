@@ -66,42 +66,42 @@ class Sentence {
       if(sentence.status === 3){
         updateQuery = `UPDATE sentences SET status = ? WHERE id = ?`;
         updateValues = [3,id];
-        console.log(100);
+        console.log('recenica vracena ne promenjena');
       }else{
         if (p === 2 && sentiment === 'negativan') {
           // Ako je p = 2 i sentiment negativan, menjamo sentiment u pozitivan
           updateQuery = `UPDATE sentences SET sentiment = ?, p = ?, status = ? WHERE id = ?`;
           updateValues = ['pozitivan', 2, 2, id];
-          console.log(1);
+          console.log('recenica je presla iz negativno u pozitivno');
   
         } else if (n === 2 && sentiment === 'pozitivan') {
           // Ako je n = 2 i sentiment pozitivan, menjamo sentiment u negativan
           updateQuery = `UPDATE sentences SET sentiment = ?, n = ?, status = ? WHERE id = ?`;
           updateValues = ['negativan', 2, 2, id];
-          console.log(2);
+          console.log('recenica je presla iz pozitivno u negativno');
   
         } else if (n === 2 && sentiment === 'negativan') {
           // Ako je n = 2 i sentiment negativan, samo postavljamo status na 2
           updateQuery = `UPDATE sentences SET status = ? WHERE id = ?`;
           updateValues = [2, id];
-          console.log(3);
+          console.log('recenica je 100% negativna');
   
         } else if (p === 2 && sentiment === 'pozitivan') {
           // Ako je p = 2 i sentiment pozitivan, postavljamo samo status na 2
           updateQuery = `UPDATE sentences SET status = ? WHERE id = ?`;
           updateValues = [2, id];
-          console.log(4);
+          console.log('recenica je 100% pozitivna');
   
         } else if (p === 1 && n === 1) {
           // Ako su p = 1 i n = 1, postavljamo oba na 1 i status na 0 jer nije gotovo pitanje
           updateQuery = `UPDATE sentences SET p = ?, n = ?,status = ? WHERE id = ?`;
           updateValues = [1, 1, 0, id];
-          console.log(5);
+          console.log('izjednaceno p i n');
         } else if ((p === 1 && n === 0) || (p === 0 && n === 1)){
           //ako recenica nije ocenjena ili nije menjana onda status se vraca na 0
           updateQuery = `UPDATE sentences SET status = ? WHERE id = ?`;
           updateValues = [0, id];
-          console.log(6);
+          console.log("status 0 vraca recenicu");
         }
       }
 

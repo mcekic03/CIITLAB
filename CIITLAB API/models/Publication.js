@@ -90,33 +90,26 @@ class Publication {
   }
 
   static async prebrojSveRedove(link) {
-    let ukupnoRedova = 0;
-    let start = 0;
-    let korak = 21; // Broj redova po stranici
-    let nastavi = true;
+    
+    const rp = this.extractRP(link);
+    let linkic = "https://enauka.gov.rs/ToolForStatistics/rest/statistics/open/"+rp;
+    try {
+      const response = await fetch(linkic);
 
-    while (nastavi) {
-        try {
-            const url = `${link}?startall=${start}`;
-            const { data } = await axios.get(url);
-            const $ = cheerio.load(data);
-
-            let brojRedova = $("tbody tr").length; // Broji redove unutar <tbody>
-            ukupnoRedova += brojRedova;
-
-            if (brojRedova === 0) {
-                nastavi = false; // Ako nema više redova, prekidamo petlju
-            } else {
-                start += korak; // Prelazimo na sledeću stranicu
-            }
-        } catch (error) {
-            console.error(`Greška pri preuzimanju sa startall=${start}:`, error.message);
-            nastavi = false;
+      if (!response.ok) {
+          throw new Error(`HTTP greška! Status: ${response.status}`);
         }
-    }
 
-    let broj = ukupnoRedova-1;
-    return broj;
+          const data = await response.json();
+          const spojeniNiz = [...data.other, ...data.open];
+          return spojeniNiz.reduce((acc, num) => acc + num, 0);
+
+        } catch (error) {
+          console.error("Fetch greška:", error);
+          return null;
+
+        }
+
   }
 
   static async updatePublication(id, data) {
@@ -132,6 +125,11 @@ class Publication {
       throw new Error('Failed to update publication');
     }
   }
+
+  static extractRP(inputString) {
+    const match = inputString.match(/rp\d+/); // Traži "rp" + brojevi
+    return match ? match[0] : null; // Ako nađe, vraća taj deo; ako ne, vraća null
+}
 
 }
 

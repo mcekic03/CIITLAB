@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Resources - CIITLAB</title>
-    <link rel="stylesheet" href="../../css/style.css" />
-    <link rel="stylesheet" href="../../css/resources.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="/css/resources.css" />
     <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
     <link
       rel="stylesheet"
@@ -23,26 +23,92 @@
        
         </div>
         <div class="nav-links">
-          <a href="index.html" class="active">Home</a>
-          <div class="dropdown">
-            <a href="#" class="dropdown-trigger">Topics</a>
-            <div class="dropdown-content">
-              <a href="artificial-intelligence.html">Artifical Intelligence</a>
+          <a href="index.html">Home</a>
+          <div class="dropdown" id="dropdown">
+            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Topics</a>
+            <div class="dropdown-content"  id="dropdownContent">
+              <a href="comingsoon.html">Artifical Intelligence</a>
               <a href="nlp.html">NLP</a>
-              <a href="#">Logic Design and Spectral Technics</a>
-              <a href="#">Signal Processing</a>
-              <a href="#">Web Programming</a>
+              <a href="comingsoon.html">Logic Design and Spectral Technics</a>
+              <a href="comingsoon.html">Signal Processing</a>
+              <a href="comingsoon.html">Web Programming</a>
               
             </div>
           </div>
           
-          <a href="news.html">News</a>
+          <a href="comingsoon.html">News</a>
           <a href="researchers.html">Researchers</a>
           <a href="students.html">PhD Students</a>
           <a href="contact.html">Contact Us</a>
         </div>
       </nav>
-    </header>
+
+       <nav class="mobile-bottom-nav">
+      <a href="index.html" class="mobile-nav-item">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
+        <i class="fas fa-book"></i>
+        <span>Topics</span>
+      </a>
+      <a href="comingsoon.html" class="mobile-nav-item">
+        <i class="fas fa-newspaper"></i>
+        <span>News</span>
+      </a>
+      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
+        <i class="fas fa-users"></i>
+        <span>Team</span>
+      </a>
+      <a href="#" class="mobile-nav-item user-menu">
+        <i class="fas fa-user-circle"></i>
+        <span>Profile</span>
+      </a>
+    </nav>
+    
+    <!-- Mobile Topics Dropdown -->
+    <div class="mobile-dropdown-panel-topics">
+      <div class="mobile-dropdown-header">
+        <h3>Topics</h3>
+        <button class="close-dropdown"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-dropdown-content">
+        <a href="comingsoon.html">Artificial Intelligence</a>
+        <a href="nlp.html">NLP</a>
+        <a href="comingsoon.html">Logic Design and Spectral Technics</a>
+        <a href="comingsoon.html">Signal Processing</a>
+        <a href="comingsoon.html">Web Programming</a>
+      </div>
+    </div>
+    <div class="mobile-dropdown-panel-team">
+      <div class="mobile-dropdown-header">
+        <h3>Team</h3>
+        <button class="close-dropdown-team"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-dropdown-content">
+        <a href="researchers.html">Researchers</a>
+        <a href="students.html">PhD Students</a>
+      </div>
+    </div>
+    <div class="mobile-user-panel">
+      <div class="mobile-user-header">
+        <div class="user-info">
+        </div>
+        <button class="close-user-panel"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-user-content">
+        <a href="/profile.html">
+          <i class="fas fa-user"></i> Profile
+        </a>
+        <a href="#" id="mobileLogoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+    </div>
+    
+    <!-- Overlay for mobile panels -->
+    <div class="mobile-overlay"></div>
+  </header>
 
     <main>
       <section class="resources-section">
@@ -56,11 +122,30 @@
             <i class="fas fa-plus"></i> Add resource
           </button>
         </div>
-        <div class="resources-list">
+        <div id="resources-list-page" class="resources-list-page">
           <!-- Resources will be loaded dynamically here -->
         </div>
       </section>
     </main>
+
+    <div id="resourceModal" class="resource-modal">
+      <div class="resource-modal-content">
+        <div class="modal-inner">
+          <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <button class="resource-modal-close" id="closeResourceModal">&times;</button>
+          </div>
+          <div class="modal-meta" id="modalMeta"></div>
+          <div class="modal-description" id="modalDescription"></div>
+          <div class="modal-actions">
+            <button class="btn-secondary" id="resourceModalCloseBtn">Close</button>
+            <a href="#" class="btn-primary" id="modalViewLink" target="_blank" rel="noopener noreferrer">
+              <i class="fas fa-external-link-alt"></i> View resource
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Resource Upload Modal -->
     <div id="resourceUploadModal" class="modal">

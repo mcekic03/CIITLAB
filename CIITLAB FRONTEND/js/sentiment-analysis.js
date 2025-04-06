@@ -48,9 +48,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const negativeBtn = document.getElementById('negativeBtn');
   const neutralBtn = document.getElementById('neutralBtn');
   const closeBtn = document.getElementById('closeBtn');
+  const sentimentSection = document.getElementById('sentimentSection');
+  const researchGrid = document.getElementById('researchGrid');
+  const researchGridTitle = document.getElementById('researchGridTitle');
   const posTaggingLink = document.getElementById('posTaggingLink');
   const sentimentAnalysisLink = document.getElementById(
     'sentimentAnalysisLink'
+  );
+  const sentimentAnalysisLinkMobile = document.getElementById(
+    'sentimentAnalysisLinkMobile'
   );
 
   const heroContent = document.getElementById('heroContent');
@@ -63,14 +69,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentSentence = null; // Trenutna rečenica
   let selectedSentiment = null;
-  
-  window.addEventListener("beforeunload", (event) => {
-    if (sentimentOverlay?.classList.contains("active")) {
-        event.preventDefault();
-        event.returnValue = ""; // Potrebno za prikazivanje dijaloga u nekim browserima
-    }
-});
 
+  window.addEventListener('beforeunload', (event) => {
+    if (sentimentOverlay?.classList.contains('active')) {
+      event.preventDefault();
+      closeSentimentCard();
+      event.returnValue = ''; // Potrebno za prikazivanje dijaloga u nekim browserima
+    }
+    closeSentimentCard();
+  });
 
   if (sentimentCloseBtn) {
     sentimentCloseBtn.addEventListener('click', (e) => {
@@ -78,6 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
       sentimentApp.classList.remove('active');
       setTimeout(() => {
         heroContent.classList.remove('hidden');
+        researchGrid.classList.remove('hide');
+        researchGridTitle.classList.remove('hide');
+        enableScroll();
+
         const existingOverlay = document.querySelector('.darkening-overlay');
         if (existingOverlay) {
           existingOverlay.remove();
@@ -90,17 +101,53 @@ document.addEventListener('DOMContentLoaded', () => {
   if (sentimentAnalysisLink) {
     sentimentAnalysisLink.addEventListener('click', (e) => {
       e.preventDefault();
-
       console.log(JSON.parse(localStorage.getItem('user')).role);
 
       // Hide hero content with transition
       heroContent.classList.add('hidden');
+      researchGrid.classList.add('hide');
+      researchGridTitle.classList.add('hide');
 
       // Show sentiment app with transition
       setTimeout(() => {
         sentimentApp.classList.add('active');
-        const existingOverlay = document.querySelector('.darkening-overlay');
+        document
+          .getElementById('sentimentApp')
+          .scrollIntoView({ behavior: 'smooth', block: 'center' });
 
+        const existingOverlay = document.querySelector('.darkening-overlay');
+        
+        if (existingOverlay) {
+          // Remove overlay if it exists
+          existingOverlay.remove();
+        } else {
+          // Create and add overlay if it doesn't exist
+          const overlay = document.createElement('div');
+          overlay.className = 'darkening-overlay';
+          document.body.appendChild(overlay);
+        }
+      }, 300);
+    });
+  }
+  if (sentimentAnalysisLinkMobile) {
+    sentimentAnalysisLinkMobile.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log(JSON.parse(localStorage.getItem('user')).role);
+
+      // Hide hero content with transition
+      heroContent.classList.add('hidden');
+      researchGrid.classList.add('hide');
+      researchGridTitle.classList.add('hide');
+
+      // Show sentiment app with transition
+      setTimeout(() => {
+        sentimentApp.classList.add('active');
+        document
+          .getElementById('sentimentApp')
+          .scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        const existingOverlay = document.querySelector('.darkening-overlay');
+        
         if (existingOverlay) {
           // Remove overlay if it exists
           existingOverlay.remove();
@@ -118,15 +165,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Dohvatanje nove rečenice iz baze
   async function getSentence() {
+    document
+      .getElementById('sentimentCard')
+      .scrollIntoView({ behavior: 'smooth', block: 'center' });
     sentimentCard.classList.remove('pulse');
     void sentimentCard.offsetWidth; // Trigger reflow
     sentimentCard.classList.add('pulse');
 
-    setTimeout(() => {
-      if (sentimentApp.classList.contains('active')) {
-        sentimentApp.classList.remove('active');
-      }
-    }, 300);
+    if (sentimentApp.classList.contains('active')) {
+      sentimentApp.classList.remove('active');
+    }
 
     try {
       const response = await fetch(`${API_BASE_URL}/sentences/getSentence`, {
@@ -197,12 +245,15 @@ document.addEventListener('DOMContentLoaded', () => {
     sentimentApp.classList.remove('active');
     setTimeout(() => {
       heroContent.classList.remove('hidden');
+      researchGrid.classList.remove('hide');
+      researchGridTitle.classList.remove('hide');
+      
       const existingOverlay = document.querySelector('.darkening-overlay');
       if (existingOverlay) {
         existingOverlay.remove();
       }
     }, 300);
-
+    console.log(currentSentence);
     if (currentSentence) {
       try {
         await fetch(`${API_BASE_URL}/sentences/postSentence`, {
@@ -234,18 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('no-scroll');
   }
 
-  // Prikazivanje sentiment kartice
-  document
-    .querySelector('#sentimentAnalysisLink')
-    .addEventListener('click', disableScroll);
-  document
-    .querySelector('#sentimentCloseBtn')
-    .addEventListener('click', enableScroll);
-  document.querySelector('#closeBtn').addEventListener('click', enableScroll);
-  
   console.log(sentimentOverlay.classList.contains('active'));
-  
-    
 
   console.log(confirmBtn);
 
@@ -286,8 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Nijedan sentiment nije odabran.');
     }
   });
-
-  
 
   closeBtn.addEventListener('click', closeSentimentCard);
   sentimentCloseBtn.addEventListener('click', closeSentimentCard);

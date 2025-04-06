@@ -14,7 +14,7 @@ async function displayStudents(students) {
         <div class="researcher-card">
             <div class="researcher-image">
                 <img src="${
-                  student.profileImage || 'images/default-avatar.svg'
+                  student.profileImage || 'http://160.99.40.221:3500/users/images/default-avatar.svg'
                 }" alt="${student.firstName} ${student.lastName}" />
             </div>
             <div class="researcher-info">
@@ -61,7 +61,7 @@ function updateLoginButtonVisibility() {
       `;
     } else {
       authButtons.innerHTML = `
-        <a href="researcher-login.html" class="btn btn-outline">Login</a>
+        <a href="login.html" class="btn btn-outline">Login</a>
       `;
     }
   }
@@ -89,16 +89,15 @@ document.addEventListener('DOMContentLoaded', () => {
   updateLoginButtonVisibility();
 });
 
-
 // Function to create student profile page
 function createStudentProfile(student) {
   return `
         <div class="student-profile">
             <div class="profile-header">
                 <div class="profile-image">
-                    <img src="${student.image}" alt="${
-    student.firstName
-  } ${student.lastName}">
+                    <img src="${student.image}" alt="${student.firstName} ${
+    student.lastName
+  }">
                 </div>
                 <div class="profile-info">
                     <h1>${student.firstName} ${student.lastName}</h1>
@@ -165,7 +164,6 @@ function createStudentProfile(student) {
 function loadStudentProfile() {
   const urlParams = new URLSearchParams(window.location.search);
   const studentId = parseInt(urlParams.get('id'));
-  
 
   if (!studentId) return;
 

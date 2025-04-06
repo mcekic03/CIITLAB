@@ -1,7 +1,7 @@
 // Config
 const AUTH_CONFIG = {
   API_BASE_URL: 'http://160.99.40.221:3500/users',
-  DEFAULT_PROFILE_IMAGE: '/images/default-avatar.png',
+  DEFAULT_PROFILE_IMAGE: 'images/default-avatar.svg',
 };
 
 // State management
@@ -25,6 +25,7 @@ const authState = {
       this.isAuthenticated = false;
       this.user = null;
       this.updateNavbar();
+      this.updateMobileAuth();
       // Očisti nevažeće vrednosti
       if (this.token && !isValidId) {
         console.log('Clearing invalid authentication data');
@@ -45,6 +46,7 @@ const authState = {
       this.isAuthenticated = false;
       this.user = null;
       this.updateNavbar();
+      this.updateMobileAuth();
       return;
     }
     
@@ -73,6 +75,7 @@ const authState = {
       localStorage.setItem('user', JSON.stringify(userData));
       
       this.updateNavbar();
+      this.updateMobileAuth();
     } catch (error) {
       console.error('Error loading user data:', error);
       // Ako ne možemo da dobavimo podatke sa servera, očistimo autentifikaciju
@@ -112,6 +115,7 @@ const authState = {
     }, 100);
     
     this.updateNavbar();
+    this.updateMobileAuth();
   },
 
   clearAuth() {
@@ -141,6 +145,7 @@ const authState = {
     }, 100);
     
     this.updateNavbar();
+    this.updateMobileAuth();
   },
 
   // Pripremi URL profilne slike
@@ -275,6 +280,88 @@ const authState = {
     }
 
     navbar.appendChild(authSection);
+  },
+
+  updateMobileAuth() {
+    const mobileUserPanel = document.querySelector('.mobile-user-panel');
+    if (!mobileUserPanel) return;
+  
+    const userInfoContainer = mobileUserPanel.querySelector('.user-info');
+    const mobileUserContent = mobileUserPanel.querySelector('.mobile-user-content');
+    
+    if (!userInfoContainer || !mobileUserContent) return;
+    
+    // Clear existing content
+    userInfoContainer.innerHTML = '';
+    mobileUserContent.innerHTML = '';
+  
+    if (this.isAuthenticated && this.user) {
+      // Common user info display for all authenticated users
+      userInfoContainer.innerHTML = `
+        <span>${this.user.firstName || ''} ${this.user.lastName || ''}</span>
+      `;
+  
+      // Add logout button for all authenticated users
+      const logoutLink = document.createElement('a');
+      logoutLink.href = '#';
+      logoutLink.id = 'mobileLogoutBtn';
+      logoutLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+      mobileUserContent.appendChild(logoutLink);
+  
+      // Add event listener for logout
+      logoutLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.clearAuth();
+        window.location.href = '/index.html';
+      });
+  
+      // Role-specific content
+      if (this.user.role === 'researcher' || this.user.role === 'student') {
+        // Add profile image for researchers and students
+        const profileImageUrl = this.getProfileImageUrl();
+        const profileImage = document.createElement('img');
+        profileImage.src = profileImageUrl;
+        profileImage.alt = 'Profile';
+        profileImage.className = 'mobile-profile-image';
+        profileImage.onerror = `this.src='${AUTH_CONFIG.DEFAULT_PROFILE_IMAGE}'`;
+        userInfoContainer.prepend(profileImage);
+  
+        // Add profile link for researchers and students
+        const profileLink = document.createElement('a');
+        profileLink.href = '/profile.html';
+        profileLink.innerHTML = '<i class="fas fa-user"></i> Profile';
+        mobileUserContent.insertBefore(profileLink, logoutLink);
+      } else if (this.user.role === 'admin') {
+        // Add admin panel link for admins
+        const adminLink = document.createElement('a');
+        adminLink.href = '/admin.html';
+        adminLink.innerHTML = '<i class="fas fa-cogs"></i> Admin Panel';
+        mobileUserContent.insertBefore(adminLink, logoutLink);
+      }
+      // For anotator1 and anotator2, only the logout button is needed which is already added
+    } else {
+      // For unauthenticated users, redirect to login page when opening mobile panel
+      // or you could choose to hide the panel entirely
+      userInfoContainer.innerHTML = `<span>Not logged in</span>`;
+      
+      const loginLink = document.createElement('a');
+      loginLink.href = '/login.html';
+      loginLink.className = 'btn btn-primary';
+      loginLink.textContent = 'Login';
+      mobileUserContent.appendChild(loginLink);
+    }
+  
+    // Add event listener for close button if it doesn't already have one
+    const closeButton = mobileUserPanel.querySelector('.close-user-panel');
+    if (closeButton) {
+      // Remove existing event listeners to prevent duplicates
+      const newCloseButton = closeButton.cloneNode(true);
+      closeButton.parentNode.replaceChild(newCloseButton, closeButton);
+      
+      newCloseButton.addEventListener('click', () => {
+        mobileUserPanel.classList.remove('active');
+      });
+    }
   }
 };
 
@@ -283,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Initializing auth state...');
   
   // Check if this is login page
-  const isLoginPage = window.location.href.includes('login.html') || window.location.href.includes('researcher-login.html');
+  const isLoginPage = window.location.href.includes('login.html');
   
   // If it's login page, clear localStorage of any incorrect data
   if (isLoginPage) {

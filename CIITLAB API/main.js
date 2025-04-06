@@ -6,6 +6,7 @@ const routeLogger = require('./middleware/routelog');
 const errorHandler = require('./middleware/error');
 const swaggerUi = require('swagger-ui-express');
 const specs = require('./config/swagger');
+const path = require('path');
 
 dotenv.config();
 
@@ -26,6 +27,8 @@ app.get('/', (req, res) => {
 });
 
 // Rute
+
+app.use("/users/images", express.static(path.join(__dirname, "public")));
 
 const userRoutes = require('./routes/users');
 app.use('/users', userRoutes);

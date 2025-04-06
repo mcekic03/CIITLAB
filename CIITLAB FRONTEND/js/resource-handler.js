@@ -108,15 +108,13 @@ const ResourceHandler = {
   
 
   // Display resources in the list
-  async displayResources(resources) {
-    const resourcesList = document.querySelector('.resources-list');
+ async displayResources(resources) {
+    const resourcesList = document.getElementById('resources-list-page');
+    
     if (!resourcesList) {
       console.error('Resources list element not found');
       return;
     }
-
-    console.log('Displaying resources:', resources);
-
     if (resources.length === 0) {
       resourcesList.innerHTML = '<p class="no-resources">No resources available at the moment.</p>';
       return;
@@ -126,61 +124,73 @@ const ResourceHandler = {
     resourcesList.innerHTML = '';
 
     // Add each resource to the list
-    for (const resource of resources) {
-      console.log('Processing resource:', resource);
-
+    resources.forEach(resource => {
       // Format the creation date
-      const createdAt = new Date(resource.created_at);
-      const formattedDate = createdAt.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
+      const formattedDate = formatDate(resource.created_at);
       
       // Get researcher name
-      console.log('Resource researcher data:', {
-        hasResearcher: !!resource.researcher,
-        researcher: resource.researcher,
-        firstName: resource.researcher?.firstName,
-        lastName: resource.researcher?.lastName
-      });
-
       const researcherName = resource.researcher && resource.researcher.firstName && resource.researcher.lastName
         ? `${resource.researcher.firstName} ${resource.researcher.lastName}`
         : 'Unknown researcher';
 
+        console.log(researcherName);
+        console.log(resources);
+
+      // Check if description is long enough to need truncation
+      const isLongDescription = resource.description.length > 100;
+      const truncatedDescription = isLongDescription 
+        ? `${resource.description.substring(0, 100)}...` 
+        : resource.description || 'No description available';
+
       // Create resource HTML
-      const resourceHtml = `
-        <div class="resource-item">
-            <div class="resource-header">
-              <h3>${resource.title || 'No title'}</h3>
-              <div class="resource-meta">
-                <span class="researcher">
-                  <i class="fas fa-user"></i> ${researcherName}
-                </span>
-                <span class="date">
-                  <i class="fas fa-calendar"></i> ${formattedDate}
-                </span>
-              </div>
+      const resourceElement = document.createElement('div');
+      resourceElement.className = 'resource-item-page';
+      resourceElement.innerHTML = `
+        <div class="resource-content-page">
+          <div class="resource-header-page">
+            <h3>${resource.title || 'No title'}</h3>
+            <div class="resource-meta">
+              <span class="researcher">
+                <i class="fas fa-user"></i> ${researcherName}
+              </span>
+              <span class="date">
+                <i class="fas fa-calendar"></i> ${formattedDate}
+              </span>
             </div>
-            <p class="resource-description">${
-              resource.description || 'No description available'
-            }</p>
-            <div class="resource-actions">
-              <a href="${resource.url}" target="_blank" class="btn btn-primary">
-                  <i class="fas fa-external-link-alt"></i> View resource
-              </a>
-            </div>
+          </div>
+          <div class="resource-description-container-page">
+            <p class="resource-description-page">${truncatedDescription}</p>
+            ${isLongDescription ? '<button class="read-more-btn-page">Read more</button>' : ''}
+          </div>
+        </div>
+        <div class="resource-actions-page">
+          <a href="${resource.url}" target="_blank" rel="noopener noreferrer" class="btn-primary resource-btn">
+            <i class="fas fa-external-link-alt"></i> View resource
+          </a>
         </div>
       `;
+      console.log(resourcesList);
+      // Add event listener to "Read more" button if it exists
+      if (isLongDescription) {
+        const readMoreBtn = resourceElement.querySelector('.read-more-btn-page');
+        readMoreBtn.addEventListener('click', () => openModal(resource));
+      }
 
-      resourcesList.insertAdjacentHTML('beforeend', resourceHtml);
-    };
+      resourcesList.appendChild(resourceElement);
+      
+    });
   },
 
+  // Modal functions
+
+
+  
+
+  // Event listeners for modal
+  
   // Display error message
   displayError(message) {
-    const resourcesList = document.querySelector('.resources-list');
+    const resourcesList = document.querySelector('.resources-list-page');
     if (resourcesList) {
       resourcesList.innerHTML = `<p class="error-message">${message}</p>`;
     }
@@ -348,6 +358,74 @@ const ResourceHandler = {
     }
   },
 };
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+function openModal(resource) {
+  const modal = document.getElementById('resourceModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalMeta = document.getElementById('modalMeta');
+  const modalDescription = document.getElementById('modalDescription');
+  const modalViewLink = document.getElementById('modalViewLink');
+
+  // Set modal content
+  modalTitle.textContent = resource.title;
+  
+  // Format the creation date
+  const formattedDate = formatDate(resource.created_at);
+  
+  // Get researcher name
+  const researcherName = resource.researcher && resource.researcher.firstName && resource.researcher.lastName
+    ? `${resource.researcher.firstName} ${resource.researcher.lastName}`
+    : 'Unknown researcher';
+
+  // Set metadata
+  modalMeta.innerHTML = `
+    <span class="researcher">
+      <i class="fas fa-user"></i> ${researcherName}
+    </span>
+    <span class="date">
+      <i class="fas fa-calendar"></i> ${formattedDate}
+    </span>
+  `;
+
+  // Set description
+  modalDescription.textContent = resource.description || 'No description available';
+
+  // Set view link
+  modalViewLink.href = resource.url;
+
+  // Show modal
+  modal.classList.add('active');
+  
+  // Prevent body scrolling when modal is open
+  document.body.style.overflow = 'hidden';
+}
+
+function closeResourceModal() {
+  const modal = document.getElementById('resourceModal');
+  modal.classList.remove('active');
+  
+  // Re-enable body scrolling
+  document.body.style.overflow = '';
+}
+
+document.getElementById('closeResourceModal').addEventListener('click', closeResourceModal);
+  document.getElementById('resourceModalCloseBtn').addEventListener('click', closeResourceModal);
+  
+  // Close modal when clicking outside content
+  document.getElementById('resourceModal').addEventListener('click', function(event) {
+    if (event.target === this) {
+      closeResourceModal();
+    }
+  });
 
 // Initialize the resource handler when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

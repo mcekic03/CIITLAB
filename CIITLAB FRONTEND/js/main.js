@@ -1,28 +1,33 @@
 // Sample data for news items
 const newsItems = [
   {
-    title: 'New Research Publication in NLP',
-    date: '2024-03-15',
+    title: 'DIDS – Dan internet domena Srbije',
+    date: '2025-03-16',
     summary:
-      'Our team has published a groundbreaking paper on advanced NLP techniques...',
-    image: 'images/news1.jpg',
+      'Registar nacionalnog internet domena Srbije (RNIDS) organizovao je onlajn konferenciju "Novi prioriteti", fokusirajući se na bezbednost poslovanja na internetu i etiku u AI i marketingu. Predavači su bili stručnjaci iz Google-a, Smashing Magazine-a i Bayer-a.',
+    image: 'https://eventsinserbia.com/wp-content/uploads/2022/03/konferencije-758x426.jpg',
   },
   {
-    title: 'Logic Design Workshop',
-    date: '2024-03-10',
+    title: 'IT Fest 2025',
+    date: '2025-02-03',
     summary:
-      'Join us for an exciting workshop on modern logic design approaches...',
-    image: 'images/news2.jpg',
+      'Festival informacionih tehnologija "AI Frontiers" namenjen srednjoškolcima. Učesnici su mogli prisustvovati predavanjima i radionicama iz oblasti veštačke inteligencije, sajber bezbednosti, multimedije i video produkcije.',
+    image: 'https://t4.ftcdn.net/jpg/03/14/92/75/360_F_314927575_yqFMAuXFTNC6gBflR2njRZ4bQb8dAb7y.jpg',
   },
   {
-    title: 'Web Programming Conference',
-    date: '2024-03-05',
+    title: 'Konferencija Digitalno obrazovanje 2025',
+    date: '2025-04-11',
     summary:
-      'Our researchers presented at the International Web Programming Conference...',
-    image: 'images/news3.jpg',
+      'Šesta međunarodna onlajn konferencija "Digitalno obrazovanje 2025" okupila je nastavnike i stručnjake iz oblasti digitalnih tehnologija u obrazovanju. Cilj je bio razmena iskustava i unapređenje nastavnih metoda.',
+    image: 'https://media.istockphoto.com/id/1439425791/photo/digital-technology-software-development-concept-coding-programmer-working-on-laptop-with.jpg?s=612x612&w=0&k=20&c=43WZfDZcnI2lULx83NVAtFiGyzKHzi4HyLqYZgggX-c=',
   },
 ];
 
+
+
+
+
+const dropdowncontent = document.getElementById('dropdownContent');
 const currentYear = new Date().getFullYear();
 document.getElementById('currentYear').innerText = currentYear;
 
@@ -47,86 +52,105 @@ function loadNews() {
   });
 }
 
+
+
+
 // Function to format date
 function formatDate(dateString) {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString('en-US', options);
 }
 
-function createResponsiveNavbar() {
-  // Check if document is loaded
-  if (typeof document === 'undefined') return;
 
-  // Select existing navbar
-  const navbar = document.querySelector('.navbar');
-  const navLinks = document.querySelector('.nav-links');
 
-  if (!navbar || !navLinks) return;
 
-  // Create burger menu
-  const burgerMenu = document.createElement('div');
-  burgerMenu.classList.add('burger-menu');
-  burgerMenu.innerHTML = `
-    <div class="burger-line"></div>
-    <div class="burger-line"></div>
-    <div class="burger-line"></div>
-  `;
 
-  // Add burger menu before nav links
-  navbar.insertBefore(burgerMenu, navLinks);
-
-  // Toggle function for menu
-  burgerMenu.addEventListener('click', () => {
-    // Toggle class for navbar and links
-    navLinks.classList.toggle('active');
-    burgerMenu.classList.toggle('active');
-  });
-
-  // Add event listener to document to close menu when clicking outside
-  document.addEventListener('click', (event) => {
-    // Check if click is outside burger menu and nav links
-    if (!navbar.contains(event.target)) {
-      navLinks.classList.remove('active');
-      burgerMenu.classList.remove('active');
-    }
-  });
-  
-  // Prevent menu from closing when clicking inside nav links
-  navLinks.addEventListener('click', (event) => event.stopPropagation());
-
-  // Responsive logic
-  function handleResponsive() {
-    const screenWidth = window.innerWidth;
-    // If width is less than 890px
-    if (screenWidth <= 1000) {
-      navbar.classList.add('mobile-view');
-      burgerMenu.style.display = 'flex';
-      navLinks.classList.add('mobile-menu');
-    } else {
-      navbar.classList.remove('mobile-view');
-      burgerMenu.style.display = 'none';
-      navLinks.classList.remove('mobile-menu');
-      navLinks.classList.remove('active');
-    }
-  }
-
-  // Initial call
-  handleResponsive();
-
-  // Listen for screen size changes
-  window.addEventListener('resize', handleResponsive);
-}
 
 // Initialize all functionality when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   loadNews();
-  createResponsiveNavbar();
+  //createResponsiveNavbar();
 
 
-  const appbtn = document.querySelector('.button-dropdown');
+ // Get elements
+ 
+  
+
+  document.querySelector('.mobile-dropdown-trigger-topics').addEventListener('click', function(e) {
+    e.preventDefault();
+    if(document.querySelector('.mobile-dropdown-panel-team').classList.contains('active')) {
+      document.querySelector('.mobile-dropdown-panel-team').classList.toggle('active');
+    }
+    document.querySelector('.mobile-dropdown-panel-topics').classList.toggle('active');
+    document.querySelector('.mobile-overlay').classList.toggle('active');
+    
+  });
+  
+  document.querySelector('.mobile-dropdown-trigger-team').addEventListener('click', function(e) {
+    e.preventDefault();
+    if(document.querySelector('.mobile-dropdown-panel-topics').classList.contains('active')) {
+      document.querySelector('.mobile-dropdown-panel-topics').classList.toggle('active');
+    }
+    document.querySelector('.mobile-dropdown-panel-team').classList.toggle('active');
+    document.querySelector('.mobile-overlay').classList.toggle('active');
+  });
+  
+  document.querySelector('.close-dropdown').addEventListener('click', function() {
+    document.querySelector('.mobile-dropdown-panel-topics').classList.remove('active');
+    document.querySelector('.mobile-dropdown-panel-team').classList.remove('active');
+    document.querySelector('.mobile-overlay').classList.remove('active');
+  });
+  document.querySelector('.close-dropdown-team').addEventListener('click', function() {
+    document.querySelector('.mobile-dropdown-panel-topics').classList.remove('active');
+    document.querySelector('.mobile-dropdown-panel-team').classList.remove('active');
+    document.querySelector('.mobile-overlay').classList.remove('active');
+  });
+  
+  document.querySelector('.user-menu').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.querySelector('.mobile-dropdown-panel-topics').classList.remove('active');
+    document.querySelector('.mobile-dropdown-panel-team').classList.remove('active');
+    document.querySelector('.mobile-user-panel').classList.toggle('active');
+    document.querySelector('.mobile-overlay').classList.toggle('active');
+  });
+  
+  document.querySelector('.close-user-panel').addEventListener('click', function() {
+    document.querySelector('.mobile-overlay').classList.remove('active');
+    document.querySelector('.mobile-user-panel').classList.remove('active');
+    
+  });
+  
+  document.querySelector('.mobile-overlay').addEventListener('click', function() {
+    document.querySelector('.mobile-dropdown-panel-topics').classList.remove('active');
+    document.querySelector('.mobile-dropdown-panel-team').classList.remove('active');
+    document.querySelector('.mobile-user-panel').classList.remove('active');
+    this.classList.remove('active');
+  });
+
+  const mobileAppBtn = document.getElementById('mobileAppBtn');
+ const mobileAppDropdown = document.getElementById('mobileAppDropdown');
+ const studentsWorkItem = document.getElementById('studentsWorkItem');
+ 
+ // Toggle dropdown when Applications button is clicked
+ mobileAppBtn.addEventListener('click', function(e) {
+   e.preventDefault();
+   
+   // Toggle dropdown
+   mobileAppDropdown.classList.toggle('open');
+   
+ });
+
+  const studentsWork = document.getElementById('studentsWork-section')
+  const appbtn = document.getElementById('buttonDropdown');
+  const appbtnMobile = document.getElementById('mobileAppBtn');
+  console.log(appbtn);
   const posTaggingLink = document.getElementById('posTaggingLink');
   const sentimentAnalysisLink = document.getElementById(
     'sentimentAnalysisLink'
+  );
+  const posTaggingLinkMobile = document.getElementById('posTaggingLinkMobile');
+  const sentimentAnalysisLinkMobile = document.getElementById(
+    'sentimentAnalysisLinkMobile'
   );
   const user = JSON.parse(localStorage.getItem('user'));
   if (user && user.role) {
@@ -138,8 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
       user.role === 'anotator2'
     ) {
       appbtn.style.display = 'inline-block';
+      appbtnMobile.style.display = 'inline-block';
     } else {
       appbtn.style.display = 'none';
+      appbtnMobile.style.display = 'none';
       console.log('ne moze');
     }
 
@@ -149,8 +175,10 @@ document.addEventListener('DOMContentLoaded', () => {
       user.role === 'anotator2'
     ) {
       posTaggingLink.style.display = 'block';
+      posTaggingLinkMobile.style.display = 'block';
     } else {
       posTaggingLink.style.display = 'none';
+      posTaggingLinkMobile.style.display = 'none';
       console.log('ne moze');
     }
 
@@ -160,14 +188,23 @@ document.addEventListener('DOMContentLoaded', () => {
       user.role === 'anotator1'
     ) {
       sentimentAnalysisLink.style.display = 'block';
+      sentimentAnalysisLinkMobile.style.display = 'block';
     } else {
       sentimentAnalysisLink.style.display = 'none';
+      sentimentAnalysisLinkMobile.style.display = 'none';
       console.log('ne moze');
     }
   } else {
     console.log('Korisnik nije prijavljen ili nema ulogu.');
     appbtn.style.display = 'none';
+    appbtnMobile.style.display = 'none';
     posTaggingLink.style.display = 'none';
+    posTaggingLinkMobile.style.display = 'none';
     sentimentAnalysisLink.style.display = 'none';
+    sentimentAnalysisLinkMobile.style.display = 'none';
   }
+
+  
 });
+
+

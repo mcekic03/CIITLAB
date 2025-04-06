@@ -23,24 +23,92 @@
         </div>
         <div class="nav-links">
           <a href="index.html" class="active">Home</a>
-          <div class="dropdown">
-            <a href="#" class="dropdown-trigger">Topics</a>
-            <div class="dropdown-content">
-              <a href="artificial-intelligence.html">Artifical Intelligence</a>
+          <div class="dropdown" id="dropdown">
+            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Topics</a>
+            <div class="dropdown-content"  id="dropdownContent">
+              <a href="comingsoon.html">Artifical Intelligence</a>
               <a href="nlp.html">NLP</a>
-              <a href="#">Logic Design and Spectral Technics</a>
-              <a href="#">Signal Processing</a>
-              <a href="#">Web Programming</a>
+              <a href="comingsoon.html">Logic Design and Spectral Technics</a>
+              <a href="comingsoon.html">Signal Processing</a>
+              <a href="comingsoon.html">Web Programming</a>
               
             </div>
           </div>
           
-          <a href="news.html">News</a>
+          <a href="comingsoon.html">News</a>
           <a href="researchers.html">Researchers</a>
           <a href="students.html">PhD Students</a>
           <a href="contact.html">Contact Us</a>
         </div>
       </nav>
+
+       <nav class="mobile-bottom-nav">
+      <a href="index.html" class="mobile-nav-item active">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
+        <i class="fas fa-book"></i>
+        <span>Topics</span>
+      </a>
+      <a href="comingsoon.html" class="mobile-nav-item">
+        <i class="fas fa-newspaper"></i>
+        <span>News</span>
+      </a>
+      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
+        <i class="fas fa-users"></i>
+        <span>Team</span>
+      </a>
+      <a href="#" class="mobile-nav-item user-menu">
+        <i class="fas fa-user-circle"></i>
+        <span>Profile</span>
+      </a>
+    </nav>
+    
+    <!-- Mobile Topics Dropdown -->
+    <div class="mobile-dropdown-panel-topics">
+      <div class="mobile-dropdown-header">
+        <h3>Topics</h3>
+        <button class="close-dropdown"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-dropdown-content">
+        <a href="comingsoon.html">Artificial Intelligence</a>
+        <a href="nlp.html">NLP</a>
+        <a href="comingsoon.html">Logic Design and Spectral Technics</a>
+        <a href="comingsoon.html">Signal Processing</a>
+        <a href="comingsoon.html">Web Programming</a>
+      </div>
+    </div>
+    <div class="mobile-dropdown-panel-team">
+      <div class="mobile-dropdown-header">
+        <h3>Team</h3>
+        <button class="close-dropdown-team"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-dropdown-content">
+        <a href="researchers.html">Researchers</a>
+        <a href="students.html">PhD Students</a>
+      </div>
+    </div>
+    <div class="mobile-user-panel">
+      <div class="mobile-user-header">
+        <div class="user-info">
+        </div>
+        <button class="close-user-panel"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-user-content">
+        <a href="/profile.html">
+          <i class="fas fa-user"></i> Profile
+        </a>
+        <a href="#" id="mobileLogoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+    </div>
+    
+    <!-- Overlay for mobile panels -->
+    <div class="mobile-overlay"></div>
+  </header>
+
     </header>
 
     <main>
@@ -92,7 +160,7 @@
             <a href="#">
             <h3>Web Programming</h3>
             <p>Building modern and scalable web applications</p>
-          
+          </a>
           </div>
           
         </div>
@@ -128,7 +196,12 @@
         <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
       </div>
     </footer>
-
+    <script>
+      // This minimal JavaScript is only for toggling the mobile panels
+      // You can implement this with CSS-only solutions if preferred
+      
+      
+    </script>
     <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
   </body>

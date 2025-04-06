@@ -13,7 +13,7 @@ async function displayResearchers(researchers) {
         <div class="researcher-card">
             <div class="researcher-image">
                 <img src="${
-                  researcher.profileImage || 'images/default-avatar.svg'
+                  researcher.profileImage || './images/default-avatar.svg'
                 }" alt="${researcher.firstName} ${researcher.lastName}" />
             </div>
             <div class="researcher-info">
@@ -61,7 +61,7 @@ function updateLoginButtonVisibility() {
       `;
     } else {
       authButtons.innerHTML = `
-        <a href="researcher-login.html" class="btn btn-outline">Login</a>
+        <a href="login.html" class="btn btn-outline">Login</a>
       `;
     }
   }

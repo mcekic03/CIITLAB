@@ -9,6 +9,7 @@
     <!-- Preload critical assets -->
     <link rel="preload" href="css/style.css" as="style" />
     <link rel="preload" href="js/researcher-profile.js" as="script" />
+    <link rel="preload" href="js/resource-handler.js" as="script" />
     <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
 
     <!-- Stylesheets -->
@@ -23,10 +24,9 @@
     <!-- Defer non-critical JavaScript -->
     <script src="js/auth.js" defer></script>
     <script src="js/researcher-profile.js" defer></script>
-    <script src="js/resource-handler.js" defer></script>
   </head>
   <body>
-    <header class="main-header">
+    <header>
       <nav class="navbar">
         <div class="logo">
           <a href="index.html">
@@ -37,25 +37,91 @@
         </div>
         <div class="nav-links">
           <a href="index.html">Home</a>
-          <div class="dropdown">
-            <a href="#" class="dropdown-trigger">Topics</a>
-            <div class="dropdown-content">
-              <a href="artificial-intelligence.html">Artifical Intelligence</a>
+          <div class="dropdown" id="dropdown">
+            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Topics</a>
+            <div class="dropdown-content"  id="dropdownContent">
+              <a href="comingsoon.html">Artifical Intelligence</a>
               <a href="nlp.html">NLP</a>
-              <a href="#">Logic Design and Spectral Technics</a>
-              <a href="#">Signal Processing</a>
-              <a href="#">Web Programming</a>
+              <a href="comingsoon.html">Logic Design and Spectral Technics</a>
+              <a href="comingsoon.html">Signal Processing</a>
+              <a href="comingsoon.html">Web Programming</a>
               
             </div>
           </div>
           
-          <a href="news.html">News</a>
+          <a href="comingsoon.html">News</a>
           <a href="researchers.html">Researchers</a>
           <a href="students.html">PhD Students</a>
           <a href="contact.html">Contact Us</a>
         </div>
       </nav>
-    </header>
+
+       <nav class="mobile-bottom-nav">
+      <a href="index.html" class="mobile-nav-item ">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
+        <i class="fas fa-book"></i>
+        <span>Topics</span>
+      </a>
+      <a href="comingsoon.html" class="mobile-nav-item">
+        <i class="fas fa-newspaper"></i>
+        <span>News</span>
+      </a>
+      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
+        <i class="fas fa-users"></i>
+        <span>Team</span>
+      </a>
+      <a href="#" class="mobile-nav-item user-menu">
+        <i class="fas fa-user-circle"></i>
+        <span>Profile</span>
+      </a>
+    </nav>
+    
+    <!-- Mobile Topics Dropdown -->
+    <div class="mobile-dropdown-panel-topics">
+      <div class="mobile-dropdown-header">
+        <h3>Topics</h3>
+        <button class="close-dropdown"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-dropdown-content">
+        <a href="comingsoon.html">Artificial Intelligence</a>
+        <a href="nlp.html">NLP</a>
+        <a href="comingsoon.html">Logic Design and Spectral Technics</a>
+        <a href="comingsoon.html">Signal Processing</a>
+        <a href="comingsoon.html">Web Programming</a>
+      </div>
+    </div>
+    <div class="mobile-dropdown-panel-team">
+      <div class="mobile-dropdown-header">
+        <h3>Team</h3>
+        <button class="close-dropdown-team"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-dropdown-content">
+        <a href="researchers.html">Researchers</a>
+        <a href="students.html">PhD Students</a>
+      </div>
+    </div>
+    <div class="mobile-user-panel">
+      <div class="mobile-user-header">
+        <div class="user-info">
+        </div>
+        <button class="close-user-panel"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-user-content">
+        <a href="/profile.html">
+          <i class="fas fa-user"></i> Profile
+        </a>
+        <a href="#" id="mobileLogoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+    </div>
+    
+    <!-- Overlay for mobile panels -->
+    <div class="mobile-overlay"></div>
+  </header>
 
     <main class="researcher-profile-page">
       <!-- Profile Header Section -->
@@ -166,7 +232,7 @@
                   <i class="fas fa-plus" aria-hidden="true"></i> Add
                 </button>
               </div>
-              <div class="section-content">
+              <div id='studentsWork-section' class="section-content">
                 <div class="studentsWork-list">
                   <p class="no-studentsWork">No Students Work listed</p>
                 </div>
@@ -217,6 +283,9 @@
                   <!-- Resources will be populated here -->
                 </div>
               </div>
+              <div class="resource-section-footer">
+
+              </div>
             </div>
           </div>
         </div>
@@ -225,16 +294,6 @@
       <!-- Edit Modal -->
       <div id="editModal" class="modal">
         <div class="modal-content">
-          <div class="modal-header">
-            <h2>Edit Profile</h2>
-            <button
-              class="close-btn"
-              onclick="closeModal()"
-              aria-label="Close modal"
-            >
-              &times;
-            </button>
-          </div>
 
           <!-- Profile Edit Form -->
           <form id="profileEditForm" class="edit-form">
@@ -355,6 +414,58 @@
               </button>
             </div>
           </form>
+ <!-- Publications Edit Form -->
+          <form
+            id="publicationsEditForm"
+            class="edit-form"
+            style="display: none"
+          >
+            <div class="modal-header">
+              <h2>Edit Publications Link</h2>
+              <button
+                type="button"
+                class="close-btn"
+                onclick="closeModal()"
+                aria-label="Close modal"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="publications-inputs">
+              <!-- Publication input groups will be added here dynamically -->
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+              </button>
+            </div>
+          </form>
+           <!-- Resources edit form -->
+           <form
+           id="resourceEditForm"
+           class="edit-form"
+           style="display: none"
+         >
+           <div class="modal-header">
+             <h2>Edit Resource</h2>
+             <button
+               type="button"
+               class="close-btn"
+               onclick="closeModal()"
+               aria-label="Close modal"
+             >
+               &times;
+             </button>
+           </div>
+           <div class="reso-inputs">
+             <!-- Publication input groups will be added here dynamically -->
+           </div>
+           <div class="form-actions">
+             <button type="submit" class="btn btn-primary">
+               <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+             </button>
+           </div>
+         </form>
 
           <form
             id="studentsWorkEditForm"
@@ -385,8 +496,8 @@
           <!-- Skills Edit Form -->
           <form id="skillsEditForm" class="edit-form" style="display: none">
             <div class="modal-header">
-              <h2>Edit Skills</h2>
-              <button
+            <h2>Edit Skills</h2>
+            <button
                 type="button"
                 class="close-btn"
                 onclick="closeModal()"
@@ -413,7 +524,6 @@
 
           <!-- Skills Edit Form -->
           <form id="skillsEditForm" class="edit-form" style="display: none">
-            <div class="modal-header">
               <h2>Edit Skills</h2>
               <button
                 type="button"
@@ -423,7 +533,6 @@
               >
                 &times;
               </button>
-            </div>
             <div class="form-group">
               <label for="skills">Skills (comma-separated)</label>
               <textarea
@@ -504,55 +613,67 @@
         <div class="modal-content">
           <div class="modal-header">
             <h2>Add Resource Link</h2>
-            <button
-              class="close-btn"
-              onclick="closeModal()"
-              aria-label="Close modal"
-            >
-              &times;
+            <button class="close-btn" onclick="closeModal()" aria-label="Close modal">
+              ×
             </button>
           </div>
           <form id="resourceUploadForm" class="edit-form">
             <div class="form-group">
               <label for="resourceTitle">Title *</label>
-              <input
-                type="text"
-                id="resourceTitle"
-                name="title"
-                class="form-control"
-                required
-              />
+              <input type="text" id="resourceTitle" name="title" class="form-control" required>
             </div>
             <div class="form-group">
               <label for="resourceDescription">Description *</label>
-              <textarea
-                id="resourceDescription"
-                name="description"
-                class="form-control"
-                rows="3"
-                required
-              ></textarea>
+              <textarea id="resourceDescription" name="description" class="form-control" rows="3" required></textarea>
             </div>
             <div class="form-group">
               <label for="resourceUrl">Resource URL *</label>
-              <input
-                type="url"
-                id="resourceUrl"
-                name="url"
-                class="form-control"
-                placeholder="https://example.com/resource"
-                required
-              />
+              <input type="url" id="resourceUrl" name="url" class="form-control" placeholder="https://example.com/resource" required>
             </div>
             <div class="form-actions">
               <button type="submit" class="btn btn-primary">
-                <i class="fas fa-plus" aria-hidden="true"></i> Add Resource
+                <i class="fas fa-plus"></i> Add Resource
               </button>
             </div>
           </form>
         </div>
       </div>
     </main>
+
+    <div id="resourceModal" class="resource-modal">
+      <div class="resource-modal-content">
+        <div class="modal-inner">
+          <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <button class="resource-modal-close" id="closeResourceModal" onclick="closeResourceModal()"><i class="fa fa-times" aria-hidden="true"></i></button>
+          </div>
+          <div class="modal-meta" id="modalMeta"></div>
+          <div class="modal-description" id="modalDescription"></div>
+          <div class="modal-actions">
+            <button class="btn-secondary" id="resourceModalCloseBtn" onclick="closeResourceModal()">Close</button>
+            <a href="#" class="btn-primary" id="modalViewLink" target="_blank" rel="noopener noreferrer">
+              <i class="fas fa-external-link-alt"></i> View resource
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="fullResourceModal" class="full-resource-modal">
+      <div class="full-resource-modal-content">
+        <div class="full-modal-inner">
+          <div class="full-modal-header">
+            <h2 class="full-modal-title" id="fullModalTitle"></h2>
+            <button class="full-resource-modal-close" id="closeFullResourceModal" onclick="closeFullResourceModal()"><i class="fa fa-times" aria-hidden="true"></i></button>
+          </div>
+          <div class="full-resource-list">
+
+          </div>
+            <button class="btn-secondary" id="fullResourceModalCloseBtn" onclick="closeFullResourceModal()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Students Work Upload Modal -->
     <div id="studentsWorkUploadModal" class="modal">
@@ -624,5 +745,6 @@
       </div>
     </footer>
     <script src="js/main.js"></script>
+    <script src="js/resource-handler.js"></script>
   </body>
 </html>

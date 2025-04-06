@@ -46,7 +46,6 @@ class Admin {
     // Broj publikacija
     static async getTotalPublicationsFor(id) {
 
-        console.log(id);
         const pub = await Publication.getPublicationsByUser(id);
         if (pub) {
             const count = await Publication.prebrojSveRedove(pub[0].url);

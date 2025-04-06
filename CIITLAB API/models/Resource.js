@@ -92,19 +92,6 @@ class Resource {
     }
   }
 
-  static async createResource(data) {
-    try {
-      const query = `
-        INSERT INTO Resources (title, description, link, created_at, updated_at)
-        VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-      `;
-      const [result] = await db.query(query, [data.title, data.description, data.link]);
-      return { success: true, message: 'Resource created successfully', id: result.insertId };
-    } catch (error) {
-      throw new Error('Failed to create resource');
-    }
-  }
-
   static async updateResource(id, data) {
     try {
       const query = `
@@ -119,15 +106,15 @@ class Resource {
     }
   }
 
-  static async deleteResource(id) {
+  static async getResourceById(id) {
     try {
-      const query = 'DELETE FROM Resources WHERE id = ?';
-      const [result] = await db.query(query, [id]);
-      return { success: true, message: 'Resource deleted successfully', affectedRows: result.affectedRows };
+      const query = `SELECT * FROM resources WHERE id = ?`;
+      const [result] = await db.promise().query(query, [id]);
+      return result;
     } catch (error) {
-      throw new Error('Failed to delete resource');
+      throw new Error('Failed to get resource by ID');
     }
-  }
+  } 
 }
 
 module.exports = Resource;
