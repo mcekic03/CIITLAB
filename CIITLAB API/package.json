@@ -6,7 +6,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node main.js",
     "dev": "nodemon main.js",
-    "deploy": "pm2 restart main.js --watch --log"
+    "restart": "pm2 restart main.js --watch --log",
+    "production": "pm2 start main.js --watch --log",
+    "stop": "pm2 stop all"
   },
   "author": "--UPDATE Company--Mihajlo Cekic & Mihajlo Mirkovic",
   "license": "ISC",

@@ -167,6 +167,18 @@ router.post('/updateResources',auth, async (req, res) => {
     }
   });
 
+router.post('/update/:id',auth,checkRole('researcher','admin'), async (req, res) => {
+    const {resource} = req.body;
+    const {id} = req.params;
+
+    try {
+        const result = await Resource.updateResource(id,resource);
+        res.json(result);
+    } catch (error) {
+        res.status(error.status || 500).json({ error: error.message || 'Server error' });
+    } 
+});
+
 /**
  * @swagger
  * /users/resources/{resourceid}:
@@ -198,6 +210,36 @@ router.delete('/:resourceid',auth,checkRole('researcher'), async (req, res) => {
       res.status(200).json({ message: 'Resource deleted successfully', result });
     } catch (error) {
       res.status(500).json({ error: error.message });
+    }
+  });
+
+  router.get('/find/:id', async (req, res) => {
+    try {
+      // 1. Dohvati sve resurse iz baze
+      const resources = await Resource.getResourceById(req.params.id);
+  
+      // 2. Iteriraj kroz svaki resurs i dodaj objekat researcher sa firstName i lastName
+      const enrichedResources = await Promise.all(
+        resources.map(async (resource) => {
+          const researcher = await Resource.getResearcherNameByResourceId(resource.id);
+  
+          return {
+            ...resource, // Dodaj postojeće podatke o resursu
+            researcher: researcher
+              ? {
+                  firstName: researcher.firstName,
+                  lastName: researcher.lastName,
+                }
+              : null,
+          };
+        })
+      );
+  
+      // 3. Pošalji klijentu kompletne podatke
+      res.json(enrichedResources);
+    } catch (error) {
+      console.error('Error fetching all resources:', error);
+      res.status(500).json({ message: 'Server error' });
     }
   });
 

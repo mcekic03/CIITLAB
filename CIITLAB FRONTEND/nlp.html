@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CIITLAB - Sentiment Analysis</title>
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/sentiment-analysis.css" />
     <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
     <link
       rel="stylesheet"
@@ -20,26 +19,95 @@
             <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
           </a>
         </div>
+       
+        </div>
         <div class="nav-links">
-          <a href="index.html">Home</a>
-          <div class="dropdown">
-            <a href="#" class="dropdown-trigger active">Topics</a>
-            <div class="dropdown-content">
-              <a href="artificial-intelligence.html">Artifical Intelligence</a>
-              <a href="nlp.html" class="active">NLP</a>
-              <a href="#">Logic Design and Spectral Technics</a>
-              <a href="#">Signal Processing</a>
-              <a href="#">Web Programming</a>
+          <a href="index.html" class="active">Home</a>
+          <div class="dropdown" id="dropdown">
+            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Topics</a>
+            <div class="dropdown-content"  id="dropdownContent">
+              <a href="comingsoon.html">Artifical Intelligence</a>
+              <a href="nlp.html">NLP</a>
+              <a href="comingsoon.html">Logic Design and Spectral Technics</a>
+              <a href="comingsoon.html">Signal Processing</a>
+              <a href="comingsoon.html">Web Programming</a>
+              
             </div>
           </div>
-          <a href="news.html">News</a>
+          
+          <a href="comingsoon.html">News</a>
           <a href="researchers.html">Researchers</a>
           <a href="students.html">PhD Students</a>
           <a href="contact.html">Contact Us</a>
         </div>
       </nav>
-    </header>
 
+       <nav class="mobile-bottom-nav">
+      <a href="index.html" class="mobile-nav-item ">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics active">
+        <i class="fas fa-book"></i>
+        <span>Topics</span>
+      </a>
+      <a href="comingsoon.html" class="mobile-nav-item">
+        <i class="fas fa-newspaper"></i>
+        <span>News</span>
+      </a>
+      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
+        <i class="fas fa-users"></i>
+        <span>Team</span>
+      </a>
+      <a href="#" class="mobile-nav-item user-menu">
+        <i class="fas fa-user-circle"></i>
+        <span>Profile</span>
+      </a>
+    </nav>
+    
+    <!-- Mobile Topics Dropdown -->
+    <div class="mobile-dropdown-panel-topics">
+      <div class="mobile-dropdown-header">
+        <h3>Topics</h3>
+        <button class="close-dropdown"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-dropdown-content">
+        <a href="comingsoon.html">Artificial Intelligence</a>
+        <a href="nlp.html">NLP</a>
+        <a href="comingsoon.html">Logic Design and Spectral Technics</a>
+        <a href="comingsoon.html">Signal Processing</a>
+        <a href="comingsoon.html">Web Programming</a>
+      </div>
+    </div>
+    <div class="mobile-dropdown-panel-team">
+      <div class="mobile-dropdown-header">
+        <h3>Team</h3>
+        <button class="close-dropdown-team"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-dropdown-content">
+        <a href="researchers.html">Researchers</a>
+        <a href="students-work.html">PhD Students</a>
+      </div>
+    </div>
+    <div class="mobile-user-panel">
+      <div class="mobile-user-header">
+        <div class="user-info">
+        </div>
+        <button class="close-user-panel"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="mobile-user-content">
+        <a href="/profile.html">
+          <i class="fas fa-user"></i> Profile
+        </a>
+        <a href="#" id="mobileLogoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+    </div>
+    
+    <!-- Overlay for mobile panels -->
+    <div class="mobile-overlay"></div>
+  </header>
     <main>
       <section class="hero" id="heroSection">
         <div class="hero-content" id="heroContent">
@@ -47,21 +115,62 @@
           <p>
             Exploring the frontiers of language AI through cutting-edge NLP research
           </p>
-          <a href="resources.html" class="btn btn-primary">Resources</a>
-          <div class="button-dropdown">
-            <a href="#" class="button-dropdown-trigger btn btn-primary">Applications</a>
-            <div class="button-dropdown-content">
-              <a href="#" id="sentimentAnalysisLink">Sentiment Analysis</a>
-              <a href="#">Pos Tagging Annotation</a>
+          <div class="desktop-nav">
+            <a href="resources.html" class="btn btn-primary">Resources</a>
+            <div class="button-dropdown" id="buttonDropdown">
+              <a href="#" class="button-dropdown-trigger btn btn-primary">Applications</a>
+              <div class="button-dropdown-content">
+                <a href="#" id="sentimentAnalysisLink">Sentiment Analysis</a>
+                <a href="#" id="posTaggingLink">Pos Tagging Annotation</a>
+              </div>
+              <a href="students-work.html"  class="btn btn-primary">Students Work</a>
+            </div>
+          </div>
+          
+          <!-- Modern mobile navigation -->
+          <div class="mobile-nav">
+            <div class="mobile-nav-item-app">
+              <a href="resources.html" class="mobile-btn">Resources</a>
             </div>
             
-          </div>
-          <a href="students-work.html" class="btn btn-primary">Students Work</a>
+            <div class="mobile-nav-item-app">
+              <a href="#" class="mobile-btn" id="mobileAppBtn">Applications</a>
+              <div class="mobile-dropdown" id="mobileAppDropdown">
+                <a href="#" class="dropdown-item"  id="sentimentAnalysisLinkMobile">Sentiment Analysis</a>
+                <a href="#" class="dropdown-item" id="posTaggingLinkMobile">Pos Tagging Annotation</a>
+              </div>
+            </div>
+            
+            <div class="mobile-nav-item-app" id="studentsWorkItem">
+              <a href="students-work.html" class="mobile-btn">Students Work</a>
+            </div>
+          </div
           </div>
           
         </div>
 
         <!-- Sentiment Analysis App -->
+        
+      </section>
+
+      
+
+      <section id="featured-research" class="featured-research">
+        
+        <h2 id="researchGridTitle" class="research-grid-title">Featured NLP Research Areas</h2>
+        <div class="research-grid" id="researchGrid">
+          <div class="research-card">
+            <i class="fas fa-language"></i>
+            <h3>Sentiment Analysis</h3>
+            <p>Understanding emotions in text through computational techniques</p>
+          </div>
+          <div class="research-card">
+            <i class="fas fa-microchip"></i>
+            <h3>Pos Tagging Annotation</h3>
+            <p>Labeling words with grammatical categories for linguistic analysis</p>
+          </div>
+        </div>
+
         <div class="sentiment-app" id="sentimentApp">
           <button class="close-btn sentiment-close-btn" id="sentimentCloseBtn">
             <i class="fas fa-times"></i>
@@ -76,62 +185,49 @@
             <button class="btn start-btn" id="startDemo">Započni analizu</button>
           </div>
         </div>
-      </section>
-
-      <!-- Sentiment Overlay (keeping original structure) -->
-      <div class="sentiment-overlay" id="sentimentOverlay">
-        <div class="sentiment-card" id="sentimentCard">
-          
-          <div class="sentiment-header">
-            <h2>
-              <i class="fas fa-brain sentiment-icon"></i>
-              Analiza Sentimenta
-            </h2>
-            <button class="close-btn" id="closeBtn">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          
-          <div class="sentence-container" id="sentenceContainer"></div>
-          
-          <div class="sentiment-actions">
-            <button class="sentiment-btn sentiment-btn-positive" id="positiveBtn">
-              <i class="fas fa-thumbs-up"></i> Pozitivno
-            </button>
-            <button class="sentiment-btn sentiment-btn-negative" id="negativeBtn">
-              <i class="fas fa-thumbs-down"></i> Negativno
-            </button>
-            <button class="sentiment-btn sentiment-btn-neutral" id="neutralBtn">
-              <i class="fas fa-question"></i> Ne znam
-            </button>
-          </div>
-      
-          <div class="confirm-container">
-            <button class="sentiment-btn sentiment-btn-confirm" id="confirmBtn" >
-              <i class="fas fa-check"></i> Potvrdi
-            </button>
-          </div>
-          
-        </div>
-      </div>
-
-      <section id="featured-research" class="featured-research">
-        <h2>Featured NLP Research Areas</h2>
-        <div class="research-grid">
-          <div class="research-card">
-            <i class="fas fa-language"></i>
-            <h3>Sentiment Analysis</h3>
-            <p>Understanding emotions in text through computational techniques</p>
-          </div>
-          <div class="research-card">
-            <i class="fas fa-microchip"></i>
-            <h3>Pos Tagging Annotation</h3>
-            <p>Labeling words with grammatical categories for linguistic analysis</p>
+        <!-- Sentiment Overlay (keeping original structure) -->
+        <div class="sentiment-overlay" id="sentimentOverlay">
+          <div class="sentiment-card" id="sentimentCard">
+            
+            <div class="sentiment-header">
+              <h2>
+                <i class="fas fa-brain sentiment-icon"></i>
+                Analiza Sentimenta
+              </h2>
+              <button class="close-btn" id="closeBtn">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <div class="sentence-container" id="sentenceContainer"></div>
+            
+            <div class="sentiment-actions">
+              <button class="sentiment-btn sentiment-btn-positive" id="positiveBtn">
+                <i class="fas fa-thumbs-up"></i> Pozitivno
+              </button>
+              <button class="sentiment-btn sentiment-btn-negative" id="negativeBtn">
+                <i class="fas fa-thumbs-down"></i> Negativno
+              </button>
+              <button class="sentiment-btn sentiment-btn-neutral" id="neutralBtn">
+                <i class="fas fa-question"></i> Ne znam
+              </button>
+            </div>
+        
+            <div class="confirm-container">
+              <button class="sentiment-btn sentiment-btn-confirm" id="confirmBtn" >
+                <i class="fas fa-check"></i> Potvrdi
+              </button>
+            </div>
+            
           </div>
         </div>
       </section>
 
-      <section class="latest-news">
+      <section id="sentimentSection" class="sentiment-section">
+        
+      </section>
+
+      <section class="latest-news" id="latest-news">
         <h2>Latest News</h2>
         <div class="news-grid">
           <!-- News items will be dynamically loaded -->
@@ -160,7 +256,6 @@
         <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
       </div>
     </footer>
-
     <script src="js/main.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/sentiment-analysis.js"></script>

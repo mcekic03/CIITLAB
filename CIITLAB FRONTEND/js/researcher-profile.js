@@ -2,9 +2,9 @@
 const CONFIG = {
   API_BASE_URL: 'http://160.99.40.221:3500',
   DEFAULT_PROFILE_IMAGE:
-    'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlZWUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjM1IiByPSIyNSIgZmlsbD0iIzk5OSIvPjxwYXRoIGQ9Ik01MCA3MGMtMjcuNjE0IDAtNTAgMjIuMzg2LTUwIDUwaDEwMGMwLTI3LjYxNC0yMi4zODYtNTAtNTAtNTB6IiBmaWxsPSIjOTk5Ii8+PC9zdmc+',
+    'http://160.99.40.221:3500/users/images/default-avatar.svg',
   MAX_FILE_SIZE: 50 * 1024 * 1024, // 50MB
-  ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/jpg'],
+  ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/jpg', 'image/svg'],
   ALLOWED_DATASET_TYPES: ['application/zip', 'application/x-zip-compressed'],
 };
 
@@ -65,7 +65,7 @@ function initializeState() {
       'Not authenticated and no profile ID in URL, redirecting to login'
     );
     localStorage.clear(); // Očisti sve iz localStorage za svaki slučaj
-    window.location.href = 'researcher-login.html';
+    window.location.href = 'login.html';
     throw new Error('Not authenticated');
   }
 
@@ -75,7 +75,7 @@ function initializeState() {
       'Has auth token but invalid or missing userId, clearing auth data'
     );
     localStorage.clear(); // Očisti sve iz localStorage
-    window.location.href = 'researcher-login.html';
+    window.location.href = 'login.html';
     throw new Error('Invalid authentication data');
   }
 }
@@ -133,7 +133,7 @@ const api = {
 
       // Logiraj parametre za debugging
       console.log('FormData contents:');
-      for (let [key, value] of formData.entries()) {
+      for (const [key, value] of formData.entries()) {
         if (key === 'profileImage') {
           if (value.size > 0) {
             console.log(
@@ -323,13 +323,44 @@ const api = {
       throw error;
     }
   },
-  
+
+  async updateResource(resourceId, resourceData) {
+    try {
+      const response = await fetch(
+        `${CONFIG.API_BASE_URL}/users/resources/${resourceId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${state.authToken}`,
+          },
+          body: JSON.stringify(resourceData),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({
+          message: `Server error: ${response.status}`,
+        }));
+        throw new Error(
+          errorData.message || `Failed to update resource (${response.status})`
+        );
+      }
+
+      const result = await response.json();
+      console.log('Resource update response:', result);
+      return result;
+    } catch (error) {
+      console.error('Resource update error:', error);
+      throw error;
+    }
+  },
 
   async getPublicationsForUser(researcherId) {
     try {
       console.log(`Fetching publications for researcher ${researcherId}`);
 
-      pub = await this.fetch(`/users/publications/find/${researcherId}`);
+      const pub = await this.fetch(`/users/publications/find/${researcherId}`);
       if (pub) {
         return pub;
       } else {
@@ -340,7 +371,6 @@ const api = {
       return [];
     }
   },
-
 
   async getResearcherResources(researcherId) {
     try {
@@ -353,15 +383,14 @@ const api = {
   },
 
   async deleteResource(resourceId) {
-    
-    window.addEventListener('beforeunload', function (event) {
+    window.addEventListener('beforeunload', (event) => {
       // Pokaži standardnu poruku za reload (korisnik ne može da menja ovu poruku)
       const confirmationMessage = 'Da li želite da osvežite stranicu?';
-  
+
       // Browser prikazuje standardnu poruku, korisnik može da odabere da li želi reload ili ne
       event.returnValue = confirmationMessage; // Za nove browser-e
     });
-  
+
     try {
       return await this.fetch(`/users/resources/${resourceId}`, {
         method: 'DELETE',
@@ -375,7 +404,9 @@ const api = {
   async getStudentsWork(researcherId) {
     try {
       console.log(`Fetching resources for researcher ${researcherId}`);
-      return await this.fetch(`/studentsWork/GetWorksForMentor/${researcherId}`);
+      return await this.fetch(
+        `/studentsWork/GetWorksForMentor/${researcherId}`
+      );
     } catch (error) {
       console.error('Error fetching researcher resources:', error);
       return [];
@@ -393,8 +424,7 @@ const api = {
     }
   },
 
-
-  getResources: async function (userId) {
+  getResources: async (userId) => {
     try {
       // Check if ID is valid
       if (!userId || userId === 'undefined' || userId === 'null') {
@@ -411,7 +441,7 @@ const api = {
     }
   },
 
-  getStudentsWork: async function (userId) {
+  getStudentsWork: async (userId) => {
     try {
       // Check if ID is valid
       if (!userId || userId === 'undefined' || userId === 'null') {
@@ -428,6 +458,17 @@ const api = {
     }
   },
 
+  // In the api object, add or modify the getResource function to fetch a single resource
+  async getResource(resourceId) {
+    try {
+      console.log(`Fetching resource with ID ${resourceId}`);
+      // Try the endpoint structure that matches your API
+      return await this.fetch(`/users/resources/find/${resourceId}`);
+    } catch (error) {
+      console.error('Error fetching resource:', error);
+      throw error;
+    }
+  },
 };
 
 // UI Components
@@ -447,7 +488,7 @@ const UI = {
       modal.style.display = 'block';
     }
   },
-  
+
   showAddStudentsWorkModal() {
     // Use the existing modal
     const modal = document.getElementById('studentsWorkUploadModal');
@@ -634,7 +675,7 @@ const UI = {
             fetch(`http://160.99.40.221:3500/users/publications/count`, {
               method: 'POST', // POST metoda
               headers: {
-                'Content-Type': 'application/json', // Definiši tip sadržaja kao JSON
+                'Content-Type': 'application/json', // Definiši tip sadržaja као JSON
               },
               body: JSON.stringify({ link: publicationUrl }), // Link šaljemo u JSON formatu
             })
@@ -693,7 +734,7 @@ const UI = {
         ? `<button class="btn btn-outline" onclick="handleLogout()">
              <i class="fas fa-sign-out-alt"></i> Logout
            </button>`
-        : `<a href="researcher-login.html" class="btn btn-outline">Login</a>`;
+        : `<a href="login.html" class="btn btn-outline">Login</a>`;
     }
   },
 
@@ -717,44 +758,88 @@ const UI = {
     }
   },
 
-  updateResourcesDisplay(resources, isOwnProfile) {
+  async updateResourcesDisplay(resources, isOwnProfile) {
     const resourcesList = document.querySelector('.resources-list');
-    if (resourcesList) {
-      if (Array.isArray(resources) && resources.length > 0) {
-        resourcesList.innerHTML = resources
-          .map(
-            (resource) => `
-            <div class="resource-item">
-              <div class="resource-header">
-                <h3>${resource.title}</h3>
-                ${
-                  isOwnProfile
-                    ? `
-                  <div class="resource-actions">
-                    <button class="btn-icon" onclick="handlers.handleResourceDelete('${resource.id}')">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                `
-                    : ''
-                }
-              </div>
-              <p class="resource-description">${resource.description}</p>
-              <div class="resource-meta">
-                <span><i class="fas fa-link"></i> External Resource</span>
-              </div>
-              <a href="${resource.url}" target="_blank" class="resource-link">
-                <i class="fas fa-external-link-alt"></i> Visit Resource
-              </a>
+    const resourceFooter = document.querySelector('.resource-section-footer');
+    const urlParams = new URLSearchParams(window.location.search);
+    const profileId = urlParams.get('id') || state.userId;
+    const user = await api.fetch(`/users/me/${profileId}`);
+    console.log(user);
+    if (!resourcesList) {
+      console.error('Resources list element not found');
+      return;
+    }
+
+    if (!Array.isArray(resources) || resources.length === 0) {
+      resourcesList.innerHTML =
+        '<p class="no-resources">No resources available.</p>';
+      return;
+    }
+
+    
+    // Clear and rebuild the resources list
+    resourcesList.innerHTML = resources
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // najnoviji prvi
+      .slice(0, 5) // uzmi samo prvih 5
+      .map((resource) => {
+        const formattedDate = formatDate(resource.created_at);
+        const researcherName =
+          user.firstName && user.lastName
+            ? `${user.firstName} ${user.lastName}`
+            : 'Unknown researcher';
+
+        const isLongDescription =
+          resource.description && resource.description.length > 50;
+        const truncatedDescription = isLongDescription
+          ? `${resource.description.substring(0, 50)}...`
+          : resource.description || 'No description available';
+
+        return `
+      <div class="resource-item">
+        <div class="resource-header">
+          <h3>${resource.title || 'No title'}</h3>
+          ${
+            isOwnProfile
+              ? `
+            <div class="resource-actions">
+              <button class="btn-icon" onclick="toggleResourceEdit('${resource.id}')">
+                <i class="fas fa-edit"></i>
+              </button>
             </div>
           `
-          )
-          .join('');
-      } else {
-        resourcesList.innerHTML =
-          '<p class="no-resources">No resources available.</p>';
-      }
+              : ''
+          }
+        </div>
+        <div class="resource-description-container">
+          <p class="resource-description">${truncatedDescription}</p>
+        </div>
+        <div class="resource-footer">
+          <div class="resource-meta"></div>
+          ${
+            isLongDescription
+              ? `<button class="read-more-btn" onclick="openResourceModal('${resource.id}')">More</button>`
+              : ''
+          }
+        </div>
+      </div>
+    `;
+      })
+      .join('');
+
+    
+    if(resources.length > 5) {
+      resourceFooter.innerHTML = `<button class="load-more-btn">More</button>`
     }
+    // Add event listeners to all "Read more" buttons
+    
+    const loadMoreButton = resourceFooter.querySelector('.load-more-btn');
+    if(loadMoreButton) {
+    loadMoreButton.addEventListener('click', () => {
+        openFullResourceListModal(resources, isOwnProfile);
+    
+    });
+    }
+      
   },
 
   updateStudentsWorkDisplay(studentsWork, isOwnProfile) {
@@ -768,7 +853,9 @@ const UI = {
             (studentsWork) => `
             <div class="studentsWork-item">
               <div class="studentsWork-header">
-                <h3>${studentsWork.title} - ${studentsWork.firstName} ${studentsWork.lastName} (${studentsWork.graduationYear})</h3>
+                <h3>${studentsWork.title} - ${studentsWork.firstName} ${
+              studentsWork.lastName
+            } (${studentsWork.graduationYear})</h3>
                 ${
                   isOwnProfile
                     ? `
@@ -781,10 +868,14 @@ const UI = {
                     : ''
                 }
               </div>
-              <p class="studentsWork-description">${studentsWork.description}</p>
+              <p class="studentsWork-description">${
+                studentsWork.description
+              }</p>
               <div class="studentsWork-meta">
               </div>
-              <a href="${studentsWork.url}" target="_blank" class="studentsWork-link">
+              <a href="${
+                studentsWork.url
+              }" target="_blank" class="studentsWork-link">
                 <i class="fas fa-external-link-alt"></i> Visit Students Work
               </a>
             </div>
@@ -844,7 +935,7 @@ const UI = {
 
     // Prikaz pregleda slike
     const reader = new FileReader();
-    reader.onload = function (e) {
+    reader.onload = (e) => {
       // Pronađi sve elemente profilnih slika na stranici
       const profileImages = document.querySelectorAll(
         '.researcher-profile-image img'
@@ -885,7 +976,7 @@ const handlers = {
 
       // Log formData
       console.log('Submitting profile update with FormData');
-      for (let [key, value] of formData.entries()) {
+      for (const [key, value] of formData.entries()) {
         if (key === 'profileImage') {
           if (value instanceof File) {
             console.log(
@@ -949,7 +1040,6 @@ const handlers = {
       submitButton.innerHTML = '<i class="fas fa-save"></i> Save changes';
     }
   },
-
 
   async handleEducationEdit(event) {
     event.preventDefault();
@@ -1111,9 +1201,67 @@ const handlers = {
     }
   },
 
+  async handleResourceEdit(event) {
+    event.preventDefault();
+    const form = event.target;
+    try {
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.innerHTML =
+        '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+      const resourceId = form.querySelector('[name="resourceId"]').value;
+      const title = form.querySelector('[name="title"]').value.trim();
+      const description = form
+        .querySelector('[name="description"]')
+        .value.trim();
+      const url = form.querySelector('[name="url"]').value.trim();
+
+      // Basic validation
+      if (!title || !description) {
+        throw new Error('Title and description are required');
+      }
+
+      const resourceData = {
+        title,
+        description,
+        url,
+      };
+
+      // Update resource
+      await api.updateResource(resourceId, resourceData);
+      UI.showNotification('Resource updated successfully');
+      UI.closeModal();
+
+      // Refresh resources list
+      const resources = await api.getResearcherResources(state.userId);
+      UI.updateResourcesDisplay(resources, true);
+
+      // Reload page to show updated resources
+      window.location.reload();
+    } catch (error) {
+      console.error('Resource update error:', error);
+      UI.showNotification(
+        error.message || 'Failed to update resource',
+        'error'
+      );
+    } finally {
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.disabled = false;
+      submitButton.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+    }
+  },
+
   async handleSkillsEdit(event) {
     event.preventDefault();
     const form = event.target;
+    document
+      .getElementById('modal')
+      .addEventListener('click', function (event) {
+        if (event.target === this) {
+          closeModal();
+        }
+      });
     try {
       const submitButton = form.querySelector('button[type="submit"]');
       submitButton.disabled = true;
@@ -1147,40 +1295,39 @@ const handlers = {
 
   async handleResourceDelete(resourceId) {
     if (window.confirm('Da li ste sigurni da želite da obrišete resurs?')) {
+      try {
+        await api.deleteResource(resourceId);
+        UI.showNotification('Resource deleted successfully');
 
-    
-    try {
-      await api.deleteResource(resourceId);
-      UI.showNotification('Resource deleted successfully');
-
-      // Refresh resources list
-      const resources = await api.getResearcherResources(state.userId);
-      UI.updateResourcesDisplay(resources, true);
-    } catch (error) {
-      UI.showNotification(error.message, 'error');
+        // Refresh resources list
+        const resources = await api.getResearcherResources(state.userId);
+        UI.updateResourcesDisplay(resources, true, state.userId);
+      } catch (error) {
+        UI.showNotification(error.message, 'error');
+      }
+    } else {
+      return;
     }
-  } else {
-    return
-  }
   },
 
   async handleStudentsWorkDelete(studentsWorkId) {
-    if (window.confirm('Da li ste sigurni da želite da obrišete studentsk rad?')) {
-    try {
-      await api.deleteStudentsWork(studentsWorkId);
-      UI.showNotification('Students work deleted successfully');
+    if (
+      window.confirm('Da li ste sigurni da želite da obrišete studentsk rad?')
+    ) {
+      try {
+        await api.deleteStudentsWork(studentsWorkId);
+        UI.showNotification('Students work deleted successfully');
 
-      const studentsWork = await api.getStudentsWork(state.userId);
-      UI.updateStudentsWorkDisplay(studentsWork, true);
-
-    } catch (error) {
-      UI.showNotification(error.message, 'error');
+        const studentsWork = await api.getStudentsWork(state.userId);
+        UI.updateStudentsWorkDisplay(studentsWork, true);
+      } catch (error) {
+        UI.showNotification(error.message, 'error');
+      }
+    } else {
+      return;
     }
-  } else {
-    return
-  }
   },
-  
+
   closeStudentsWorkModal() {
     const modal = document.getElementById('studentsWorkUploadModal');
     if (modal) {
@@ -1190,7 +1337,7 @@ const handlers = {
 
   setupEventListeners() {
     const form = document.getElementById('studentsWorkUploadForm');
-    
+
     if (form) {
       form.addEventListener('submit', this.handleStudentsWorkSubmit.bind(this));
     }
@@ -1209,16 +1356,36 @@ const handlers = {
     try {
       // Get form values and log them
       const title = form.querySelector('#studentsWorkTitle').value.trim();
-      const firstName = form.querySelector('#studentsWorkFirstName').value.trim();
+      const firstName = form
+        .querySelector('#studentsWorkFirstName')
+        .value.trim();
       const lastName = form.querySelector('#studentsWorkLastName').value.trim();
-      const graduationYear = form.querySelector('#studentsWorkGraduationYear').value.trim();
-      const description = form.querySelector('#studentsWorkDescription').value.trim();
+      const graduationYear = form
+        .querySelector('#studentsWorkGraduationYear')
+        .value.trim();
+      const description = form
+        .querySelector('#studentsWorkDescription')
+        .value.trim();
       const url = form.querySelector('#studentsWorkUrl').value.trim();
 
-      console.log('Raw form values:', { title, description, url, firstName, lastName, graduationYear });
+      console.log('Raw form values:', {
+        title,
+        description,
+        url,
+        firstName,
+        lastName,
+        graduationYear,
+      });
 
       // Basic validation
-      if (!title || !description || !url || !firstName || !lastName || !graduationYear) {
+      if (
+        !title ||
+        !description ||
+        !url ||
+        !firstName ||
+        !lastName ||
+        !graduationYear
+      ) {
         throw new Error('All fields are required');
       }
 
@@ -1234,7 +1401,7 @@ const handlers = {
       // Check if authState is fully initialized
       if (!authState.user.id) {
         console.log('Waiting for authState to be fully initialized...');
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
         if (!authState.user.id) {
           throw new Error('Unable to get user ID. Please try again.');
         }
@@ -1242,7 +1409,7 @@ const handlers = {
 
       console.log('Current auth state:', {
         isAuthenticated: authState.isAuthenticated,
-        user: authState.user
+        user: authState.user,
       });
 
       const formData = {
@@ -1251,7 +1418,7 @@ const handlers = {
         lastName,
         graduationYear,
         description,
-        url, 
+        url,
       };
 
       // Log the request details for debugging
@@ -1270,6 +1437,8 @@ const handlers = {
           body: JSON.stringify(formData),
         }
       );
+
+      console.log(response);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -1293,12 +1462,13 @@ const handlers = {
       console.error('Error adding students work:', error);
     } finally {
       // Re-enable form
-      Array.from(form.elements).forEach((element) => (element.disabled = false));
+      Array.from(form.elements).forEach(
+        (element) => (element.disabled = false)
+      );
       submitButton.textContent = 'Add students work';
       form.reset();
     }
   },
-
 };
 
 // Main Functions
@@ -1352,25 +1522,30 @@ async function loadUserProfile() {
           form.addEventListener('submit', handler);
         }
       });
+      const resourceEditForm = document.getElementById('resourceEditForm');
+      if (resourceEditForm) {
+        resourceEditForm.addEventListener(
+          'submit',
+          handlers.handleResourceEdit
+        );
+      }
     }
   } catch (error) {
     console.error('Error loading profile:', error);
     UI.showNotification(error.message, 'error');
     if (error.message.includes('Not authenticated')) {
-      window.location.href = 'researcher-login.html';
+      window.location.href = 'login.html';
     }
   }
 }
 
 // Update the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', async () => {
-
-
   try {
     // Прво провери да ли постоји ID корисника
     const urlParams = new URLSearchParams(window.location.search);
     const profileId = urlParams.get('id') || state.userId;
-    
+
     console.log(
       'DOMContentLoaded - Attempting to load profile with ID:',
       profileId
@@ -1385,7 +1560,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         'error'
       );
       setTimeout(() => {
-        window.location.href = 'researcher-login.html';
+        window.location.href = 'login.html';
       }, 2000);
       return;
     }
@@ -1528,18 +1703,21 @@ window.togglePublicationsEdit = async () => {
         // Set up remove button click handler
         const removeBtn = newGroup.querySelector('.remove-publication');
         if (removeBtn) {
-         
           removeBtn.onclick = (e) => {
             e.preventDefault();
-            if(window.confirm('Da li ste sigurni da želite da obrišete publikaciju?')) {
-            const group = e.target.closest('.publication-input-group');
-            if (group) {
-              group.remove();
-            } 
-          } else{
-            return
-          }
-          }; 
+            if (
+              window.confirm(
+                'Da li ste sigurni da želite da obrišete publikaciju?'
+              )
+            ) {
+              const group = e.target.closest('.publication-input-group');
+              if (group) {
+                group.remove();
+              }
+            } else {
+              return;
+            }
+          };
         }
         publicationsInputs.appendChild(newGroup);
       });
@@ -1555,7 +1733,29 @@ window.togglePublicationsEdit = async () => {
   }
 };
 
+// Modify the window.toggleResourceEdit function to use the correct endpoint
+window.toggleResourceEdit = (resourceId) => {
+  UI.openModal();
+  UI.showForm('resourceEditForm');
 
+  // Fetch the resource data using the correct endpoint
+  api
+    .getResource(resourceId)
+    .then((resource) => {
+      // Populate the form with resource data
+      const form = document.getElementById('resourceEditForm');
+      form.querySelector('[name="resourceId"]').value = resourceId;
+      form.querySelector('[name="title"]').value = resource.title || '';
+      form.querySelector('[name="description"]').value =
+        resource.description || '';
+      form.querySelector('[name="url"]').value = resource.url || '';
+    })
+    .catch((error) => {
+      console.error('Error loading resource data:', error);
+      UI.showNotification('Failed to load resource data', 'error');
+      UI.closeModal();
+    });
+};
 
 window.toggleSkillsEdit = () => {
   UI.openModal();
@@ -1671,6 +1871,149 @@ function validateJSON(textarea) {
   }
 }
 
+async function openFullResourceListModal(resources, isOwnProfile) {
+  const modal = document.getElementById('fullResourceModal');
+  const modalTitle = document.getElementById('fullModalTitle');
+  const urlParams = new URLSearchParams(window.location.search);
+  const profileId = urlParams.get('id') || state.userId;
+  const user = await api.fetch(`/users/me/${profileId}`);
+  const fullList = document.querySelector('.full-resource-list');
+  // Set modal content
+  modalTitle.textContent = 'All Resources';
+
+  fullList.innerHTML = resources
+  .sort((b, a) => new Date(b.created_at) - new Date(a.created_at))
+      .map((resource) => {
+        const formattedDate = formatDate(resource.created_at);
+        const researcherName =
+          user.firstName && user.lastName
+            ? `${user.firstName} ${user.lastName}`
+            : 'Unknown researcher';
+        const isLongDescription =
+          resource.description && resource.description.length > 50;
+        const truncatedDescription = isLongDescription
+          ? `${resource.description.substring(0, 50)}...`
+          : resource.description || 'No description available';
+        return `
+      <div class="resource-item">
+        <div class="resource-header">
+          <h3>${resource.title || 'No title'}</h3>
+          ${
+            isOwnProfile
+              ? `
+            <div class="resource-actions">
+              <button class="btn-icon" onclick="toggleResourceEdit('${resource.id}')">
+                <i class="fas fa-edit"></i>
+              </button>
+            </div>
+          `
+              : ''
+          }
+        </div>
+        <div class="resource-description-container">
+          <p class="resource-description">${truncatedDescription}</p>
+        </div>
+        <div class="resource-footer">
+          <div class="resource-meta"></div>
+          ${
+            isLongDescription
+              ? `<button class="read-more-btn" onclick="openResourceModal('${resource.id}')">More</button>`
+              : ''
+          }
+        </div>
+      </div>
+    `;
+      })
+      .join('');
+
+  modal.classList.add('active');
+
+  // Prevent body scrolling when modal is open
+  document.body.style.overflow = 'hidden';
+}
+async function openResourceModal(resourceId) {
+  const modal = document.getElementById('resourceModal');
+  const fullModal = document.getElementById('fullResourceModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalMeta = document.getElementById('modalMeta');
+  const modalDescription = document.getElementById('modalDescription');
+  const modalViewLink = document.getElementById('modalViewLink');
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const profileId = urlParams.get('id') || state.userId;
+  
+  // Dohvatanje podataka
+  const user = await api.fetch(`/users/me/${profileId}`);
+  const resourceResponse = await api.fetch(`/users/resources/find/${resourceId}`);
+  
+  // Pošto API vraća niz sa jednim objektom, uzimamo prvi element
+  const resource = Array.isArray(resourceResponse) ? resourceResponse[0] : resourceResponse;
+  
+  console.log(resourceId);
+  console.log(resource);
+  
+  // Opciono: sačuvati resource u localStorage za kasnije korišćenje
+  localStorage.setItem(`resource_${resourceId}`, JSON.stringify(resource));
+  
+  // Set modal content
+  modalTitle.textContent = resource.title;
+  fullModal.classList.remove('active');
+  
+  // Format the creation date
+  const formattedDate = formatDate(resource.created_at);
+  
+  // Get researcher name - koristimo podatke iz resource objekta direktno
+  let researcherName = 'Unknown researcher';
+  
+  if (resource.researcher && resource.researcher.firstName && resource.researcher.lastName) {
+    researcherName = `${resource.researcher.firstName} ${resource.researcher.lastName}`;
+  } else if (user.firstName && user.lastName) {
+    researcherName = `${user.firstName} ${user.lastName}`;
+  }
+
+  // Set metadata
+  modalMeta.innerHTML = `
+    <span class="researcher">
+      <i class="fas fa-user"></i> ${researcherName}
+    </span>
+    <span class="date">
+      <i class="fas fa-calendar"></i> ${formattedDate}
+    </span>
+  `;
+
+  // Set description
+  modalDescription.textContent =
+    resource.description || 'No description available';
+
+  // Set view link
+  modalViewLink.href = resource.url;
+
+  // Show modal
+  modal.classList.add('active');
+
+  // Prevent body scrolling when modal is open
+  document.body.style.overflow = 'hidden';
+  
+  // Vraćamo resource objekat ako je potrebno
+  return resource;
+}
+
+function closeResourceModal() {
+  const modal = document.getElementById('resourceModal');
+  const fullModal = document.getElementById('fullResourceModal');
+  modal.classList.remove('active');
+
+  // Re-enable body scrolling
+  document.body.style.overflow = '';
+}
+function closeFullResourceModal() {
+  const modal = document.getElementById('fullResourceModal');
+  modal.classList.remove('active');
+
+  // Re-enable body scrolling
+  document.body.style.overflow = '';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   handlers.init();
 });
@@ -1678,3 +2021,22 @@ document.addEventListener('DOMContentLoaded', () => {
 // Export the validation functions for use in HTML
 window.validateFileSize = validateFileSize;
 window.validateJSON = validateJSON;
+
+// Helper function to format dates
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+  const year = date.getFullYear();
+  return `${day}.${month}.${year}`;
+}
+
+// Mock authState object if it's not already defined
+window.authState = window.authState || {
+  isAuthenticated: state.isAuthenticated(),
+  user: JSON.parse(localStorage.getItem('user')) || null,
+  updateNavbar: () => {
+    // Implement your navbar update logic here
+    console.log('Navbar updated');
+  },
+};

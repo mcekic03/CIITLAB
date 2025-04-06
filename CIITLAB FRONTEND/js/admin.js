@@ -3,14 +3,15 @@ const API_BASE_URL = 'http://160.99.40.221:3500/admin';
 
 function formatDate(isoString) {
   const date = new Date(isoString);
-  const day = String(date.getUTCDate()).padStart(2, '0');
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const year = date.getUTCFullYear();
-  const hours = String(date.getUTCHours()).padStart(2, '0');
-  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0'); // lokalni dan
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // lokalni mesec
+  const year = date.getFullYear(); // lokalna godina
+  const hours = String(date.getHours()).padStart(2, '0'); // lokalni sati
+  const minutes = String(date.getMinutes()).padStart(2, '0'); // lokalni minuti
 
-  return `${day}.${month}.${year}. ${hours}:${minutes}h`;
+  return `${day}.${month}.${year}. ${hours}:${minutes}`;
 }
+
 
 // Authentication token
 let authToken = localStorage.getItem('authToken');
@@ -86,6 +87,20 @@ window.onclick = function (event) {
     event.target.style.display = 'none';
   }
 };
+
+
+window.addEventListener('load', function(){
+  
+  setTimeout(() => {
+    document.getElementById("modalLoading").style.display = "none";
+  }, 1200);
+
+
+
+});
+
+
+
 
 // Dashboard Functions
 async function loadDashboardData() {
