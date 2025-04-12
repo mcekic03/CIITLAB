@@ -68,7 +68,7 @@ router.get('/getAll', async (req, res) => {
  *       404:
  *         description: Rad nije pronađen
  */
-router.get('/GetWork/:id', async (req, res) => {
+router.get('/find/:id', async (req, res) => {
   try {
     const work = await StudentsWork.getWorkById(req.params.id);
     res.status(200).json(work);
@@ -206,5 +206,69 @@ router.post('/create/:id',auth,checkRole('researcher','admin'), async (req, res)
     res.status(500).json({ message: 'Error creating work', error: err.message });
   }
 });
+
+/**
+ * @swagger
+ * /studentsWork/update/{id}:
+ *   put:
+ *     summary: Ažurira postojeći studentski rad
+ *     tags: [Students Work]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID studentskog rada
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - firstName
+ *               - lastName
+ *               - title
+ *               - description
+ *               - graduationYear
+ *               - link
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *                 description: Ime studenta
+ *               lastName:
+ *                 type: string
+ *                 description: Prezime studenta
+ *               title:
+ *                 type: string
+ *                 description: Naslov rada
+ *               description:
+ *                 type: string
+ *                 description: Opis rada
+ *               graduationYear:
+ *                 type: integer
+ *                 description: Godina diplomiranja
+ *               link:
+ *                 type: string
+ *                 description: Link ka radu
+ *     responses:
+ *       200:
+ *         description: Rad uspešno ažuriran
+ *       401:
+ *         description: Neautorizovan pristup
+ *       500:
+ *         description: Server error
+ */
+router.post('/update/:id',auth,checkRole('researcher','admin'), async (req, res) => {
+  try {
+    const result = await StudentsWork.updateWork(req.params.id, req.body);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating work', error: err.message });
+  } 
+}); 
 
 module.exports = router;

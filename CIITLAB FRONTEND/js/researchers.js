@@ -2,7 +2,7 @@
 const API_BASE_URL = 'http://160.99.40.221:3500/users';
 
 // Authentication token
-const authToken = localStorage.getItem('authToken');
+const authToken = sessionStorage.getItem('authToken');
 
 // Function to display researchers in the grid
 async function displayResearchers(researchers) {
@@ -69,8 +69,8 @@ function updateLoginButtonVisibility() {
 
 // Handle logout
 function handleLogout() {
-  localStorage.removeItem('authToken');
-  localStorage.removeItem('userId');
+  sessionStorage.removeItem('authToken');
+  sessionStorage.removeItem('userId');
   window.location.href = 'index.html';
 }
 

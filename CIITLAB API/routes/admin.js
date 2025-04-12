@@ -13,35 +13,41 @@ const deleteFiles = require('../autodeleteCSV')
 
 const fs = require('fs');
 
-
 /**
  * @swagger
  * /admin/dashboard:
  *   get:
- *     summary: Dohvata podatke za admin dashboard
+ *     summary: Dobija podatke za admin dashboard
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Podaci za dashboard
+ *         description: Uspešno dobavljeni podaci za dashboard
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
+ *                 totalUsers:
+ *                   type: integer
+ *                   description: Ukupan broj korisnika
  *                 totalResearchers:
  *                   type: integer
+ *                   description: Ukupan broj istraživača
+ *                 totalStudents:
+ *                   type: integer
+ *                   description: Ukupan broj studenata
  *                 totalPublications:
  *                   type: integer
+ *                   description: Ukupan broj publikacija
  *                 totalResources:
  *                   type: integer
- *                 totalBlogs:
- *                   type: integer
- *                 recentActivity:
- *                   type: array
+ *                   description: Ukupan broj resursa
  *       401:
  *         description: Neautorizovan pristup
+ *       403:
+ *         description: Zabranjen pristup
  *       500:
  *         description: Server error
  */
@@ -81,19 +87,79 @@ router.get("/dashboard",auth,checkRole('admin'), async (req, res) => {
         res.status(500).json({ error: "Failed to load dashboard data" });
     }
 });
+
 /**
  * @swagger
- * /admin/getAllUsers:
+ * /admin/users:
  *   get:
- *     summary: Dohvata sve korisnike
+ *     summary: Dobija listu svih korisnika
  *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Broj stranice
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Broj korisnika po stranici
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Pretraga po imenu ili email-u
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *           enum: [researcher, student]
+ *         description: Filter po ulozi
  *     responses:
  *       200:
- *         description: Lista svih korisnika
+ *         description: Uspešno dobavljena lista korisnika
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                       role:
+ *                         type: string
+ *                       profileImage:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                 total:
+ *                   type: integer
+ *                   description: Ukupan broj korisnika
+ *                 pages:
+ *                   type: integer
+ *                   description: Ukupan broj stranica
+ *       401:
+ *         description: Neautorizovan pristup
+ *       403:
+ *         description: Zabranjen pristup
  *       500:
  *         description: Server error
  */
-router.get('/getAllUsers',auth,checkRole('admin'), async (req, res) => {
+router.get('/getAllUsers', auth, checkRole('admin'), async (req, res) => {
     try {
         // Pozivamo metodu iz klase Users da dobijemo sve korisnike
         const users = await User.getAllUsers(type = 'all');
@@ -177,41 +243,198 @@ router.get('/getUser/:id',auth,checkRole('admin'), async (req, res) => {
 
 /**
  * @swagger
- * /admin/getAllPublications:
+ * /admin/publications:
  *   get:
- *     summary: Dohvata sve publikacije
+ *     summary: Dobija listu svih publikacija
  *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Broj stranice
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Broj publikacija po stranici
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Pretraga po naslovu
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [journal, conference, book]
+ *         description: Filter po tipu publikacije
  *     responses:
  *       200:
- *         description: Lista svih publikacija
+ *         description: Uspešno dobavljena lista publikacija
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 publications:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       title:
+ *                         type: string
+ *                       type:
+ *                         type: string
+ *                       authors:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                       year:
+ *                         type: integer
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                 total:
+ *                   type: integer
+ *                   description: Ukupan broj publikacija
+ *                 pages:
+ *                   type: integer
+ *                   description: Ukupan broj stranica
+ *       401:
+ *         description: Neautorizovan pristup
+ *       403:
+ *         description: Zabranjen pristup
  *       500:
  *         description: Server error
  */
-router.get('/getAllPublications',auth,checkRole('admin'), async (req, res) => {
+router.get('/getAllPublications', auth, checkRole('admin'), async (req, res) => {
     try {
+        // Pozivamo metodu iz klase Publications da dobijemo sve publikacije
+        let publications = await Publication.getAllPublications();
         
-        const pub = await Publication.getAllPublications();
-        
-        res.status(200).json(pub);
+        publications = await Promise.all(publications.map(async (p) => {
+          const u = await User.findUserById(p.user_id);
+          if (u) {
+              return {
+                  ...p,
+                  firstName: u.firstName,
+                  lastName: u.lastName
+              };
+          }
+          return p;
+        }));
+        res.status(200).json(publications);
     } catch (error) {
         // U slučaju greške vraćamo 500 status sa porukom o grešci
-        console.error('Error fetching users:', error);
-        res.status(500).json({ message: 'Failed to fetch users' });
+        console.error('Error fetching publications:', error);
+        res.status(500).json({ message: 'Failed to fetch publications' });
     }
 });
-//vraca sve resurse
-router.get('/getAllResources',auth,checkRole('admin'), async (req, res) => {
+
+/**
+ * @swagger
+ * /admin/resources:
+ *   get:
+ *     summary: Dobija listu svih resursa
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Broj stranice
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Broj resursa po stranici
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Pretraga po nazivu
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [equipment, software, material]
+ *         description: Filter po tipu resursa
+ *     responses:
+ *       200:
+ *         description: Uspešno dobavljena lista resursa
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 resources:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       type:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                       quantity:
+ *                         type: integer
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                 total:
+ *                   type: integer
+ *                   description: Ukupan broj resursa
+ *                 pages:
+ *                   type: integer
+ *                   description: Ukupan broj stranica
+ *       401:
+ *         description: Neautorizovan pristup
+ *       403:
+ *         description: Zabranjen pristup
+ *       500:
+ *         description: Server error
+ */
+router.get('/getAllResources', auth, checkRole('admin'), async (req, res) => {
     try {
+        // Pozivamo metodu iz klase Resources da dobijemo sve resurse
+        let resources = await Resource.getAllResources();
+
+        resources = await Promise.all(resources.map(async (p) => {
+          const u = await User.findUserById(p.researcher_id);
+          if (u) {
+              return {
+                  ...p,
+                  firstName: u.firstName,
+                  lastName: u.lastName
+              };
+          }
+          return p;
+      }));
         
-        const re = await Resource.getAllResources();
-        
-        res.status(200).json(re);
+        // Vraćamo resurse kao JSON odgovor
+        res.status(200).json(resources);
     } catch (error) {
         // U slučaju greške vraćamo 500 status sa porukom o grešci
-        console.error('Error fetching users:', error);
-        res.status(500).json({ message: 'Failed to fetch users' });
+        console.error('Error fetching resources:', error);
+        res.status(500).json({ message: 'Failed to fetch resources' });
     }
 });
+
 //vraca sve istrazivace
 router.get('/getAllResearchers',auth,checkRole('admin'), async (req, res) => {
     try {
@@ -243,7 +466,19 @@ router.get('/getAllResearchers',auth,checkRole('admin'), async (req, res) => {
 router.get('/getAllBlogs',auth,checkRole('admin'), async (req, res) => {
     try {
         // Pozivamo metodu iz klase Users da dobijemo sve korisnike
-        const b = await Blog.getAllBlogs();
+        let b = await Blog.getAllBlogs();
+
+        b = await Promise.all(b.map(async (p) => {
+          const u = await User.findUserById(p.author_id);
+          if (u) {
+              return {
+                  ...p,
+                  firstName: u.firstName,
+                  lastName: u.lastName
+              };
+          }
+          return p;
+      }));
         
         // Vraćamo korisnike kao JSON odgovor
         res.status(200).json(b);

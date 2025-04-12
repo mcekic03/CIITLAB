@@ -4,7 +4,7 @@ const CONFIG = {
   DEFAULT_PROFILE_IMAGE:
     'http://160.99.40.221:3500/users/images/default-avatar.svg',
   MAX_FILE_SIZE: 50 * 1024 * 1024, // 50MB
-  ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/jpg', 'image/svg'],
+  ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
   ALLOWED_DATASET_TYPES: ['application/zip', 'application/x-zip-compressed'],
 };
 
@@ -15,14 +15,14 @@ const state = {
   isAuthenticated: () => Boolean(state.authToken && state.userId),
 };
 
-// Initialize state from localStorage
+// Initialize state from sessionStorage
 function initializeState() {
-  state.authToken = localStorage.getItem('authToken');
+  state.authToken = sessionStorage.getItem('authToken');
   console.log(state.authToken);
-  // Get userId either from URL parameter or localStorage
+  // Get userId either from URL parameter or sessionStorage
   const urlParams = new URLSearchParams(window.location.search);
   const urlId = urlParams.get('id');
-  const storageId = localStorage.getItem('userId');
+  const storageId = sessionStorage.getItem('userId');
 
   // Proveri validnost ID-a iz storage-a
   const isStorageIdValid =
@@ -40,10 +40,10 @@ function initializeState() {
   // Ako storage ID nije validan, očisti ga
   if (storageId && !isStorageIdValid) {
     console.warn(
-      'Invalid userId found in localStorage, clearing it:',
+      'Invalid userId found in sessionStorage, clearing it:',
       storageId
     );
-    localStorage.removeItem('userId');
+    sessionStorage.removeItem('userId');
   }
 
   // Postavimo ID koristeći URL parametar ili lokalno skladište
@@ -64,7 +64,7 @@ function initializeState() {
     console.warn(
       'Not authenticated and no profile ID in URL, redirecting to login'
     );
-    localStorage.clear(); // Očisti sve iz localStorage za svaki slučaj
+    sessionStorage.clear(); // Očisti sve iz sessionStorage za svaki slučaj
     window.location.href = 'login.html';
     throw new Error('Not authenticated');
   }
@@ -74,7 +74,7 @@ function initializeState() {
     console.warn(
       'Has auth token but invalid or missing userId, clearing auth data'
     );
-    localStorage.clear(); // Očisti sve iz localStorage
+    sessionStorage.clear(); // Očisti sve iz sessionStorage
     window.location.href = 'login.html';
     throw new Error('Invalid authentication data');
   }
@@ -134,7 +134,7 @@ const api = {
       // Logiraj parametre za debugging
       console.log('FormData contents:');
       for (const [key, value] of formData.entries()) {
-        if (key === 'profileImage') {
+        if (key === 'image') {
           if (value.size > 0) {
             console.log(
               `${key}: File - ${value.name} (${value.size} bytes, ${value.type})`
@@ -148,8 +148,10 @@ const api = {
       }
 
       // Handle profile image if present
-      const profileImage = formData.get('profileImage');
-      if (profileImage && profileImage.size > 0) {
+      const profileImage = formData.get('image');
+      const hasNewImage = profileImage && profileImage.size > 0;
+
+      if (hasNewImage) {
         // Validate file type
         if (!CONFIG.ALLOWED_IMAGE_TYPES.includes(profileImage.type)) {
           throw new Error(
@@ -162,41 +164,87 @@ const api = {
         }
       } else if (profileImage && profileImage.size === 0) {
         // Ukloni praznu sliku iz formData
-        formData.delete('profileImage');
+        formData.delete('image');
       }
 
       console.log('Sending profile update request to server...');
 
       // Show progress bar or loading indicator
       const progressBar = document.querySelector('.upload-progress');
-      if (progressBar && profileImage && profileImage.size > 0) {
+      if (progressBar && hasNewImage) {
         progressBar.style.display = 'flex';
       }
 
-      // Koristi fetch sa FormData
-      const response = await fetch(
-        `${CONFIG.API_BASE_URL}/users/me/${userId}`,
-        {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${state.authToken}`,
-            // Ne postavljamo Content-Type za FormData
-          },
-          body: formData,
+      // Create a new FormData object to ensure it's properly serialized
+      const requestFormData = new FormData();
+      for (const [key, value] of formData.entries()) {
+        requestFormData.append(key, value);
+      }
+
+      // Log the actual request data
+      console.log('Request data:');
+      for (const [key, value] of requestFormData.entries()) {
+        if (key === 'image') {
+          if (value instanceof File) {
+            console.log(`${key}: [File] ${value.name} (${value.size} bytes)`);
+          } else {
+            console.log(`${key}: ${value}`);
+          }
+        } else {
+          console.log(`${key}: ${value}`);
         }
-      );
+      }
+
+      let response;
+
+      // Choose the appropriate endpoint based on whether a new image is being uploaded
+      if (hasNewImage) {
+        // Use the existing endpoint for image and data update
+        response = await fetch(
+          `${CONFIG.API_BASE_URL}/users/updateProfile/ImageAndData/${userId}`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${state.authToken}`,
+              // Ne postavljamo Content-Type za FormData
+            },
+            body: requestFormData,
+          }
+        );
+      } else {
+        // Use a different endpoint for data-only update
+        // Convert FormData to JSON for the data-only endpoint
+        const jsonData = {};
+        for (const [key, value] of requestFormData.entries()) {
+          jsonData[key] = value;
+        }
+
+        response = await fetch(
+          `${CONFIG.API_BASE_URL}/users/updateProfile/Data/${userId}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${state.authToken}`,
+            },
+            body: JSON.stringify(jsonData),
+          }
+        );
+
+        console.log(jsonData);
+      }
+
+      console.log(response);
 
       if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ message: 'Unknown server error' }));
+        const errorData = await response;
         console.error('Server error response:', errorData);
         throw new Error(
           errorData.message || `Server error: ${response.status}`
         );
       }
 
-      const result = await response.json();
+      const result = await response;
       console.log('Profile update successful:', result);
 
       // Hide progress bar after successful upload
@@ -205,7 +253,7 @@ const api = {
       }
 
       // Ažuriraj podatke o korisniku u lokalnom skladištu
-      localStorage.setItem('user', JSON.stringify(result));
+      sessionStorage.setItem('user', JSON.stringify(result));
 
       return result;
     } catch (error) {
@@ -220,9 +268,9 @@ const api = {
 
       // Šaljemo samo education polje
       const updateResponse = await fetch(
-        `${CONFIG.API_BASE_URL}/users/me/${userId}`,
+        `${CONFIG.API_BASE_URL}/users/updateEducation/${userId}`,
         {
-          method: 'PATCH',
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${state.authToken}`,
@@ -232,7 +280,7 @@ const api = {
           }),
         }
       );
-
+      console.log(updateResponse);
       if (!updateResponse.ok) {
         const errorData = await updateResponse.json().catch(() => ({
           message: `Server error: ${updateResponse.status}`,
@@ -245,6 +293,7 @@ const api = {
 
       const result = await updateResponse.json();
       console.log('Education update response:', result);
+      window.location.reload();
       return result;
     } catch (error) {
       console.error('Education update error:', error);
@@ -327,7 +376,7 @@ const api = {
   async updateResource(resourceId, resourceData) {
     try {
       const response = await fetch(
-        `${CONFIG.API_BASE_URL}/users/resources/${resourceId}`,
+        `${CONFIG.API_BASE_URL}/users/resources/find/${resourceId}`,
         {
           method: 'PATCH',
           headers: {
@@ -352,6 +401,39 @@ const api = {
       return result;
     } catch (error) {
       console.error('Resource update error:', error);
+      throw error;
+    }
+  },
+
+  async updateStudentsWork(studentsWorkId, studentsWorkData) {
+    try {
+      const response = await fetch(
+        `${CONFIG.API_BASE_URL}/studentsWork/update/${studentsWorkId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${state.authToken}`,
+          },
+          body: JSON.stringify(studentsWorkData),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({
+          message: `Server error: ${response.status}`,
+        }));
+        throw new Error(
+          errorData.message ||
+            `Failed to update students work (${response.status})`
+        );
+      }
+
+      const result = await response.json();
+      console.log('Students work update response:', result);
+      return result;
+    } catch (error) {
+      console.error('Students work update error:', error);
       throw error;
     }
   },
@@ -383,14 +465,6 @@ const api = {
   },
 
   async deleteResource(resourceId) {
-    window.addEventListener('beforeunload', (event) => {
-      // Pokaži standardnu poruku za reload (korisnik ne može da menja ovu poruku)
-      const confirmationMessage = 'Da li želite da osvežite stranicu?';
-
-      // Browser prikazuje standardnu poruku, korisnik može da odabere da li želi reload ili ne
-      event.returnValue = confirmationMessage; // Za nove browser-e
-    });
-
     try {
       return await this.fetch(`/users/resources/${resourceId}`, {
         method: 'DELETE',
@@ -485,7 +559,7 @@ const UI = {
     // Use the existing modal
     const modal = document.getElementById('resourceUploadModal');
     if (modal) {
-      modal.style.display = 'block';
+      modal.style.display = 'flex';
     }
   },
 
@@ -493,14 +567,14 @@ const UI = {
     // Use the existing modal
     const modal = document.getElementById('studentsWorkUploadModal');
     if (modal) {
-      modal.style.display = 'block';
+      modal.style.display = 'flex';
     }
   },
 
   openModal() {
     const modal = document.getElementById('editModal');
     if (modal) {
-      modal.style.display = 'block';
+      modal.style.display = 'flex';
     }
   },
 
@@ -638,7 +712,7 @@ const UI = {
         }
       } else {
         educationList.innerHTML =
-          '<p class="no-education">No resources listed</p>';
+          '<p class="no-education">No Education listed</p>';
         // Reset education count
         const educationCount = document.querySelector('.education-count');
         if (educationCount) {
@@ -776,7 +850,6 @@ const UI = {
       return;
     }
 
-    
     // Clear and rebuild the resources list
     resourcesList.innerHTML = resources
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // najnoviji prvi
@@ -826,31 +899,39 @@ const UI = {
       })
       .join('');
 
-    
-    if(resources.length > 5) {
-      resourceFooter.innerHTML = `<button class="load-more-btn">More</button>`
+    if (resources.length > 5) {
+      resourceFooter.innerHTML = `<button class="load-more-btn">More</button>`;
     }
     // Add event listeners to all "Read more" buttons
-    
+
     const loadMoreButton = resourceFooter.querySelector('.load-more-btn');
-    if(loadMoreButton) {
-    loadMoreButton.addEventListener('click', () => {
+    if (loadMoreButton) {
+      loadMoreButton.addEventListener('click', () => {
         openFullResourceListModal(resources, isOwnProfile);
-    
-    });
+      });
     }
-      
   },
 
   updateStudentsWorkDisplay(studentsWork, isOwnProfile) {
     const studentsWorkList = document.querySelector('.studentsWork-list');
+    const studentsWorkFooter = document.querySelector(
+      '.studentsWork-section-footer'
+    );
     const studentsWorkCount = document.querySelector('.studentsWork-count');
     studentsWorkCount.textContent = studentsWork.length;
     if (studentsWorkList) {
       if (Array.isArray(studentsWork) && studentsWork.length > 0) {
         studentsWorkList.innerHTML = studentsWork
-          .map(
-            (studentsWork) => `
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // najnoviji prvi
+          .slice(0, 3)
+          .map((studentsWork) => {
+            const isLongDescription =
+              studentsWork.description && studentsWork.description.length > 50;
+            const truncatedDescription = isLongDescription
+              ? `${studentsWork.description.substring(0, 50)}...`
+              : studentsWork.description || 'No description available';
+
+            return `
             <div class="studentsWork-item">
               <div class="studentsWork-header">
                 <h3>${studentsWork.title} - ${studentsWork.firstName} ${
@@ -860,32 +941,44 @@ const UI = {
                   isOwnProfile
                     ? `
                   <div class="studentsWork-actions">
-                    <button class="btn-icon" onclick="handlers.handleStudentsWorkDelete('${studentsWork.id}')">
-                      <i class="fas fa-trash"></i>
+                    <button class="btn-icon" onclick="toggleStudentsWorkEdit('${studentsWork.id}')">
+                      <i class="fas fa-edit"></i>
                     </button>
                   </div>
                 `
                     : ''
                 }
               </div>
-              <p class="studentsWork-description">${
-                studentsWork.description
-              }</p>
-              <div class="studentsWork-meta">
+              <div class="studentsWork-description-container">
+                <p class="studentsWork-description">${truncatedDescription}</p>
               </div>
-              <a href="${
-                studentsWork.url
-              }" target="_blank" class="studentsWork-link">
-                <i class="fas fa-external-link-alt"></i> Visit Students Work
-              </a>
+              <div class="studentsWork-footer">
+                <div class="studentsWork-meta"></div>
+          ${
+            isLongDescription
+              ? `<button class="read-more-btn" onclick="openStudentsWorkModal('${studentsWork.id}')">More</button>`
+              : ''
+          }
+              </div>
             </div>
-          `
-          )
+          `;
+          })
           .join('');
       } else {
         studentsWorkList.innerHTML =
           '<p class="no-studentsWork">No students work available.</p>';
       }
+    }
+
+    if (studentsWork.length > 1) {
+      studentsWorkFooter.innerHTML = `<button class="load-more-btn">More</button>`;
+    }
+
+    const loadMoreButton = studentsWorkFooter.querySelector('.load-more-btn');
+    if (loadMoreButton) {
+      loadMoreButton.addEventListener('click', () => {
+        openFullStudentsWorkListModal(studentsWork, isOwnProfile);
+      });
     }
   },
 
@@ -936,6 +1029,12 @@ const UI = {
     // Prikaz pregleda slike
     const reader = new FileReader();
     reader.onload = (e) => {
+      // Update the preview image in the form
+      const previewImage = document.getElementById('profileImagePreview');
+      if (previewImage) {
+        previewImage.src = e.target.result;
+      }
+
       // Pronađi sve elemente profilnih slika na stranici
       const profileImages = document.querySelectorAll(
         '.researcher-profile-image img'
@@ -971,13 +1070,42 @@ const handlers = {
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
     try {
-      // Get form data
-      const formData = new FormData(form);
+      // Create FormData object and add fields manually to ensure all data is included
+      const formData = new FormData();
 
-      // Log formData
-      console.log('Submitting profile update with FormData');
+      // Get form elements directly
+      const firstNameInput = form.querySelector('input[name="firstName"]');
+      const lastNameInput = form.querySelector('input[name="lastName"]');
+      const emailInput = form.querySelector('input[name="email"]');
+      const bioInput = form.querySelector('textarea[name="bio"]');
+      const profileImageInput = form.querySelector(
+        'input[name="profileImage"]'
+      );
+
+      // Log the form elements for debugging
+      console.log('Form elements:', {
+        firstNameInput,
+        lastNameInput,
+        emailInput,
+        bioInput,
+        profileImageInput,
+      });
+
+      // Get values and add to FormData
+      if (firstNameInput) formData.append('firstName', firstNameInput.value);
+      if (lastNameInput) formData.append('lastName', lastNameInput.value);
+      if (emailInput) formData.append('email', emailInput.value);
+      if (bioInput) formData.append('bio', bioInput.value);
+
+      // Handle profile image
+      if (profileImageInput && profileImageInput.files[0]) {
+        formData.append('image', profileImageInput.files[0]);
+      }
+
+      // Log formData for debugging
+      console.log('Submitting profile update with FormData:');
       for (const [key, value] of formData.entries()) {
-        if (key === 'profileImage') {
+        if (key === 'image') {
           if (value instanceof File) {
             console.log(
               `${key}: [File object]`,
@@ -993,22 +1121,14 @@ const handlers = {
         }
       }
 
-      const profileImage = formData.get('profileImage');
-      console.log('Profile image file:', profileImage);
-      if (profileImage && profileImage.size === 0) {
-        // Ukloni praznu sliku
-        formData.delete('profileImage');
-        console.log('Empty profile image removed from FormData');
-      }
-
       // Update profile
       const userId = state.userId;
       console.log('Updating profile for user ID:', userId);
       const updatedUser = await api.updateProfile(userId, formData);
       console.log('Profile updated successfully, updated user:', updatedUser);
 
-      // Save result in localStorage for auth.js
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      // Save result in sessionStorage for auth.js
+      sessionStorage.setItem('user', JSON.stringify(updatedUser));
 
       // Refresh navigation to show new image
       if (typeof authState !== 'undefined' && authState.updateNavbar) {
@@ -1051,15 +1171,14 @@ const handlers = {
 
     try {
       const education = Array.from(
-        form.querySelectorAll('.education-entry')
+        form.querySelectorAll('.education-input-group')
       ).map((entry) => ({
         institution: entry.querySelector('[name="institution"]').value,
         degree: entry.querySelector('[name="degree"]').value,
-        field: entry.querySelector('[name="field"]').value,
-        startDate: entry.querySelector('[name="startDate"]').value,
-        endDate: entry.querySelector('[name="endDate"]').value,
-        description: entry.querySelector('[name="description"]').value,
+        year: entry.querySelector('[name="year"]').value,
       }));
+
+      console.log(education);
 
       await api.updateEducation(state.userId, education);
       UI.showNotification('Education updated successfully', 'success');
@@ -1104,12 +1223,6 @@ const handlers = {
     educationInputs.appendChild(newGroup);
   },
 
-  handleLogout() {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userId');
-    window.location.href = 'index.html';
-  },
-
   handleAddPublication() {
     const publicationsInputs = document.querySelector('.publications-inputs');
     const publicationTemplate = document.getElementById(
@@ -1140,6 +1253,12 @@ const handlers = {
     publicationsInputs.appendChild(newGroup);
   },
 
+  handleLogout() {
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('userId');
+    window.location.href = 'index.html';
+  },
+
   init() {
     // Sačekaj da se authState inicijalizuje
     if (typeof authState === 'undefined') {
@@ -1151,15 +1270,15 @@ const handlers = {
   },
 
   checkAuthAndSetupUI() {
-    const authToken = localStorage.getItem('authToken');
-    const userRole = localStorage.getItem('userRole');
+    const authToken = sessionStorage.getItem('authToken');
+    const userRole = sessionStorage.getItem('userRole');
     const addStudentsWorkBtn = document.getElementById('addStudentsWorkBtn');
     if (authToken && userRole === 'researcher' && addStudentsWorkBtn) {
       addStudentsWorkBtn.style.display = 'flex';
       addStudentsWorkBtn.addEventListener('click', () => {
         const modal = document.getElementById('studentsWorkUploadModal');
         if (modal) {
-          modal.style.display = 'block';
+          modal.style.display = 'flex';
         }
       });
     }
@@ -1204,13 +1323,13 @@ const handlers = {
   async handleResourceEdit(event) {
     event.preventDefault();
     const form = event.target;
+    console.log(resourceId);
     try {
       const submitButton = form.querySelector('button[type="submit"]');
       submitButton.disabled = true;
       submitButton.innerHTML =
         '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
-      const resourceId = form.querySelector('[name="resourceId"]').value;
       const title = form.querySelector('[name="title"]').value.trim();
       const description = form
         .querySelector('[name="description"]')
@@ -1251,12 +1370,68 @@ const handlers = {
       submitButton.innerHTML = '<i class="fas fa-save"></i> Save Changes';
     }
   },
+  async handleStudentsWorkEdit(event) {
+    event.preventDefault();
+    const form = event.target;
+    try {
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.innerHTML =
+        '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+      const title = form.querySelector('#title').value.trim();
+      const firstName = form.querySelector('#firstName').value.trim();
+      const lastName = form.querySelector('#lastName').value.trim();
+      const graduationYear = form.querySelector('#graduationYear').value.trim();
+      const description = form.querySelector('#description').value.trim();
+      const link = form.querySelector('[name="link"]').value.trim();
+
+      // Basic validation
+      if (!title || !description) {
+        throw new Error('Title and description are required');
+      }
+
+      const studentsWorkData = {
+        title,
+        firstName,
+        lastName,
+        graduationYear,
+        description,
+        link: link,
+      };
+
+      // Get the studentsWorkId from the form's dataset
+      const studentsWorkId = form.dataset.studentsWorkId;
+
+      // Update resource
+      await api.updateStudentsWork(studentsWorkId, studentsWorkData);
+      UI.showNotification('Students work updated successfully');
+      UI.closeModal();
+
+      // Refresh resources list
+      const studentsWork = await api.getStudentsWork(state.userId);
+      UI.updateStudentsWorkDisplay(studentsWork, true);
+
+      // Reload page to show updated resources
+      window.location.reload();
+    } catch (error) {
+      console.error('Resource update error:', error);
+      UI.showNotification(
+        error.message || 'Failed to update students work',
+        'error'
+      );
+    } finally {
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.disabled = false;
+      submitButton.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+    }
+  },
 
   async handleSkillsEdit(event) {
     event.preventDefault();
     const form = event.target;
     document
-      .getElementById('modal')
+      .getElementById('skillsEditForm')
       .addEventListener('click', function (event) {
         if (event.target === this) {
           closeModal();
@@ -1312,7 +1487,7 @@ const handlers = {
 
   async handleStudentsWorkDelete(studentsWorkId) {
     if (
-      window.confirm('Da li ste sigurni da želite da obrišete studentsk rad?')
+      window.confirm('Da li ste sigurni da želite da obrišete studentski rad?')
     ) {
       try {
         await api.deleteStudentsWork(studentsWorkId);
@@ -1430,8 +1605,8 @@ const handlers = {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: localStorage.getItem('authToken')
-              ? `Bearer ${localStorage.getItem('authToken')}`
+            Authorization: sessionStorage.getItem('authToken')
+              ? `Bearer ${sessionStorage.getItem('authToken')}`
               : undefined,
           },
           body: JSON.stringify(formData),
@@ -1466,6 +1641,252 @@ const handlers = {
         (element) => (element.disabled = false)
       );
       submitButton.textContent = 'Add students work';
+      form.reset();
+    }
+  },
+
+  async loadResources() {
+    try {
+      console.log('Loading resources...');
+      const authToken = sessionStorage.getItem('authToken');
+      console.log('Auth token present:', !!authToken);
+
+      const urlParams = new URLSearchParams(window.location.search);
+      let urlId = urlParams.get('id');
+      if (urlId == null) {
+        urlId = sessionStorage.getItem('userId');
+      }
+      const response = await fetch(`${CONFIG.API_BASE_URL}/resources/all`, {
+        headers: {
+          Authorization: authToken ? `Bearer ${authToken}` : undefined,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch resources');
+      }
+
+      const resources = await response.json();
+      console.log('Loaded resources:', resources);
+
+      // Log each resource's researcher data
+      resources.forEach((resource, index) => {
+        console.log(
+          `Resource ${index + 1} researcher data:`,
+          resource.researcher_id
+        );
+      });
+
+      this.displayResources(resources);
+    } catch (error) {
+      console.error('Error loading resources:', error);
+      this.displayError('Error loading resources');
+    }
+  },
+
+  displayError(message) {
+    const resourcesList = document.querySelector('.resources-list-page');
+    if (resourcesList) {
+      resourcesList.innerHTML = `<p class="error-message">${message}</p>`;
+    }
+  },
+
+  // Display success message
+  displaySuccess(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification success';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => notification.remove(), 3000);
+  },
+
+  async displayResources(resources) {
+    const resourcesList = document.getElementById('resources-list-page');
+
+    if (!resourcesList) {
+      console.error('Resources list element not found');
+      return;
+    }
+    if (resources.length === 0) {
+      resourcesList.innerHTML =
+        '<p class="no-resources">No resources available at the moment.</p>';
+      return;
+    }
+
+    // Clear existing resources
+    resourcesList.innerHTML = '';
+
+    // Add each resource to the list
+    resources.forEach((resource) => {
+      // Format the creation date
+      const formattedDate = formatDate(resource.created_at);
+
+      // Get researcher name
+      const researcherName =
+        resource.researcher &&
+        resource.researcher.firstName &&
+        resource.researcher.lastName
+          ? `${resource.researcher.firstName} ${resource.researcher.lastName}`
+          : 'Unknown researcher';
+
+      console.log(researcherName);
+      console.log(resources);
+
+      // Check if description is long enough to need truncation
+      const isLongDescription = resource.description.length > 100;
+      const truncatedDescription = isLongDescription
+        ? `${resource.description.substring(0, 100)}...`
+        : resource.description || 'No description available';
+
+      // Create resource HTML
+      const resourceElement = document.createElement('div');
+      resourceElement.className = 'resource-item-page';
+      resourceElement.innerHTML = `
+        <div class="resource-content-page">
+          <div class="resource-header-page">
+            <h3>${resource.title || 'No title'}</h3>
+            <div class="resource-meta">
+              <span class="researcher">
+                <i class="fas fa-user"></i> ${researcherName}
+              </span>
+              <span class="date">
+                <i class="fas fa-calendar"></i> ${formattedDate}
+              </span>
+            </div>
+          </div>
+          <div class="resource-description-container-page">
+            <p class="resource-description-page">${truncatedDescription}</p>
+            ${
+              isLongDescription
+                ? '<button class="read-more-btn-page">Read more</button>'
+                : ''
+            }
+          </div>
+        </div>
+        <div class="resource-actions-page">
+          <a href="${
+            resource.url
+          }" target="_blank" rel="noopener noreferrer" class="btn-primary resource-btn">
+            <i class="fas fa-external-link-alt"></i> View resource
+          </a>
+        </div>
+      `;
+      console.log(resourcesList);
+      // Add event listener to "Read more" button if it exists
+      if (isLongDescription) {
+        const readMoreBtn = resourceElement.querySelector(
+          '.read-more-btn-page'
+        );
+        readMoreBtn.addEventListener('click', () => openModal(resource));
+      }
+
+      resourcesList.appendChild(resourceElement);
+    });
+  },
+
+  async handleResourceSubmit(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const submitButton = form.querySelector('button[type="submit"]');
+    let resourceId = null;
+    // Disable form during submission
+    Array.from(form.elements).forEach((element) => (element.disabled = true));
+    submitButton.textContent =
+      '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+    try {
+      // Check if there are any resource input groups
+      const resourceGroups = form.querySelectorAll('.resource-input-group');
+
+      // If no input groups and we have a resourceId, delete the resource
+      if (resourceGroups.length === 0) {
+        // Try to get the resourceId from the form
+        const resourceIdElement = form.querySelector('[name="resourceId"]');
+        if (resourceIdElement) {
+          resourceId = resourceIdElement.value.trim();
+          console.log('No input groups found, deleting resource:', resourceId);
+          await api.deleteResource(resourceId);
+          UI.showNotification('Resource deleted successfully');
+          UI.closeModal();
+
+          // Refresh resources list
+          const resources = await api.getResearcherResources(state.userId);
+          UI.updateResourcesDisplay(resources, true);
+
+          // Reload page to show updated resources
+          window.location.reload();
+          return;
+        } else {
+          // If no resourceId is available, this is a new resource form with no inputs
+          // Just close the modal and reset the form
+          UI.closeModal();
+          UI.showNotification('No resource data to save', 'info');
+          return;
+        }
+      }
+
+      // Get the first resource input group (we're only handling one at a time)
+      const resourceGroup = resourceGroups[0];
+
+      // Get form values from within the resource input group
+      const titleElement = resourceGroup.querySelector('[name="title"]');
+      const descriptionElement = resourceGroup.querySelector(
+        '[name="description"]'
+      );
+      const urlElement = resourceGroup.querySelector('[name="url"]');
+      const resourceIdElement = resourceGroup.querySelector(
+        '[name="resourceId"]'
+      );
+
+      // Check if all required elements exist
+      if (!titleElement || !descriptionElement || !urlElement) {
+        throw new Error('Form is missing required fields');
+      }
+
+      // Get the resource ID if available
+      if (resourceIdElement) {
+        resourceId = resourceIdElement.value.trim();
+      }
+
+      const title = titleElement.value.trim();
+      const description = descriptionElement.value.trim();
+      const url = urlElement.value.trim();
+
+      console.log('Raw form values:', { title, description, url, resourceId });
+
+      // Basic validation
+      if (!title || !description) {
+        throw new Error('Title and description are required');
+      }
+
+      const resourceData = {
+        title,
+        description,
+        url,
+      };
+
+      // Update resource
+      await api.updateResource(resourceId, resourceData);
+      UI.showNotification('Resource updated successfully');
+      UI.closeModal();
+
+      // Refresh resources list
+      const resources = await api.getResearcherResources(state.userId);
+      UI.updateResourcesDisplay(resources, true);
+
+      // Reload page to show updated resources
+      window.location.reload();
+    } catch (error) {
+      console.error('Error handling resource:', error);
+      UI.showNotification(error.message || 'Error handling resource', 'error');
+    } finally {
+      // Re-enable form
+      Array.from(form.elements).forEach(
+        (element) => (element.disabled = false)
+      );
+      submitButton.textContent = 'Add resource';
       form.reset();
     }
   },
@@ -1507,12 +1928,20 @@ async function loadUserProfile() {
       console.error('Error loading students work:', studentsWorkError);
     }
 
+    const studentsWork = document.getElementById('studentsWorkSection');
+    if (user.role != 'researcher') {
+      studentsWork.style.display = 'none';
+    }
+
     // Set up event listeners for forms - only if it's user's own profile
     if (profileId === state.userId) {
       const forms = {
         publicationsEditForm: handlers.handlePublicationsEdit,
         studentsWorkEditForm: handlers.handleStudentsWorkEdit,
+        educationEditForm: handlers.handleEducationEdit,
         skillsEditForm: handlers.handleSkillsEdit,
+        resourceEditForm: handlers.handleResourceSubmit,
+        profileEditForm: handlers.handleProfileEdit,
       };
 
       // Add form submit handlers
@@ -1522,13 +1951,6 @@ async function loadUserProfile() {
           form.addEventListener('submit', handler);
         }
       });
-      const resourceEditForm = document.getElementById('resourceEditForm');
-      if (resourceEditForm) {
-        resourceEditForm.addEventListener(
-          'submit',
-          handlers.handleResourceEdit
-        );
-      }
     }
   } catch (error) {
     console.error('Error loading profile:', error);
@@ -1553,7 +1975,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!isValidId(profileId)) {
       console.error(
-        'No valid user ID available - either in URL or localStorage'
+        'No valid user ID available - either in URL or sessionStorage'
       );
       UI.showNotification(
         'Молимо вас да се пријавите да бисте видели профил',
@@ -1599,6 +2021,33 @@ document.addEventListener('DOMContentLoaded', async () => {
 window.toggleEditMode = () => {
   UI.openModal();
   UI.showForm('profileEditForm');
+
+  // Populate the form with the user's current data
+  const urlParams = new URLSearchParams(window.location.search);
+  const profileId = urlParams.get('id') || state.userId;
+
+  // Get the current user data
+  api
+    .fetch(`/users/me/${profileId}`)
+    .then((user) => {
+      // Populate the form fields
+      document.getElementById('firstName').value = user.firstName || '';
+      document.getElementById('lastName').value = user.lastName || '';
+      document.getElementById('email').value = user.email || '';
+      document.getElementById('bio').value = user.bio || '';
+
+      // Update profile image preview
+      const profileImagePreview = document.getElementById(
+        'profileImagePreview'
+      );
+      if (profileImagePreview && user.profileImage) {
+        profileImagePreview.src = user.profileImage;
+      }
+    })
+    .catch((error) => {
+      console.error('Error loading user data:', error);
+      UI.showNotification('Error loading user data', 'error');
+    });
 };
 
 window.toggleEducationEdit = () => {
@@ -1738,22 +2187,157 @@ window.toggleResourceEdit = (resourceId) => {
   UI.openModal();
   UI.showForm('resourceEditForm');
 
-  // Fetch the resource data using the correct endpoint
+  const resourceInputs = document.querySelector('.resource-inputs');
+  const template = document.getElementById('resourceFormTemplate');
+
+  // Clear existing inputs
+  resourceInputs.innerHTML = '';
+
+  // Get current user data from the page
+  const urlParams = new URLSearchParams(window.location.search);
+  const profileId = urlParams.get('id') || state.userId;
+  // Fetch and populate education data
   api
-    .getResource(resourceId)
+    .fetch(`/users/resources/find/${resourceId}`)
     .then((resource) => {
-      // Populate the form with resource data
-      const form = document.getElementById('resourceEditForm');
-      form.querySelector('[name="resourceId"]').value = resourceId;
-      form.querySelector('[name="title"]').value = resource.title || '';
-      form.querySelector('[name="description"]').value =
-        resource.description || '';
-      form.querySelector('[name="url"]').value = resource.url || '';
+      console.log(resource);
+      if (resource) {
+        resource.forEach((res) => {
+          console.log(res.url);
+          const newGroup = template.content
+            .cloneNode(true)
+            .querySelector('.resource-input-group');
+
+          // Set values
+          newGroup.querySelector('[name="title"]').value = res.title || '';
+          newGroup.querySelector('[name="description"]').value =
+            res.description || '';
+          newGroup.querySelector('[name="url"]').value = res.url || '';
+          newGroup.querySelector('[name="resourceId"]').value = res.id || '';
+
+          // Replace the remove button with a delete button
+          const removeBtn = newGroup.querySelector('.remove-resource');
+          if (removeBtn) {
+            removeBtn.className = 'btn-icon delete-resource';
+            removeBtn.innerHTML =
+              '<i class="fas fa-trash" aria-hidden="true"></i>';
+            removeBtn.title = 'Delete Resource';
+            removeBtn.onclick = async (e) => {
+              e.preventDefault();
+              if (confirm('Da li ste sigurni da želite da obrišete resurs?')) {
+                try {
+                  await api.deleteResource(resourceId);
+                  UI.showNotification('Resource deleted successfully');
+                  UI.closeModal();
+
+                  // Refresh resources list
+                  const resources = await api.getResearcherResources(
+                    state.userId
+                  );
+                  UI.updateResourcesDisplay(resources, true);
+
+                  // Reload page to show updated resources
+                  window.location.reload();
+                } catch (error) {
+                  console.error('Error deleting resource:', error);
+                  UI.showNotification(
+                    error.message || 'Error deleting resource',
+                    'error'
+                  );
+                }
+              }
+            };
+          }
+
+          resourceInputs.appendChild(newGroup);
+        });
+      } else {
+        // Add one empty education input group if no education data exists
+        handlers.handleResourceEdit();
+      }
     })
     .catch((error) => {
       console.error('Error loading resource data:', error);
       UI.showNotification('Failed to load resource data', 'error');
-      UI.closeModal();
+    });
+};
+
+window.toggleStudentsWorkEdit = (studentsWorkId) => {
+  UI.openModal();
+  UI.showForm('studentsWorkEditForm');
+
+  const resourceInputs = document.querySelector('.studentsWork-inputs');
+  const template = document.getElementById('studentsWorkFormTemplate');
+
+  // Clear existing inputs
+  resourceInputs.innerHTML = '';
+
+  // Store the studentsWorkId in the form for later use
+  const form = document.getElementById('studentsWorkEditForm');
+  form.dataset.studentsWorkId = studentsWorkId;
+
+  // Get current user data from the page
+  const urlParams = new URLSearchParams(window.location.search);
+  const profileId = urlParams.get('id') || state.userId;
+  // Fetch and populate education data
+  api
+    .fetch(`/studentsWork/find/${studentsWorkId}`)
+    .then((studentsWork) => {
+      console.log(studentsWork);
+      if (studentsWork) {
+        const newGroup = template.content
+          .cloneNode(true)
+          .querySelector('.studentsWork-input-group');
+
+        // Set values
+        newGroup.querySelector('#title').value = studentsWork.title || '';
+        newGroup.querySelector('#firstName').value =
+          studentsWork.firstName || '';
+        newGroup.querySelector('#lastName').value = studentsWork.lastName || '';
+        newGroup.querySelector('#graduationYear').value =
+          studentsWork.graduationYear || '';
+        newGroup.querySelector('#description').value =
+          studentsWork.description || '';
+        newGroup.querySelector('[name="link"]').value = studentsWork.link || '';
+
+        // Replace the remove button with a delete button
+        const removeBtn = newGroup.querySelector('.remove-studentsWork');
+        if (removeBtn) {
+          removeBtn.className = 'btn-icon delete-studentsWork';
+          removeBtn.innerHTML =
+            '<i class="fas fa-trash" aria-hidden="true"></i>';
+          removeBtn.title = 'Delete Students Work';
+          removeBtn.onclick = async (e) => {
+            e.preventDefault();
+            if (confirm('Da li ste sigurni da želite da obrišete rad?')) {
+              try {
+                await api.deleteStudentsWork(studentsWorkId);
+                UI.showNotification('Students work deleted successfully');
+                UI.closeModal();
+
+                // Refresh resources list
+                const studentsWork = await api.getStudentsWork(state.userId);
+                UI.updateStudentsWorkDisplay(studentsWork, true);
+
+                // Reload page to show updated resources
+                window.location.reload();
+              } catch (error) {
+                console.error('Error deleting resource:', error);
+                UI.showNotification(
+                  error.message || 'Error deleting students work',
+                  'error'
+                );
+              }
+            }
+          };
+        }
+
+        resourceInputs.appendChild(newGroup);
+      }
+    })
+    .catch((error) => {
+      console.error('Error loading resource data:', error);
+      UI.showNotification('Failed to load resource data', 'error');
     });
 };
 
@@ -1783,14 +2367,14 @@ window.toggleSkillsEdit = () => {
 window.toggleResourcesEdit = () => {
   const modal = document.getElementById('resourceUploadModal');
   if (modal) {
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
   }
 };
 
-window.toggleStudentsWorkEdit = () => {
+window.toggleStudentsWorkUpload = () => {
   const modal = document.getElementById('studentsWorkUploadModal');
   if (modal) {
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
   }
 };
 
@@ -1811,6 +2395,31 @@ window.closeModal = () => {
 
 window.handleLogout = handlers.handleLogout;
 
+window.handleAddResource = () => {
+  const resourceInputs = document.querySelector('.resource-inputs');
+  const resourceTemplate = document.getElementById('resourceFormTemplate');
+  const newGroup = resourceTemplate.content
+    .cloneNode(true)
+    .querySelector('.resource-input-group');
+
+  // Clear any existing values
+  newGroup.querySelectorAll('input').forEach((input) => (input.value = ''));
+
+  // Set up remove button click handler
+  const removeBtn = newGroup.querySelector('.remove-resource');
+  if (removeBtn) {
+    removeBtn.onclick = (e) => {
+      e.preventDefault();
+      const group = e.target.closest('.resource-input-group');
+      if (group) {
+        group.remove();
+      }
+    };
+  }
+
+  // Add the new group to the form
+  resourceInputs.appendChild(newGroup);
+};
 window.handleAddEducation = () => {
   const educationInputs = document.querySelector('.education-inputs');
   const educationTemplate = document.getElementById('educationFormTemplate');
@@ -1882,19 +2491,19 @@ async function openFullResourceListModal(resources, isOwnProfile) {
   modalTitle.textContent = 'All Resources';
 
   fullList.innerHTML = resources
-  .sort((b, a) => new Date(b.created_at) - new Date(a.created_at))
-      .map((resource) => {
-        const formattedDate = formatDate(resource.created_at);
-        const researcherName =
-          user.firstName && user.lastName
-            ? `${user.firstName} ${user.lastName}`
-            : 'Unknown researcher';
-        const isLongDescription =
-          resource.description && resource.description.length > 50;
-        const truncatedDescription = isLongDescription
-          ? `${resource.description.substring(0, 50)}...`
-          : resource.description || 'No description available';
-        return `
+    .sort((b, a) => new Date(b.created_at) - new Date(a.created_at))
+    .map((resource) => {
+      const formattedDate = formatDate(resource.created_at);
+      const researcherName =
+        user.firstName && user.lastName
+          ? `${user.firstName} ${user.lastName}`
+          : 'Unknown researcher';
+      const isLongDescription =
+        resource.description && resource.description.length > 50;
+      const truncatedDescription = isLongDescription
+        ? `${resource.description.substring(0, 50)}...`
+        : resource.description || 'No description available';
+      return `
       <div class="resource-item">
         <div class="resource-header">
           <h3>${resource.title || 'No title'}</h3>
@@ -1923,8 +2532,8 @@ async function openFullResourceListModal(resources, isOwnProfile) {
         </div>
       </div>
     `;
-      })
-      .join('');
+    })
+    .join('');
 
   modal.classList.add('active');
 
@@ -1938,34 +2547,42 @@ async function openResourceModal(resourceId) {
   const modalMeta = document.getElementById('modalMeta');
   const modalDescription = document.getElementById('modalDescription');
   const modalViewLink = document.getElementById('modalViewLink');
-  
+
   const urlParams = new URLSearchParams(window.location.search);
   const profileId = urlParams.get('id') || state.userId;
-  
+
   // Dohvatanje podataka
   const user = await api.fetch(`/users/me/${profileId}`);
-  const resourceResponse = await api.fetch(`/users/resources/find/${resourceId}`);
-  
+  const resourceResponse = await api.fetch(
+    `/users/resources/find/${resourceId}`
+  );
+
   // Pošto API vraća niz sa jednim objektom, uzimamo prvi element
-  const resource = Array.isArray(resourceResponse) ? resourceResponse[0] : resourceResponse;
-  
+  const resource = Array.isArray(resourceResponse)
+    ? resourceResponse[0]
+    : resourceResponse;
+
   console.log(resourceId);
   console.log(resource);
-  
-  // Opciono: sačuvati resource u localStorage za kasnije korišćenje
-  localStorage.setItem(`resource_${resourceId}`, JSON.stringify(resource));
-  
+
+  // Opciono: sačuvati resource u sessionStorage za kasnije korišćenje
+  sessionStorage.setItem(`resource_${resourceId}`, JSON.stringify(resource));
+
   // Set modal content
   modalTitle.textContent = resource.title;
   fullModal.classList.remove('active');
-  
+
   // Format the creation date
   const formattedDate = formatDate(resource.created_at);
-  
+
   // Get researcher name - koristimo podatke iz resource objekta direktno
   let researcherName = 'Unknown researcher';
-  
-  if (resource.researcher && resource.researcher.firstName && resource.researcher.lastName) {
+
+  if (
+    resource.researcher &&
+    resource.researcher.firstName &&
+    resource.researcher.lastName
+  ) {
     researcherName = `${resource.researcher.firstName} ${resource.researcher.lastName}`;
   } else if (user.firstName && user.lastName) {
     researcherName = `${user.firstName} ${user.lastName}`;
@@ -1993,7 +2610,7 @@ async function openResourceModal(resourceId) {
 
   // Prevent body scrolling when modal is open
   document.body.style.overflow = 'hidden';
-  
+
   // Vraćamo resource objekat ako je potrebno
   return resource;
 }
@@ -2008,6 +2625,165 @@ function closeResourceModal() {
 }
 function closeFullResourceModal() {
   const modal = document.getElementById('fullResourceModal');
+  modal.classList.remove('active');
+
+  // Re-enable body scrolling
+  document.body.style.overflow = '';
+}
+
+async function openFullStudentsWorkListModal(studentsWork, isOwnProfile) {
+  const modal = document.getElementById('fullStudentsWorkModal');
+  const modalTitle = document.getElementById('fullStudentsWorkModalTitle');
+  const urlParams = new URLSearchParams(window.location.search);
+  const profileId = urlParams.get('id') || state.userId;
+  const user = await api.fetch(`/users/me/${profileId}`);
+  const fullList = document.querySelector('.full-studentsWork-list');
+  // Set modal content
+  modalTitle.textContent = 'All Students Work';
+
+  fullList.innerHTML = studentsWork
+    .sort((b, a) => new Date(b.created_at) - new Date(a.created_at))
+    .map((studentsWork) => {
+      const formattedDate = formatDate(studentsWork.created_at);
+      const researcherName =
+        user.firstName && user.lastName
+          ? `${user.firstName} ${user.lastName}`
+          : 'Unknown researcher';
+      const isLongDescription =
+        studentsWork.description && studentsWork.description.length > 50;
+      const truncatedDescription = isLongDescription
+        ? `${studentsWork.description.substring(0, 50)}...`
+        : studentsWork.description || 'No description available';
+      return `
+      <div class="studentsWork-item">
+        <div class="studentsWork-header">
+          <h3>${studentsWork.title || 'No title'} - ${studentsWork.firstName} ${
+        studentsWork.lastName
+      } (${studentsWork.graduationYear})</h3>
+          ${
+            isOwnProfile
+              ? `
+            <div class="studentsWork-actions">
+              <button class="btn-icon" onclick="toggleStudentsWorkEdit('${studentsWork.id}')">
+                <i class="fas fa-edit"></i>
+              </button>
+            </div>
+          `
+              : ''
+          }
+        </div>
+        <div class="studentsWork-description-container">
+          <p class="studentsWork-description">${truncatedDescription}</p>
+        </div>
+        <div class="studentsWork-footer">
+          <div class="studentsWork-meta"></div>
+          ${
+            isLongDescription
+              ? `<button class="read-more-btn" onclick="openStudentsWorkModal('${studentsWork.id}')">More</button>`
+              : ''
+          }
+        </div>
+      </div>
+    `;
+    })
+    .join('');
+
+  modal.classList.add('active');
+
+  // Prevent body scrolling when modal is open
+  document.body.style.overflow = 'hidden';
+}
+async function openStudentsWorkModal(studentsWorkId) {
+  const modal = document.getElementById('studentsWorkModal');
+  const fullModal = document.getElementById('fullStudentsWorkModal');
+  const modalTitle = document.getElementById('studentsWork-modal-title');
+  const modalMeta = document.getElementById('studentsWork-modal-meta');
+  const modalDescription = document.getElementById(
+    'studentsWork-modal-description'
+  );
+  const modalViewLink = document.getElementById('modalViewLink');
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const profileId = urlParams.get('id') || state.userId;
+
+  // Dohvatanje podataka
+  const user = await api.fetch(`/users/me/${profileId}`);
+  const studentsWorkResponse = await api.fetch(
+    `/studentsWork/find/${studentsWorkId}`
+  );
+
+  // Pošto API vraća niz sa jednim objektom, uzimamo prvi element
+  const studentsWork = Array.isArray(studentsWorkResponse)
+    ? studentsWorkResponse[0]
+    : studentsWorkResponse;
+
+  console.log(studentsWorkId);
+  console.log(studentsWork);
+
+  // Opciono: sačuvati resource u sessionStorage za kasnije korišćenje
+  sessionStorage.setItem(
+    `studentsWork_${studentsWorkId}`,
+    JSON.stringify(studentsWork)
+  );
+
+  // Set modal content
+  modalTitle.textContent = studentsWork.title;
+  console.log(modalTitle);
+  fullModal.classList.remove('active');
+
+  // Format the creation date
+  const formattedDate = formatDate(studentsWork.created_at);
+
+  // Get researcher name - koristimo podatke iz resource objekta direktno
+  let researcherName = 'Unknown researcher';
+
+  if (
+    studentsWork.researcher &&
+    studentsWork.researcher.firstName &&
+    studentsWork.researcher.lastName
+  ) {
+    researcherName = `${studentsWork.researcher.firstName} ${studentsWork.researcher.lastName}`;
+  } else if (user.firstName && user.lastName) {
+    researcherName = `${user.firstName} ${user.lastName}`;
+  }
+
+  // Set metadata
+  modalMeta.innerHTML = `
+    <span class="researcher">
+      <i class="fas fa-user"></i> ${user.firstName} ${user.lastName}
+    </span>
+    <span class="date">
+      <i class="fas fa-calendar"></i> ${formattedDate}
+    </span>
+  `;
+
+  // Set description
+  modalDescription.textContent =
+    studentsWork.description || 'No description available';
+
+  // Set view link
+  modalViewLink.href = studentsWork.url;
+
+  // Show modal
+  modal.classList.add('active');
+
+  // Prevent body scrolling when modal is open
+  document.body.style.overflow = 'hidden';
+
+  // Vraćamo resource objekat ako je potrebno
+  return studentsWork;
+}
+
+function closeStudentsWorkModal() {
+  const modal = document.getElementById('studentsWorkModal');
+  const fullModal = document.getElementById('fullStudentsWorkModal');
+  modal.classList.remove('active');
+
+  // Re-enable body scrolling
+  document.body.style.overflow = '';
+}
+function closeFullStudentsWorkModal() {
+  const modal = document.getElementById('fullStudentsWorkModal');
   modal.classList.remove('active');
 
   // Re-enable body scrolling
@@ -2034,7 +2810,7 @@ function formatDate(dateString) {
 // Mock authState object if it's not already defined
 window.authState = window.authState || {
   isAuthenticated: state.isAuthenticated(),
-  user: JSON.parse(localStorage.getItem('user')) || null,
+  user: JSON.parse(sessionStorage.getItem('user')) || null,
   updateNavbar: () => {
     // Implement your navbar update logic here
     console.log('Navbar updated');

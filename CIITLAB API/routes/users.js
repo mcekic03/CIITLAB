@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { checkRole,auth } = require('../middleware/auth');
 const User = require('../models/User');
-const Skill = require('../models/Skill');
 
 /**
  * @swagger
@@ -57,7 +56,7 @@ router.get('/me/:id', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'Korisnik nije pronađen.' });
     }
-
+    //console.log(user);
     // Vraća podatke o korisniku (ne uključujući lozinku)
     const { password, ...userData } = user;
     res.json(userData);
@@ -110,12 +109,66 @@ router.post('/updateSkills/:userId', auth, async(req, res) => {
 
   try {
     // Pozovi statičku metodu klase Skill
-    const result = await Skill.updateSkillsForUser(userId, skills);
+    const result = await User.updateSkillsForUser(userId, skills);
     res.json(result); // Pošaljemo rezultat klijentu
   } catch (error) {
     res.status(error.status || 500).json({ error: error.message || 'Server error' });
   }
 });
+
+/**
+ * @swagger
+ * /users/updateEducation/{userId}:
+ *   post:
+ *     summary: Ažurira obrazovanje korisnika
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID korisnika
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               education:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     degree:
+ *                       type: string
+ *                       description: Stepen obrazovanja
+ *                     institution:
+ *                       type: string
+ *                       description: Ustanova gde je stekao obrazovanje
+ *     responses:
+ *       200:
+ *         description: Obrazovanje uspešno ažurirano
+ *       401:
+ *         description: Neautorizovan pristup
+ *       500:
+ *         description: Server error
+ */
+router.post('/updateEducation/:userId', auth, async (req, res) => {
+  console.log("updateEducation");
+  const {education} = req.body;
+  const { userId } = req.params;
+  try {
+    const result = await User.updateEducation(userId, education); 
+    res.json(result);
+  } catch (error) {
+    console.log(error);
+    res.status(error.status || 500).json({ error: error.message || 'Server error' });
+  }
+}); 
 
 /**
  * @swagger

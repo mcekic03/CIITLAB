@@ -5,27 +5,26 @@ const newsItems = [
     date: '2025-03-16',
     summary:
       'Registar nacionalnog internet domena Srbije (RNIDS) organizovao je onlajn konferenciju "Novi prioriteti", fokusirajući se na bezbednost poslovanja na internetu i etiku u AI i marketingu. Predavači su bili stručnjaci iz Google-a, Smashing Magazine-a i Bayer-a.',
-    image: 'https://eventsinserbia.com/wp-content/uploads/2022/03/konferencije-758x426.jpg',
+    image:
+      'https://eventsinserbia.com/wp-content/uploads/2022/03/konferencije-758x426.jpg',
   },
   {
     title: 'IT Fest 2025',
     date: '2025-02-03',
     summary:
       'Festival informacionih tehnologija "AI Frontiers" namenjen srednjoškolcima. Učesnici su mogli prisustvovati predavanjima i radionicama iz oblasti veštačke inteligencije, sajber bezbednosti, multimedije i video produkcije.',
-    image: 'https://t4.ftcdn.net/jpg/03/14/92/75/360_F_314927575_yqFMAuXFTNC6gBflR2njRZ4bQb8dAb7y.jpg',
+    image:
+      'https://t4.ftcdn.net/jpg/03/14/92/75/360_F_314927575_yqFMAuXFTNC6gBflR2njRZ4bQb8dAb7y.jpg',
   },
   {
     title: 'Konferencija Digitalno obrazovanje 2025',
     date: '2025-04-11',
     summary:
       'Šesta međunarodna onlajn konferencija "Digitalno obrazovanje 2025" okupila je nastavnike i stručnjake iz oblasti digitalnih tehnologija u obrazovanju. Cilj je bio razmena iskustava i unapređenje nastavnih metoda.',
-    image: 'https://media.istockphoto.com/id/1439425791/photo/digital-technology-software-development-concept-coding-programmer-working-on-laptop-with.jpg?s=612x612&w=0&k=20&c=43WZfDZcnI2lULx83NVAtFiGyzKHzi4HyLqYZgggX-c=',
+    image:
+      'https://media.istockphoto.com/id/1439425791/photo/digital-technology-software-development-concept-coding-programmer-working-on-laptop-with.jpg?s=612x612&w=0&k=20&c=43WZfDZcnI2lULx83NVAtFiGyzKHzi4HyLqYZgggX-c=',
   },
 ];
-
-
-
-
 
 const dropdowncontent = document.getElementById('dropdownContent');
 const currentYear = new Date().getFullYear();
@@ -52,95 +51,124 @@ function loadNews() {
   });
 }
 
-
-
-
 // Function to format date
 function formatDate(dateString) {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString('en-US', options);
 }
 
-
-
-
-
-
 // Initialize all functionality when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   loadNews();
   //createResponsiveNavbar();
 
+  // Get elements
 
- // Get elements
- 
-  
+  document
+    .querySelector('.mobile-dropdown-trigger-topics')
+    .addEventListener('click', function (e) {
+      e.preventDefault();
+      if (
+        document
+          .querySelector('.mobile-dropdown-panel-team')
+          .classList.contains('active')
+      ) {
+        document
+          .querySelector('.mobile-dropdown-panel-team')
+          .classList.toggle('active');
+      }
+      document
+        .querySelector('.mobile-dropdown-panel-topics')
+        .classList.toggle('active');
+      document.querySelector('.mobile-overlay').classList.toggle('active');
+    });
 
-  document.querySelector('.mobile-dropdown-trigger-topics').addEventListener('click', function(e) {
+  document
+    .querySelector('.mobile-dropdown-trigger-team')
+    .addEventListener('click', function (e) {
+      e.preventDefault();
+      if (
+        document
+          .querySelector('.mobile-dropdown-panel-topics')
+          .classList.contains('active')
+      ) {
+        document
+          .querySelector('.mobile-dropdown-panel-topics')
+          .classList.toggle('active');
+      }
+      document
+        .querySelector('.mobile-dropdown-panel-team')
+        .classList.toggle('active');
+      document.querySelector('.mobile-overlay').classList.toggle('active');
+    });
+
+  document
+    .querySelector('.close-dropdown')
+    .addEventListener('click', function () {
+      document
+        .querySelector('.mobile-dropdown-panel-topics')
+        .classList.remove('active');
+      document
+        .querySelector('.mobile-dropdown-panel-team')
+        .classList.remove('active');
+      document.querySelector('.mobile-overlay').classList.remove('active');
+    });
+  document
+    .querySelector('.close-dropdown-team')
+    .addEventListener('click', function () {
+      document
+        .querySelector('.mobile-dropdown-panel-topics')
+        .classList.remove('active');
+      document
+        .querySelector('.mobile-dropdown-panel-team')
+        .classList.remove('active');
+      document.querySelector('.mobile-overlay').classList.remove('active');
+    });
+
+  document.querySelector('.user-menu').addEventListener('click', function (e) {
     e.preventDefault();
-    if(document.querySelector('.mobile-dropdown-panel-team').classList.contains('active')) {
-      document.querySelector('.mobile-dropdown-panel-team').classList.toggle('active');
-    }
-    document.querySelector('.mobile-dropdown-panel-topics').classList.toggle('active');
-    document.querySelector('.mobile-overlay').classList.toggle('active');
-    
-  });
-  
-  document.querySelector('.mobile-dropdown-trigger-team').addEventListener('click', function(e) {
-    e.preventDefault();
-    if(document.querySelector('.mobile-dropdown-panel-topics').classList.contains('active')) {
-      document.querySelector('.mobile-dropdown-panel-topics').classList.toggle('active');
-    }
-    document.querySelector('.mobile-dropdown-panel-team').classList.toggle('active');
-    document.querySelector('.mobile-overlay').classList.toggle('active');
-  });
-  
-  document.querySelector('.close-dropdown').addEventListener('click', function() {
-    document.querySelector('.mobile-dropdown-panel-topics').classList.remove('active');
-    document.querySelector('.mobile-dropdown-panel-team').classList.remove('active');
-    document.querySelector('.mobile-overlay').classList.remove('active');
-  });
-  document.querySelector('.close-dropdown-team').addEventListener('click', function() {
-    document.querySelector('.mobile-dropdown-panel-topics').classList.remove('active');
-    document.querySelector('.mobile-dropdown-panel-team').classList.remove('active');
-    document.querySelector('.mobile-overlay').classList.remove('active');
-  });
-  
-  document.querySelector('.user-menu').addEventListener('click', function(e) {
-    e.preventDefault();
-    document.querySelector('.mobile-dropdown-panel-topics').classList.remove('active');
-    document.querySelector('.mobile-dropdown-panel-team').classList.remove('active');
+    document
+      .querySelector('.mobile-dropdown-panel-topics')
+      .classList.remove('active');
+    document
+      .querySelector('.mobile-dropdown-panel-team')
+      .classList.remove('active');
     document.querySelector('.mobile-user-panel').classList.toggle('active');
     document.querySelector('.mobile-overlay').classList.toggle('active');
   });
-  
-  document.querySelector('.close-user-panel').addEventListener('click', function() {
-    document.querySelector('.mobile-overlay').classList.remove('active');
-    document.querySelector('.mobile-user-panel').classList.remove('active');
-    
-  });
-  
-  document.querySelector('.mobile-overlay').addEventListener('click', function() {
-    document.querySelector('.mobile-dropdown-panel-topics').classList.remove('active');
-    document.querySelector('.mobile-dropdown-panel-team').classList.remove('active');
-    document.querySelector('.mobile-user-panel').classList.remove('active');
-    this.classList.remove('active');
-  });
+
+  document
+    .querySelector('.close-user-panel')
+    .addEventListener('click', function () {
+      document.querySelector('.mobile-overlay').classList.remove('active');
+      document.querySelector('.mobile-user-panel').classList.remove('active');
+    });
+
+  document
+    .querySelector('.mobile-overlay')
+    .addEventListener('click', function () {
+      document
+        .querySelector('.mobile-dropdown-panel-topics')
+        .classList.remove('active');
+      document
+        .querySelector('.mobile-dropdown-panel-team')
+        .classList.remove('active');
+      document.querySelector('.mobile-user-panel').classList.remove('active');
+      this.classList.remove('active');
+    });
 
   const mobileAppBtn = document.getElementById('mobileAppBtn');
- const mobileAppDropdown = document.getElementById('mobileAppDropdown');
- const studentsWorkItem = document.getElementById('studentsWorkItem');
- 
- // Toggle dropdown when Applications button is clicked
- mobileAppBtn.addEventListener('click', function(e) {
-   e.preventDefault();
-   
-   // Toggle dropdown
-   mobileAppDropdown.classList.toggle('open');
-   
- });
+  const mobileAppDropdown = document.getElementById('mobileAppDropdown');
+  const studentsWorkItem = document.getElementById('studentsWorkItem');
 
-  const studentsWork = document.getElementById('studentsWork-section')
+  // Toggle dropdown when Applications button is clicked
+  mobileAppBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    // Toggle dropdown
+    mobileAppDropdown.classList.toggle('open');
+  });
+
   const appbtn = document.getElementById('buttonDropdown');
   const appbtnMobile = document.getElementById('mobileAppBtn');
   console.log(appbtn);
@@ -152,7 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const sentimentAnalysisLinkMobile = document.getElementById(
     'sentimentAnalysisLinkMobile'
   );
-  const user = JSON.parse(localStorage.getItem('user'));
+
+  const user = JSON.parse(sessionStorage.getItem('user'));
   if (user && user.role) {
     console.log(user.role);
     if (
@@ -162,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
       user.role === 'anotator2'
     ) {
       appbtn.style.display = 'inline-block';
-      appbtnMobile.style.display = 'inline-block';
+      appbtnMobile.style.display = 'block';
     } else {
       appbtn.style.display = 'none';
       appbtnMobile.style.display = 'none';
@@ -203,8 +232,4 @@ document.addEventListener('DOMContentLoaded', () => {
     sentimentAnalysisLink.style.display = 'none';
     sentimentAnalysisLinkMobile.style.display = 'none';
   }
-
-  
 });
-
-

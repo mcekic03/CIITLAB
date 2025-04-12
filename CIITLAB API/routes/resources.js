@@ -168,9 +168,10 @@ router.post('/updateResources',auth, async (req, res) => {
   });
 
 router.post('/update/:id',auth,checkRole('researcher','admin'), async (req, res) => {
-    const {resource} = req.body;
     const {id} = req.params;
-
+    const resource = req.body;
+    console.log(resource);
+    console.log(id);
     try {
         const result = await Resource.updateResource(id,resource);
         res.json(result);

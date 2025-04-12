@@ -23,8 +23,8 @@ class StudentsWork {
     try {
       const query = `
         SELECT *
-        FROM StudentsWork
-        WHERE sw.id = ?
+        FROM studentswork
+        WHERE id = ?
       `;
       const [rows] = await db.promise().query(query, [id]);
       if (rows.length === 0) throw new Error('Work not found');
@@ -38,7 +38,7 @@ class StudentsWork {
   // 📌 4️⃣ Izlistavanje radova po mentor_id
   static async getWorksByMentorId(mentor_id) {
     try {
-      const query = `SELECT * FROM StudentsWork WHERE mentor_id = ? ORDER BY created_at DESC`;
+      const query = `SELECT * FROM studentswork WHERE mentor_id = ? ORDER BY created_at DESC`;
       const [rows] = await db.promise().query(query, [mentor_id]);
       return rows;
     } catch (err) {
@@ -90,6 +90,33 @@ class StudentsWork {
       throw new Error('Database error');
     }
   }
+
+  static async updateWork(id, workData) {
+    try {
+      const query = `
+        UPDATE studentswork 
+        SET firstName = ?, lastName = ?, title = ?, description = ?, graduationYear = ?, link = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `;
+      const [result] = await db.promise().query(query, [
+        workData.firstName,
+        workData.lastName,
+        workData.title,
+        workData.description,
+        workData.graduationYear,
+        workData.link,
+        id
+      ]);
+      return { 
+        message: 'Work updated successfully', 
+        affectedRows: result.affectedRows 
+      };
+    } catch (err) {
+      console.error('Error updating work:', err);
+      throw new Error('Database error');
+    }
+  }
+
 }
 
 module.exports = StudentsWork;

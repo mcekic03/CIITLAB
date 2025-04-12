@@ -11,8 +11,8 @@ const authState = {
   token: null,
 
   init() {
-    this.token = localStorage.getItem('authToken');
-    const userId = localStorage.getItem('userId');
+    this.token = sessionStorage.getItem('authToken');
+    const userId = sessionStorage.getItem('userId');
     
     // Proveri da li je userId validan
     const isValidId = userId && userId !== 'undefined' && userId !== 'null';
@@ -20,7 +20,7 @@ const authState = {
     
     // Ако нема токена или userId, нема смисла даље проверавати
     if (!this.token || !isValidId) {
-      console.warn('No auth token or valid userId found in localStorage');
+      console.warn('No auth token or valid userId found in sessionStorage');
       // Постави стање као неаутентификовано и ажурирај навбар
       this.isAuthenticated = false;
       this.user = null;
@@ -72,7 +72,7 @@ const authState = {
       this.isAuthenticated = true;
       
       // Ažuriraj lokalno skladište
-      localStorage.setItem('user', JSON.stringify(userData));
+      sessionStorage.setItem('user', JSON.stringify(userData));
       
       this.updateNavbar();
       this.updateMobileAuth();
@@ -97,21 +97,21 @@ const authState = {
     this.token = token;
     this.isAuthenticated = true;
     
-    // Save data in localStorage
-    localStorage.setItem('authToken', token);
+    // Save data in sessionStorage
+    sessionStorage.setItem('authToken', token);
     
     // Use _id or id, whichever is available
     const userId = user.id;
-    console.log('Saving userId in localStorage:', userId);
-    localStorage.setItem('userId', userId);
-    localStorage.setItem('user', JSON.stringify(user));
+    console.log('Saving userId in sessionStorage:', userId);
+    sessionStorage.setItem('userId', userId);
+    sessionStorage.setItem('user', JSON.stringify(user));
     
     // Check if saving was successful
     setTimeout(() => {
-      console.log('Checking localStorage after setAuth:');
-      console.log('authToken:', localStorage.getItem('authToken'));
-      console.log('userId:', localStorage.getItem('userId'));
-      console.log('user object:', localStorage.getItem('user'));
+      console.log('Checking sessionStorage after setAuth:');
+      console.log('authToken:', sessionStorage.getItem('authToken'));
+      console.log('userId:', sessionStorage.getItem('userId'));
+      console.log('user object:', sessionStorage.getItem('user'));
     }, 100);
     
     this.updateNavbar();
@@ -119,28 +119,28 @@ const authState = {
   },
 
   clearAuth() {
-    console.log('Clearing auth data from localStorage');
+    console.log('Clearing auth data from sessionStorage');
     this.user = null;
     this.token = null;
     this.isAuthenticated = false;
     
-    // Očisti localStorage
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('user');
+    // Očisti sessionStorage
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('user');
     
     // Proveri da li je čišćenje uspelo
     setTimeout(() => {
-      const authToken = localStorage.getItem('authToken');
-      const userId = localStorage.getItem('userId');
-      const user = localStorage.getItem('user');
+      const authToken = sessionStorage.getItem('authToken');
+      const userId = sessionStorage.getItem('userId');
+      const user = sessionStorage.getItem('user');
       
       console.log('After clearing - Token present:', !!authToken, 'userId present:', !!userId, 'user present:', !!user);
       
       // Ako podaci i dalje postoje, probaj clear
       if (authToken || userId || user) {
-        console.warn('Failed to remove items from localStorage, trying clear()');
-        localStorage.clear();
+        console.warn('Failed to remove items from sessionStorage, trying clear()');
+        sessionStorage.clear();
       }
     }, 100);
     
@@ -372,12 +372,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check if this is login page
   const isLoginPage = window.location.href.includes('login.html');
   
-  // If it's login page, clear localStorage of any incorrect data
+  // If it's login page, clear sessionStorage of any incorrect data
   if (isLoginPage) {
-    console.log('Login page detected - resetting localStorage');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('user');
+    console.log('Login page detected - resetting sessionStorage');
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('user');
   }
   
   authState.init();

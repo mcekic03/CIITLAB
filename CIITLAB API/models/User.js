@@ -35,13 +35,11 @@ class User {
     try {
       const query = `
         SELECT u.*,
-       GROUP_CONCAT(DISTINCT CONCAT(ue.degree, ',', ue.institution) ORDER BY ue.degree ASC SEPARATOR '|') AS education,
-       GROUP_CONCAT(DISTINCT us.skill ORDER BY us.skill ASC) AS skills
-      FROM users u
-      LEFT JOIN usereducation ue ON u.id = ue.user_id
-      LEFT JOIN userskills us ON u.id = us.user_id
-      WHERE u.id = ?
-      GROUP BY u.id;
+       GROUP_CONCAT(DISTINCT CONCAT(ue.degree, ':', ue.institution, ':', ue.year) ORDER BY ue.degree ASC SEPARATOR '|') AS education
+        FROM users u
+        LEFT JOIN usereducation ue ON u.id = ue.user_id
+        WHERE u.id = ?
+        GROUP BY u.id;
       `;
   
       const [rows] = await db.promise().query(query, [id]);
@@ -55,11 +53,12 @@ class User {
       // Split stringove sa zarezima u nizove
       
       user.skills = user.skills ? user.skills.split(',') : [];
+      user.bio = user.bio.replace(/\t/g, '');
 
       if (user.education) {
         user.education = user.education.split('|').map(entry => {
-            const [degree, institution] = entry.split(',');
-            return { degree, institution };
+            const [degree, institution,year] = entry.split(':');
+            return { degree, institution,year };
         });
       } else {
         user.education = [];
@@ -120,11 +119,9 @@ class User {
     try {
 
       let query = `  SELECT u.*,
-       GROUP_CONCAT(DISTINCT CONCAT(ue.degree, ',', ue.institution) ORDER BY ue.degree ASC SEPARATOR '|') AS education,
-       GROUP_CONCAT(DISTINCT us.skill ORDER BY us.skill ASC) AS skills
+       GROUP_CONCAT(DISTINCT CONCAT(ue.degree, ',', ue.institution) ORDER BY ue.degree ASC SEPARATOR '|') AS educatios
         FROM users u
         LEFT JOIN usereducation ue ON u.id = ue.user_id
-        LEFT JOIN userskills us ON u.id = us.user_id
         WHERE u.role = 'researcher'
         GROUP BY u.id
         ORDER BY 
@@ -132,16 +129,6 @@ class User {
         FIELD(u.id, 3, 1, 2, 9, 10, 4, 5), 
         u.id ASC; `;
 
-      const query1 = `
-        SELECT u.*,
-        GROUP_CONCAT(DISTINCT CONCAT(ue.degree, ',', ue.institution) ORDER BY ue.degree ASC SEPARATOR '|') AS education,
-        GROUP_CONCAT(DISTINCT us.skill ORDER BY us.skill ASC) AS skills
-        FROM users u
-        LEFT JOIN usereducation ue ON u.id = ue.user_id
-        LEFT JOIN userskills us ON u.id = us.user_id
-        WHERE u.role = 'researcher'
-        GROUP BY u.id;
-      `;
       
       const [rows] = await db.promise().query(query);
       
@@ -170,11 +157,9 @@ class User {
     try {
       const query = `
         SELECT u.*,
-        GROUP_CONCAT(DISTINCT CONCAT(ue.degree, ',', ue.institution) ORDER BY ue.degree ASC SEPARATOR '|') AS education,
-        GROUP_CONCAT(DISTINCT us.skill ORDER BY us.skill ASC) AS skills
+        GROUP_CONCAT(DISTINCT CONCAT(ue.degree, ',', ue.institution) ORDER BY ue.degree ASC SEPARATOR '|') AS education
         FROM users u
         LEFT JOIN usereducation ue ON u.id = ue.user_id
-        LEFT JOIN userskills us ON u.id = us.user_id
         WHERE u.role = 'student'
         GROUP BY u.id;
       `;
@@ -244,6 +229,67 @@ class User {
       throw new Error('Error deleting user: ' + error.message);
     }
   }
+
+//dobija niz edukacija i id usera
+  static async updateEducation(id, updates) {
+    try {
+        const query = 'delete from usereducation where user_id = ?';
+        const [result] = await db.promise().query(query, [id]);
+
+        let results2 = [];
+      for (const update of updates) {
+        console.log(update);
+        const query2 = 'insert into usereducation (user_id, degree, institution,`year`) values (?, ?, ?, ?)';
+        const [result2] = await db.promise().query(query2, [id, update.degree, update.institution, update.year]);
+        results2.push(result2);
+      }
+      return results2;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error updating education: ' + error.message);
+    } 
+
+  }
+
+  static async updateSkillsForUser(userId, skills) {
+    const skillsS = skills.join(', ');
+    try {
+      const query = 'UPDATE users SET skills = ? WHERE id = ?';
+      const values = [skillsS, userId];
+      const [result] = await db.promise().query(query, values);
+      return result; // Vraća rezultat upita
+  } catch (error) {
+      throw new Error('Greška prilikom ažuriranja veština: ' + error.message);
+  }
+
+
+  }
+
+  static async updateUserImage(userId, imageUrl) {
+    try {
+      const query = 'UPDATE users SET profileImage = ? WHERE id = ?';
+      const values = [imageUrl, userId];
+      const [result] = await db.promise().query(query, values);
+      return result; // Vraća rezultat upita
+    } catch (error) {
+      throw new Error('Greška prilikom ažuriranja slike korisnika: ' + error.message);
+    }
+  }
+
+  static async updateUserProfile(userId, updates) {
+    try {
+      const query = 'UPDATE users SET firstName = ?, lastName = ?, email = ?, bio = ? WHERE id = ?';
+      const values = [updates.firstName, updates.lastName, updates.email, updates.bio, userId];
+      const [result] = await db.promise().query(query, values);
+      return result; // Vraća rezultat upita  
+    } catch (error) {
+      throw new Error('Greška prilikom ažuriranja profila korisnika: ' + error.message);
+    }
+  }
+
+
+
+
 }
 
 module.exports = User;

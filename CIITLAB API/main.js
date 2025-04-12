@@ -7,13 +7,13 @@ const errorHandler = require('./middleware/error');
 const swaggerUi = require('swagger-ui-express');
 const specs = require('./config/swagger');
 const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 
 
 const app = express();
 app.use(cors());
-app.use(express.json());
 app.use(routeLogger);
 app.use(errorHandler);
 
@@ -28,37 +28,63 @@ app.get('/', (req, res) => {
 
 // Rute
 
-app.use("/users/images", express.static(path.join(__dirname, "public")));
+app.use("/users/images",express.json(), express.static(path.join(__dirname, "public")));
+
+
+const uploadRoutes = require('./routes/upload');
+app.use('/users/updateProfile', uploadRoutes);
 
 const userRoutes = require('./routes/users');
-app.use('/users', userRoutes);
+app.use('/users',express.json(), userRoutes);
 
 //ovde je login samo /auth/login
 const authRoutes = require('./routes/auth');
-app.use('/auth', authRoutes);
+app.use('/auth',express.json(), authRoutes);
 
 //publications
 const publicationsRoutes = require("./routes/publications");
-app.use('/users/publications', publicationsRoutes);
+app.use('/users/publications',express.json(), publicationsRoutes);
 
 //resources
 const resourcesRoutes = require("./routes/resources")
-app.use('/users/resources', resourcesRoutes);
+app.use('/users/resources',express.json(), resourcesRoutes);
 
 //sentencesroutes
 const sentencesRoutes = require("./routes/sentences")
-app.use('/sentences', sentencesRoutes);
+app.use('/sentences',express.json(), sentencesRoutes);
 
 //studentsWorks
 const studentsWorkRoutes = require("./routes/studentsWork")
-app.use('/studentsWork', studentsWorkRoutes);
+app.use('/studentsWork',express.json(), studentsWorkRoutes);
 
 //adminroutes
 const adminRoutes = require("./routes/admin")
-app.use('/admin', adminRoutes);
+app.use('/admin',express.json(), adminRoutes);
 
+// Kreiranje logs direktorijuma ako ne postoji
+const logsDir = path.join(__dirname, 'logs');
+if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir);
+}
 
+// Funkcija za čišćenje server.log fajla
+const clearServerLog = () => {
+    const logPath = path.join(logsDir, 'server.log');
+    
+    // Proveri da li fajl postoji
+    if (fs.existsSync(logPath)) {
+        try {
+            // Isprazni fajl
+            fs.writeFileSync(logPath, '');
+            console.log('Server.log fajl je očišćen');
+        } catch (error) {
+            console.error('Greška pri čišćenju server.log fajla:', error);
+        }
+    }
+};
 
+// Postavi interval za čišćenje na 10 dana (10 * 24 * 60 * 60 * 1000 milisekundi)
+setInterval(clearServerLog, 10 * 24 * 60 * 60 * 1000);
 
 // Dobijanje lokalne IP adrese
 const getLocalIp = () => {

@@ -1,5 +1,5 @@
 const API_BASE_URL = 'http://160.99.40.221:3500';
-const authToken = localStorage.getItem('authToken');
+const authToken = sessionStorage.getItem('authToken');
 
 const state = {
   authToken: null,
@@ -7,12 +7,12 @@ const state = {
   isAuthenticated: () => Boolean(state.authToken && state.userId),
 };
 
-// Initialize state from localStorage
+// Initialize state from sessionStorage
 function initializeState() {
-  state.authToken = localStorage.getItem('authToken');
+  state.authToken = sessionStorage.getItem('authToken');
   console.log(state.authToken);
-  // Get userId either from URL parameter or localStorage
-  const storageId = localStorage.getItem('userId');
+  // Get userId either from URL parameter or sessionStorage
+  const storageId = sessionStorage.getItem('userId');
 
   // Proveri validnost ID-a iz storage-a
   const isStorageIdValid =
@@ -21,10 +21,10 @@ function initializeState() {
   // Ako storage ID nije validan, očisti ga
   if (storageId && !isStorageIdValid) {
     console.warn(
-      'Invalid userId found in localStorage, clearing it:',
+      'Invalid userId found in sessionStorage, clearing it:',
       storageId
     );
-    localStorage.removeItem('userId');
+    sessionStorage.removeItem('userId');
   }
 
   // Postavimo ID koristeći URL parametar ili lokalno skladište
@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sentimentSection = document.getElementById('sentimentSection');
   const researchGrid = document.getElementById('researchGrid');
   const researchGridTitle = document.getElementById('researchGridTitle');
+  const news = document.getElementById('latest-news');
   const posTaggingLink = document.getElementById('posTaggingLink');
   const sentimentAnalysisLink = document.getElementById(
     'sentimentAnalysisLink'
@@ -59,7 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
     'sentimentAnalysisLinkMobile'
   );
 
-  const heroContent = document.getElementById('heroContent');
+  const desktopNav = document.getElementById('desktopNav');
+  const mobileNav = document.getElementById('mobileNav');
   const sentimentApp = document.getElementById('sentimentApp');
   const sentimentCloseBtn = document.getElementById('sentimentCloseBtn');
 
@@ -84,9 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       sentimentApp.classList.remove('active');
       setTimeout(() => {
-        heroContent.classList.remove('hidden');
+        desktopNav.classList.remove('hidden');
+        mobileNav.classList.remove('hidden');
         researchGrid.classList.remove('hide');
         researchGridTitle.classList.remove('hide');
+        news.classList.remove('hide');
         enableScroll();
 
         const existingOverlay = document.querySelector('.darkening-overlay');
@@ -101,12 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (sentimentAnalysisLink) {
     sentimentAnalysisLink.addEventListener('click', (e) => {
       e.preventDefault();
-      console.log(JSON.parse(localStorage.getItem('user')).role);
+      console.log(JSON.parse(sessionStorage.getItem('user')).role);
 
       // Hide hero content with transition
-      heroContent.classList.add('hidden');
+      desktopNav.classList.add('hidden');
+      mobileNav.classList.add('hidden');
       researchGrid.classList.add('hide');
       researchGridTitle.classList.add('hide');
+      news.classList.add('hide');
 
       // Show sentiment app with transition
       setTimeout(() => {
@@ -132,12 +138,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (sentimentAnalysisLinkMobile) {
     sentimentAnalysisLinkMobile.addEventListener('click', (e) => {
       e.preventDefault();
-      console.log(JSON.parse(localStorage.getItem('user')).role);
+      console.log(JSON.parse(sessionStorage.getItem('user')).role);
 
       // Hide hero content with transition
-      heroContent.classList.add('hidden');
+      desktopNav.classList.add('hidden');
+      mobileNav.classList.add('hidden');
       researchGrid.classList.add('hide');
       researchGridTitle.classList.add('hide');
+      news.classList.add('hide');
 
       // Show sentiment app with transition
       setTimeout(() => {
@@ -166,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Dohvatanje nove rečenice iz baze
   async function getSentence() {
     document
-      .getElementById('sentimentCard')
+      .getElementById('sentimentApp')
       .scrollIntoView({ behavior: 'smooth', block: 'center' });
     sentimentCard.classList.remove('pulse');
     void sentimentCard.offsetWidth; // Trigger reflow
@@ -184,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'Content-Type': 'application/json',
         },
       });
-      console.log(JSON.parse(localStorage.getItem('user')).role);
+      console.log(JSON.parse(sessionStorage.getItem('user')).role);
       currentSentence = await response.json();
       console.log(state.authToken);
       console.log(currentSentence[0]);
@@ -199,6 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error('Greška pri dohvatanju rečenice:', error);
     }
+    document
+      .getElementById('sentimentOverlay')
+      .scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
   // Slanje feedback-a
   async function sendFeedback(sentiment) {
@@ -244,9 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
   async function closeSentimentCard() {
     sentimentApp.classList.remove('active');
     setTimeout(() => {
-      heroContent.classList.remove('hidden');
+      desktopNav.classList.remove('hidden');
+      mobileNav.classList.remove('hidden');
       researchGrid.classList.remove('hide');
       researchGridTitle.classList.remove('hide');
+      news.classList.remove('hide');
       
       const existingOverlay = document.querySelector('.darkening-overlay');
       if (existingOverlay) {

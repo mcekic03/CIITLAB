@@ -41,8 +41,8 @@ const ResourceHandler = {
 
   // Check authentication and setup UI accordingly
   checkAuthAndSetupUI() {
-    const authToken = localStorage.getItem('authToken');
-    const userRole = localStorage.getItem('userRole');
+    const authToken = sessionStorage.getItem('authToken');
+    const userRole = sessionStorage.getItem('userRole');
     const addResourceBtn = document.getElementById('addResourceBtn');
 
     if (authToken && userRole === 'researcher' && addResourceBtn) {
@@ -68,13 +68,13 @@ const ResourceHandler = {
   async loadResources() {
     try {
       console.log('Loading resources...');
-      const authToken = localStorage.getItem('authToken');
+      const authToken = sessionStorage.getItem('authToken');
       console.log('Auth token present:', !!authToken);
 
       const urlParams = new URLSearchParams(window.location.search);
       let urlId = urlParams.get('id');
       if(urlId == null){
-        urlId = localStorage.getItem('userId')
+        urlId = sessionStorage.getItem('userId')
       }
       const response = await fetch(`${this.config.API_BASE_URL}/resources/all`, {
         headers: {
@@ -98,16 +98,127 @@ const ResourceHandler = {
         console.log(`Resource ${index + 1} researcher data:`, resource.researcher_id);
       });
       
-      this.displayResources(resources);
+      this.displayStudentsWork(resources);
     } catch (error) {
       console.error('Error loading resources:', error);
       this.displayError('Error loading resources');
+    }
+  },
+  async loadStudentsWork() {
+    try {
+      console.log('Loading students work...');
+      const authToken = sessionStorage.getItem('authToken');
+      console.log('Auth token present:', !!authToken);
+
+      const urlParams = new URLSearchParams(window.location.search);
+      let urlId = urlParams.get('id');
+      if(urlId == null){
+        urlId = sessionStorage.getItem('userId')
+      }
+      const response = await fetch(`${this.config.API_BASE_URL}/studentsWork/all`, {
+        headers: {
+          Authorization: authToken ? `Bearer ${authToken}` : undefined,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch resources');
+      }
+
+      const studentsWork = await response.json();
+      console.log('Loaded students work:', studentsWork);
+      
+    
+      
+
+      
+      // Log each resource's researcher data
+      studentsWork.forEach((studentsWork, index) => {
+        console.log(`Resource ${index + 1} researcher data:`, studentsWork.researcher_id);
+      });
+      
+      this.displayStudentsWork(studentsWork);
+    } catch (error) {
+      console.error('Error loading students work:', error);
+      this.displayError('Error loading students work');
     }
   },
 
   
 
   // Display resources in the list
+ async displayStudentsWork(studentsWork) {
+    const studentsWorkList = document.getElementById('studentsWork-list-page');
+    
+    if (!studentsWorkList) {
+      console.error('Students work list element not found');
+      return;
+    }
+    if (studentsWork.length === 0) {
+      studentsWorkList.innerHTML = '<p class="no-resources">No students work available at the moment.</p>';
+      return;
+    }
+
+    // Clear existing resources
+    studentsWorkList.innerHTML = '';
+
+    // Add each resource to the list
+    studentsWork.forEach(studentsWork => {
+      // Format the creation date
+      const formattedDate = formatDate(studentsWork.created_at);
+      
+      // Get researcher name
+      const researcherName = studentsWork.researcher && studentsWork.researcher.firstName && studentsWork.researcher.lastName
+        ? `${studentsWork.researcher.firstName} ${studentsWork.researcher.lastName}`
+        : 'Unknown researcher';
+
+        console.log(researcherName);
+        console.log(studentsWork);
+
+      // Check if description is long enough to need truncation
+      const isLongDescription = studentsWork.description.length > 100;
+      const truncatedDescription = isLongDescription 
+        ? `${studentsWork.description.substring(0, 100)}...` 
+        : studentsWork.description || 'No description available';
+
+      // Create resource HTML
+      const studentsWorkElement = document.createElement('div');
+      studentsWorkElement.className = 'resource-item-page';
+      studentsWorkElement.innerHTML = `
+        <div class="resource-content-page">
+          <div class="resource-header-page">
+            <h3>${studentsWork.title || 'No title'}</h3>
+            <div class="resource-meta">
+              <span class="researcher">
+                <i class="fas fa-user"></i> ${researcherName}
+              </span>
+              <span class="date">
+                <i class="fas fa-calendar"></i> ${formattedDate}
+              </span>
+            </div>
+          </div>
+          <div class="resource-description-container-page">
+            <p class="resource-description-page">${truncatedDescription}</p>
+            ${isLongDescription ? '<button class="read-more-btn-page">Read more</button>' : ''}
+          </div>
+        </div>
+        <div class="resource-actions-page">
+          <a href="${resource.url}" target="_blank" rel="noopener noreferrer" class="btn-primary resource-btn">
+            <i class="fas fa-external-link-alt"></i> View resource
+          </a>
+        </div>
+      `;
+      console.log(studentsWorkList);
+      // Add event listener to "Read more" button if it exists
+      if (isLongDescription) {
+        const readMoreBtn = studentsWorkElement.querySelector('.read-more-btn-page');
+        readMoreBtn.addEventListener('click', () => openModal(studentsWork));
+      }
+
+      studentsWorkList.appendChild(studentsWorkElement);
+      
+    });
+  },
  async displayResources(resources) {
     const resourcesList = document.getElementById('resources-list-page');
     
@@ -271,8 +382,8 @@ const ResourceHandler = {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: localStorage.getItem('authToken')
-              ? `Bearer ${localStorage.getItem('authToken')}`
+            Authorization: sessionStorage.getItem('authToken')
+              ? `Bearer ${sessionStorage.getItem('authToken')}`
               : undefined,
           },
           body: JSON.stringify(formData),
@@ -341,7 +452,7 @@ const ResourceHandler = {
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
           },
         }
       );

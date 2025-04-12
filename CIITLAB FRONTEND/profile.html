@@ -24,6 +24,7 @@
     <!-- Defer non-critical JavaScript -->
     <script src="js/auth.js" defer></script>
     <script src="js/researcher-profile.js" defer></script>
+    <script src="js/main.js" async></script>
   </head>
   <body>
     <header>
@@ -137,8 +138,8 @@
               />
               <div class="profile-image-overlay">
                 <button class="change-image-btn" onclick="toggleEditMode()" aria-label="Change profile picture">
-                  <i class="fas fa-camera"></i>
-                  <span>Promeni sliku</span>
+                  <i class="fas fa-edit"></i>
+                  <span>Izmeni profil</span>
                 </button>
               </div>
             </div>
@@ -167,7 +168,7 @@
       <section class="profile-content">
         <div class="profile-grid">
           <!-- Left Column -->
-          <div class="profile-main">
+          <div id="profileMain" class="profile-main">
             <!-- About Section -->
            
             <!-- Education Section -->
@@ -178,7 +179,7 @@
                   Education
                 </h2>
                 <button
-                  class="btn btn-outline edit-education-btn"
+                  class="btn btn-outline edit-section-btn"
                   onclick="toggleEducationEdit()"
                   style="display: none"
                   aria-label="Edit education"
@@ -214,7 +215,7 @@
                 </div>
               </div>
             </div>
-            <div class="profile-section">
+            <div id="studentsWorkSection" class="profile-section">
               <div class="section-header">
                 <h2>
                   <i class="fas fa-briefcase" aria-hidden="true"></i> Students Work
@@ -225,7 +226,7 @@
                 </div>
                 <button
                   class="btn btn-outline edit-section-btn"
-                  onclick="toggleStudentsWorkEdit()"
+                  onclick="toggleStudentsWorkUpload()"
                   style="display: none"
                   aria-label="Edit Students Work"
                 >
@@ -236,6 +237,8 @@
                 <div class="studentsWork-list">
                   <p class="no-studentsWork">No Students Work listed</p>
                 </div>
+              </div>
+              <div class="studentsWork-section-footer">
               </div>
             </div>
           </div>
@@ -297,6 +300,17 @@
 
           <!-- Profile Edit Form -->
           <form id="profileEditForm" class="edit-form">
+            <div class="modal-header">
+              <h2>Edit Profile Info</h2>
+              <button
+                type="button"
+                class="close-btn"
+                onclick="closeModal()"
+                aria-label="Close modal"
+              >
+                &times;
+              </button>
+            </div>
             <div class="form-group">
               <label for="firstName">First Name</label>
               <input
@@ -347,8 +361,11 @@
                 aria-describedby="profileImageHelp"
                 onchange="UI.handleImagePreview(event)"
               />
-              <small id="profileImageHelp" class="form-text">
-                Maximum file size: 5MB. Supported formats: JPEG, PNG, JPG
+              <div id="profileImagePreviewContainer" class="profile-image-preview-container">
+                <img id="profileImagePreview" src="" alt="Profile image preview" class="profile-image-preview" />
+              </div>
+              <small id="profileImageHelp" class="form-text text-muted">
+                Upload a profile image (JPG, JPEG, PNG, WEBP). Max size: 5MB.
               </small>
             </div>
             <div class="form-actions">
@@ -457,8 +474,7 @@
                &times;
              </button>
            </div>
-           <div class="reso-inputs">
-             <!-- Publication input groups will be added here dynamically -->
+           <div class="resource-inputs">
            </div>
            <div class="form-actions">
              <button type="submit" class="btn btn-primary">
@@ -572,6 +588,31 @@
         </div>
       </template>
 
+      <!-- Resource Form Template -->
+      <template id="resourceFormTemplate">
+        <div class="resource-input-group">
+          <div class="form-group">
+            <label>Title *</label>
+            <input type="text" name="title" required />
+          </div>
+          <div class="form-group">
+            <label>Description *</label>
+            <input type="text" name="description" required />
+          </div>
+          <div class="form-group">
+            <label>Link *</label>
+            <input type="url" name="url" required />
+          </div>
+          <div class="form-group" style="display: none;">
+            <label>Id</label>
+            <input type="hidden" name="resourceId" />
+          </div>
+          <button type="button" class="btn-icon remove-resource">
+            <i class="fas fa-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+      </template>
+
       <!-- Publication Form Template -->
       <template id="publicationFormTemplate">
         <div class="publication-input-group">
@@ -673,7 +714,40 @@
           </div>
         </div>
       </div>
-    </div>
+
+      <div id="studentsWorkModal" class="studentsWork-modal">
+        <div class="studentsWork-modal-content">
+          <div class="studentsWork-modal-inner">
+            <div class="studentsWork-modal-header">
+              <h2 class="studentsWork-modal-title" id="studentsWork-modal-title"></h2>
+              <button class="studentsWork-modal-close" id="closeStudentsWorkModal" onclick="closeStudentsWorkModal()"><i class="fa fa-times" aria-hidden="true"></i></button>
+            </div>
+            <div class="studentsWork-modal-meta" id="studentsWork-modal-meta"></div>
+            <div class="studentsWork-modal-description" id="studentsWork-modal-description"></div>
+            <div class="studentsWork-modal-actions">
+              <button class="btn-secondary" id="studentsWorkModalCloseBtn" onclick="closeStudentsWorkModal()">Close</button>
+              <a href="#" class="btn-primary" id="modalViewLink" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-external-link-alt"></i> View resource
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div id="fullStudentsWorkModal" class="full-studentsWork-modal">
+        <div class="full-studentsWork-modal-content">
+          <div class="full-modal-inner">
+            <div class="full-modal-header">
+              <h2 class="full-modal-title" id="fullStudentsWorkModalTitle"></h2>
+              <button class="full-studentsWork-modal-close" id="closeFullStudentsWorkModal" onclick="closeFullStudentsWorkModal()"><i class="fa fa-times" aria-hidden="true"></i></button>
+            </div>
+            <div class="full-studentsWork-list">
+  
+            </div>
+              <button class="btn-secondary" id="fullStudentsWorkModalCloseBtn" onclick="closeFullStudentsWorkModal()">Close</button>
+            </div>
+          </div>
+        </div>
 
     <!-- Students Work Upload Modal -->
     <div id="studentsWorkUploadModal" class="modal">

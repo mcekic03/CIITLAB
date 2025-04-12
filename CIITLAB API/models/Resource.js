@@ -96,10 +96,10 @@ class Resource {
     try {
       const query = `
         UPDATE Resources 
-        SET title = ?, description = ?, link = ?, updated_at = CURRENT_TIMESTAMP
+        SET title = ?, description = ?, url = ?, updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
       `;
-      const [result] = await db.query(query, [data.title, data.description, data.link, id]);
+      const [result] = await db.promise().query(query, [data.title, data.description, data.url, id]);
       return { success: true, message: 'Resource updated successfully', affectedRows: result.affectedRows };
     } catch (error) {
       throw new Error('Failed to update resource');

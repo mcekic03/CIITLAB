@@ -12,9 +12,75 @@ function formatDate(isoString) {
   return `${day}.${month}.${year}. ${hours}:${minutes}`;
 }
 
+let sortDirections = {};
+
+function sortTable(columnIndex, th) {
+  const table = th.closest('table');
+  const tbody = table.tBodies[0];
+  const rows = Array.from(tbody.rows);
+
+  // Inicijalizuj ili promeni smer sortiranja
+  sortDirections[columnIndex] =
+    sortDirections[columnIndex] === 'asc' ? 'desc' : 'asc';
+  const isAsc = sortDirections[columnIndex] === 'asc';
+
+  // Resetuj sve indikatore
+  table.querySelectorAll('.sort-indicator').forEach((indicator) => {
+    indicator.textContent = '';
+  });
+
+  // Postavi indikator na trenutnu kolonu
+  const indicator = th.querySelector('.sort-indicator');
+  indicator.textContent = isAsc ? '▲' : '▼';
+
+  // Sortiraj redove
+  rows.sort((a, b) => {
+    let aValue = a.cells[columnIndex].textContent.trim();
+    let bValue = b.cells[columnIndex].textContent.trim();
+
+    // Handle empty values
+    if (aValue === '' && bValue === '') return 0;
+    if (aValue === '') return isAsc ? 1 : -1;
+    if (bValue === '') return isAsc ? -1 : 1;
+
+    // Try to parse as numbers first
+    let aNum = null;
+    let bNum = null;
+
+    // Remove currency symbols, commas, and spaces
+    const cleanA = aValue.replace(/[$,€£\s]/g, '');
+    const cleanB = bValue.replace(/[$,€£\s]/g, '');
+
+    // Try to parse as numbers
+    if (/^-?\d*\.?\d+$/.test(cleanA)) aNum = parseFloat(cleanA);
+    if (/^-?\d*\.?\d+$/.test(cleanB)) bNum = parseFloat(cleanB);
+
+    // If both are valid numbers, compare numerically
+    if (aNum !== null && bNum !== null) {
+      return isAsc ? aNum - bNum : bNum - aNum;
+    }
+
+    // Try to parse as dates
+    const aDate = Date.parse(aValue);
+    const bDate = Date.parse(bValue);
+    if (!isNaN(aDate) && !isNaN(bDate)) {
+      return isAsc ? aDate - bDate : bDate - aDate;
+    }
+
+    // If one is a number and the other isn't, put numbers first/last based on sort direction
+    if (aNum !== null && bNum === null) return isAsc ? -1 : 1;
+    if (aNum === null && bNum !== null) return isAsc ? 1 : -1;
+
+    // Default to string comparison
+    return isAsc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+  });
+
+  // Ažuriraj tabelu
+  rows.forEach((row) => tbody.appendChild(row));
+}
 
 // Authentication token
-let authToken = localStorage.getItem('authToken');
+let authToken = sessionStorage.getItem('authToken');
 
 // Navigation
 document.querySelectorAll('.admin-nav a').forEach((link) => {
@@ -74,7 +140,7 @@ function showSection(sectionId) {
 
 // Modal Functions
 function openModal(modalId) {
-  document.getElementById(modalId).style.display = 'block';
+  document.getElementById(modalId).style.display = 'flex';
 }
 
 function closeModal(modalId) {
@@ -88,19 +154,11 @@ window.onclick = function (event) {
   }
 };
 
-
-window.addEventListener('load', function(){
-  
+window.addEventListener('load', function () {
   setTimeout(() => {
-    document.getElementById("modalLoading").style.display = "none";
+    document.getElementById('modalLoading').style.display = 'none';
   }, 1200);
-
-
-
 });
-
-
-
 
 // Dashboard Functions
 async function loadDashboardData() {
@@ -110,6 +168,7 @@ async function loadDashboardData() {
         Authorization: `Bearer ${authToken}`,
       },
     });
+
     const data = await response.json();
     console.log(data);
 
@@ -156,7 +215,9 @@ function displayRecentActivity(activities) {
 /// Funkcija za preuzimanje jednog fajla sa opcionalnim custom imenom fajla
 async function downloadFile(url, filename) {
   try {
-    const response = await fetch(url, { headers: { Authorization: `Bearer ${authToken}` } });
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
     const blob = await response.blob();
@@ -214,8 +275,6 @@ async function displayPosTaggingAnnotation() {
   appTable.innerHTML = `<p>Aplikacija u izradi</p>`;
 }
 
-
-
 async function displayNone() {
   const appTable = document.getElementById('app-table');
   appTable.innerHTML = `<h3>Choose application</h3>`;
@@ -223,30 +282,49 @@ async function displayNone() {
 
 async function displaySentimentAnalysis() {
   try {
-    const response = await fetch(`${API_BASE_URL}/sentimentAnalysis/dashboard`, {
-      headers: { Authorization: `Bearer ${authToken}`, 'Content-Type': 'application/json' },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/sentimentAnalysis/dashboard`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
     const data = await response.json();
     console.log(data);
 
-    const { countAnnotators, countDoneSentences, countNotSureSentences, sentimentCount } = data;
+    const {
+      countAnnotators,
+      countDoneSentences,
+      countNotSureSentences,
+      countFreeSentences,
+      sentimentCount,
+    } = data;
 
-    document.getElementById('total-sentimentAnalysis-annotators').textContent = countAnnotators;
-    document.getElementById('total-annotated-sentences').textContent = countDoneSentences;
-    document.getElementById('total-neutral-sentences').textContent = countNotSureSentences;
+    document.getElementById('total-sentimentAnalysis-annotators').textContent =
+      countAnnotators;
+    document.getElementById('total-annotated-sentences').textContent =
+      countDoneSentences;
+    document.getElementById('total-neutral-sentences').textContent =
+      countNotSureSentences;
+    document.getElementById('total-left-sentences').textContent =
+      countFreeSentences;
 
     document.getElementById('app-table').innerHTML = `
       <thead>
         <tr>
-          <th>Annotator ID</th>
-          <th>Annotator</th>
-          <th>Total Sentences</th>
-          <th>Last Annotation</th>
+          <th onclick="sortTable(0, this)">Annotator ID <span class="sort-indicator"></span></th>
+          <th onclick="sortTable(1, this)">Annotator <span class="sort-indicator"></span></th>
+          <th onclick="sortTable(2, this)">Total Sentences <span class="sort-indicator"></span></th>
+          <th onclick="sortTable(3, this)">Last Annotation <span class="sort-indicator"></span></th>
           <th style="text-align: center; vertical-align: middle;">Download Annotator's Sentences</th>
         </tr>
       </thead>
       <tbody id="app-list">
-        ${sentimentCount.map(({ annotator_id, annotator, total_sentences, last_time }) => `
+        ${sentimentCount
+          .map(
+            ({ annotator_id, annotator, total_sentences, last_time }) => `
           <tr>
             <td>${annotator_id}</td>
             <td>${annotator}</td>
@@ -257,17 +335,34 @@ async function displaySentimentAnalysis() {
                 <i class="fas fa-download"></i>
               </button>
             </td>
-          </tr>`).join('')}
+          </tr>`
+          )
+          .join('')}
       </tbody>
     `;
 
     [
-      { id: 'downloadButtonDone', url: '/downloadDoneCSV', prefix: 'sentiment_data_done' },
-      { id: 'downloadButtonFlag', url: '/downloadNotSureCSV', prefix: 'sentiment_data_not_sure' },
-      { id: 'downloadButtonUnprocessed', url: '/downloadNotProcessCSV', prefix: 'sentiment_data_unprocessed' }
+      {
+        id: 'downloadButtonDone',
+        url: '/downloadDoneCSV',
+        prefix: 'sentiment_data_done',
+      },
+      {
+        id: 'downloadButtonFlag',
+        url: '/downloadNotSureCSV',
+        prefix: 'sentiment_data_not_sure',
+      },
+      {
+        id: 'downloadButtonUnprocessed',
+        url: '/downloadNotProcessCSV',
+        prefix: 'sentiment_data_unprocessed',
+      },
     ].forEach(({ id, url, prefix }) => {
       const btn = document.getElementById(id);
-      if (btn) btn.addEventListener('click', () => downloadFile(`${API_BASE_URL}${url}`, generateDateFilename(prefix)));
+      if (btn)
+        btn.addEventListener('click', () =>
+          downloadFile(`${API_BASE_URL}${url}`, generateDateFilename(prefix))
+        );
     });
   } catch (error) {
     console.error('Error loading annotators:', error);
@@ -278,7 +373,10 @@ async function displaySentimentAnalysis() {
 // Researcher Functions
 function loadApp() {
   const select = document.getElementById('app-select');
-  const app = document.querySelector('.app-stats');
+  const app = document.querySelector('.app-stats-sentiment-stats');
+  const appDownload = document.querySelector('.app-stats-sentiment-download');
+  const sentimentStats = document.querySelector('.sentiment-stats');
+  const sentimentDownload = document.querySelector('.sentiment-download');
 
   // Remove any existing event listeners to prevent duplicates
   const newSelect = select.cloneNode(true);
@@ -292,23 +390,35 @@ function loadApp() {
     if (selectedValue === 'sentimentAnalysis') {
       displaySentimentAnalysis();
       app.classList.add('active');
+      appDownload.classList.add('active');
+      sentimentStats.classList.add('active');
+      sentimentDownload.classList.add('active');
     } else if (selectedValue === 'posTagging') {
       app.classList.remove('active');
+      appDownload.classList.remove('active');
       displayPosTaggingAnnotation();
+      sentimentStats.classList.remove('active');
+      sentimentDownload.classList.remove('active');
     } else if (selectedValue === 'none') {
       app.classList.remove('active');
+      appDownload.classList.remove('active');
       displayNone();
+      sentimentStats.classList.remove('active');
+      sentimentDownload.classList.remove('active');
     }
   });
 }
 
 async function loadStudents() {
   try {
-    const response = await fetch(`${API_BASE_URL.replace('/admin', '/users')}/getStudents`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL.replace('/admin', '/users')}/getStudents`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
     const students = await response.json();
     console.log(students);
     const studentsList = document.getElementById('students-list');
@@ -427,12 +537,14 @@ async function loadPublications() {
         (pub) => `
             <tr>
                 <td>${pub.id}</td>
-                <td>${pub.user_id}</td>
+                <td>${pub.firstName} ${pub.lastName}</td>
                 <td>${formatDate(pub.created_at)}</td>
                 <td>${pub.url}</td>
                 
                 <td>
-                    <button class="btn-icon" onclick="deletePublication('${pub.id}')">
+                    <button class="btn-icon" onclick="deletePublication('${
+                      pub.id
+                    }')">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -440,6 +552,8 @@ async function loadPublications() {
         `
       )
       .join('');
+    const defaultTh = document.getElementById('defaultSort');
+    sortTable(0, defaultTh);
   } catch (error) {
     console.error('Error loading publications:', error);
     showError('Failed to load publications');
@@ -486,7 +600,7 @@ async function loadResources() {
       .map(
         (resource) => `
             <tr>
-                <td>${resource.researcher_id}</td>
+                <td>${resource.firstName} ${resource.lastName}</td>
                 <td>${resource.title}</td>
                 <td>${resource.description}</td>
                 <td>${resource.url}</td>
@@ -500,6 +614,8 @@ async function loadResources() {
         `
       )
       .join('');
+    const defaultTh = document.getElementById('defaultSort');
+    sortTable(0, defaultTh);
   } catch (error) {
     console.error('Error loading resources:', error);
     showError('Failed to load resources');
@@ -547,7 +663,7 @@ async function loadBlogs() {
         (blog) => `
             <tr>
                 <td>${blog.id}</td>
-                <td>${blog.author_id}</td>
+                <td>${blog.firstName} ${blog.lastName}</td>
                 <td>${blog.title}</td>
                 <td>${formatDate(blog.created_at)}</td>
                 <td>${blog.updated_at}</td>
@@ -562,6 +678,8 @@ async function loadBlogs() {
         `
       )
       .join('');
+    const defaultTh = document.getElementById('defaultSort');
+    sortTable(0, defaultTh);
   } catch (error) {
     console.error('Error loading blogs:', error);
     showError('Failed to load blogs');
@@ -628,6 +746,8 @@ async function loadUsers() {
     console.error('Error loading users:', error);
     showError('Failed to load users');
   }
+  const defaultTh = document.getElementById('defaultSort');
+  sortTable(0, defaultTh);
 }
 
 function openAddUserModal() {
@@ -649,7 +769,7 @@ async function handleUserSubmit(event) {
     role: document.getElementById('user-role').value,
     bio: document.getElementById('user-bio').value,
     status: document.getElementById('user-status').value,
-    profileImage: document.getElementById('user-profileImage').value,
+    //profileImage: document.getElementById('user-profileImage').value,
     password: ' ',
   };
 
@@ -748,7 +868,9 @@ function showError(message) {
   alert(message);
 }
 
-function refreshDashboard() {}
+function refreshDashboard() {
+  window.location.reload();
+}
 
 // Initialize the admin panel
 document.addEventListener('DOMContentLoaded', () => {
