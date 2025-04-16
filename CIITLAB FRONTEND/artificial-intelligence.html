@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PhD Students - CIITLAB</title>
+    <title>Artificial Intelligence - CIITLAB</title>
     <link rel="preload" href="css/style.css" as="style" />
     <link rel="preload" href="js/auth.js" as="script" />
     <link rel="preload" href="js/main.js" as="script" />
@@ -25,9 +25,13 @@
         <div class="nav-links">
           <a href="index.html">Home</a>
           <div class="dropdown" id="dropdown">
-            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Research Areas</a>
-            <div class="dropdown-content"  id="dropdownContent">
-              <a href="artificial-intelligence.html">Artifical Intelligence</a>
+            <a href="#" class="dropdown-trigger" id="dropdownTrigger"
+              >Research Areas</a
+            >
+            <div class="dropdown-content" id="dropdownContent">
+              <a href="artificial-intelligence.html" class="active"
+                >Artifical Intelligence</a
+              >
               <a href="nlp.html">NLP</a>
               <a href="logic-design.html">Logic Design and Spectral Technics</a>
               <a href="signal-processing.html">Signal Processing</a>
@@ -36,7 +40,7 @@
           </div>
           <a href="news.html">News</a>
           <a href="researchers.html">Researchers</a>
-          <a href="students.html" class="active">PhD Students</a>
+          <a href="students.html">PhD Students</a>
           <a href="contact.html">Contact Us</a>
         </div>
       </nav>
@@ -67,13 +71,17 @@
       <!-- Mobile Topics Dropdown -->
       <div class="mobile-dropdown-panel-topics">
         <div class="mobile-dropdown-header">
-          <h3>Topics</h3>
+          <h3>Research Areas</h3>
           <button class="close-dropdown"><i class="fas fa-times"></i></button>
         </div>
         <div class="mobile-dropdown-content">
-          <a href="artificial-intelligence.html">Artificial Intelligence</a>
+          <a href="artificial-intelligence.html" class="active"
+            >Artificial Intelligence</a
+          >
           <a href="nlp.html">NLP</a>
-          <a href="logic-design-and-spectral-technics.html">Logic Design and Spectral Technics</a>
+          <a href="logic-design-and-spectral-technics.html"
+            >Logic Design and Spectral Technics</a
+          >
           <a href="signal-processing.html">Signal Processing</a>
           <a href="web-programming.html">Web Programming</a>
         </div>
@@ -87,7 +95,7 @@
         </div>
         <div class="mobile-dropdown-content">
           <a href="researchers.html">Researchers</a>
-          <a href="students.html" class="active">PhD Students</a>
+          <a href="students.html">PhD Students</a>
         </div>
       </div>
       <div class="mobile-user-panel">
@@ -110,14 +118,45 @@
     <main>
       <div class="hero">
         <div class="hero-content">
-          <h1>CIITLAB PhD Students</h1>
+          <h1>Artificial Intelligence</h1>
+          <p>
+            Exploring the frontiers of AI through cutting-edge research and
+            innovation
+          </p>
         </div>
       </div>
-      <section class="page-header">
-        <h1>Active PhD Students</h1>
 
-      <section class="researchers-grid">
-        <!-- Researchers will be loaded dynamically via JavaScript -->
+      <section class="content-section">
+        <div class="container">
+          <h2>About Our AI Research</h2>
+          <p>
+            Our Artificial Intelligence research focuses on developing advanced
+            AI models and algorithms to solve complex real-world problems. We
+            work on various aspects of AI including machine learning, deep
+            learning, and neural networks.
+          </p>
+
+          <h3>Key Research Areas</h3>
+          <ul>
+            <li>Machine Learning Algorithms</li>
+            <li>Deep Neural Networks</li>
+            <li>Computer Vision</li>
+            <li>Natural Language Processing</li>
+            <li>Reinforcement Learning</li>
+          </ul>
+
+          <h3>Current Projects</h3>
+          <p>
+            We are currently working on several cutting-edge AI projects,
+            including:
+          </p>
+          <ul>
+            <li>Advanced neural network architectures for image recognition</li>
+            <li>Natural language understanding systems</li>
+            <li>Reinforcement learning for robotics</li>
+            <li>AI-powered decision support systems</li>
+          </ul>
+        </div>
       </section>
     </main>
 
@@ -126,7 +165,10 @@
         <div class="footer-section">
           <h3>Contact Us</h3>
           <p>Phone: +381 18 529 523</p>
-          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +381 18 529 530</p>
+          <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            +381 18 529 530
+          </p>
         </div>
         <div class="footer-section">
           <h3>Quick Links</h3>
@@ -137,15 +179,15 @@
             <li><a href="contact.html">Contact Us</a></li>
           </ul>
         </div>
-        </div>
       </div>
       <div class="footer-bottom">
-        <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
+        <p class="footer-text">
+          &copy;<span id="currentYear"></span> CIITLAB. All rights reserved.
+        </p>
       </div>
     </footer>
 
-    <script src="js/auth.js"></script>
-    <script src="js/students.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
   </body>
 </html>

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CIITLAB - Research Platform</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="preload" href="css/style.css" as="style" />
+    <link rel="preload" href="js/auth.js" as="script" />
+    <link rel="preload" href="js/main.js" as="script" />
     <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
     <link
       rel="stylesheet"
@@ -19,112 +22,147 @@
             <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
           </a>
         </div>
-       
-        </div>
         <div class="nav-links">
           <a href="index.html" class="active">Home</a>
           <div class="dropdown" id="dropdown">
-            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Topics</a>
-            <div class="dropdown-content"  id="dropdownContent">
-              <a href="comingsoon.html">Artifical Intelligence</a>
+            <a
+              href="research-areas.html"
+              class="dropdown-trigger"
+              id="dropdownTrigger"
+              >Research Areas</a
+            >
+            <div class="dropdown-content" id="dropdownContent">
+              <a href="artificial-intelligence.html">Artifical Intelligence</a>
               <a href="nlp.html">NLP</a>
-              <a href="comingsoon.html">Logic Design and Spectral Technics</a>
-              <a href="comingsoon.html">Signal Processing</a>
-              <a href="comingsoon.html">Web Programming</a>
-              
+              <a href="logic-design.html">Logic Design and Spectral Technics</a>
+              <a href="signal-processing.html">Signal Processing</a>
+              <a href="web-programming.html">Web Programming</a>
             </div>
           </div>
-          
-          <a href="comingsoon.html">News</a>
+          <a href="news.html">News</a>
           <a href="researchers.html">Researchers</a>
           <a href="students.html">PhD Students</a>
           <a href="contact.html">Contact Us</a>
         </div>
       </nav>
 
-       <nav class="mobile-bottom-nav">
-      <a href="index.html" class="mobile-nav-item active">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </a>
-      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
-        <i class="fas fa-book"></i>
-        <span>Topics</span>
-      </a>
-      <a href="comingsoon.html" class="mobile-nav-item">
-        <i class="fas fa-newspaper"></i>
-        <span>News</span>
-      </a>
-      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
-        <i class="fas fa-users"></i>
-        <span>Team</span>
-      </a>
-      <a href="#" class="mobile-nav-item user-menu">
-        <i class="fas fa-user-circle"></i>
-        <span>Profile</span>
-      </a>
-    </nav>
-    
-    <!-- Mobile Topics Dropdown -->
-    <div class="mobile-dropdown-panel-topics">
-      <div class="mobile-dropdown-header">
-        <h3>Topics</h3>
-        <button class="close-dropdown"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="mobile-dropdown-content">
-        <a href="comingsoon.html">Artificial Intelligence</a>
-        <a href="nlp.html">NLP</a>
-        <a href="comingsoon.html">Logic Design and Spectral Technics</a>
-        <a href="comingsoon.html">Signal Processing</a>
-        <a href="comingsoon.html">Web Programming</a>
-      </div>
-    </div>
-    <div class="mobile-dropdown-panel-team">
-      <div class="mobile-dropdown-header">
-        <h3>Team</h3>
-        <button class="close-dropdown-team"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="mobile-dropdown-content">
-        <a href="researchers.html">Researchers</a>
-        <a href="students.html">PhD Students</a>
-      </div>
-    </div>
-    <div class="mobile-user-panel">
-      <div class="mobile-user-header">
-        <div class="user-info">
-        </div>
-        <button class="close-user-panel"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="mobile-user-content">
-        <a href="/profile.html">
-          <i class="fas fa-user"></i> Profile
+      <nav class="mobile-bottom-nav">
+        <a href="index.html" class="mobile-nav-item active">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
         </a>
-        <a href="#" id="mobileLogoutBtn">
-          <i class="fas fa-sign-out-alt"></i> Logout
+        <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
+          <i class="fas fa-book"></i>
+          <span>Areas</span>
         </a>
-      </div>
-    </div>
-    
-    <!-- Overlay for mobile panels -->
-    <div class="mobile-overlay"></div>
-  </header>
+        <a href="news.html" class="mobile-nav-item">
+          <i class="fas fa-newspaper"></i>
+          <span>News</span>
+        </a>
+        <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
+          <i class="fas fa-users"></i>
+          <span>Team</span>
+        </a>
+        <a href="#" class="mobile-nav-item user-menu">
+          <i class="fas fa-user-circle"></i>
+          <span>Profile</span>
+        </a>
+      </nav>
 
+      <!-- Mobile Topics Dropdown -->
+      <div class="mobile-dropdown-panel-topics">
+        <div class="mobile-dropdown-header">
+          <h3>Research Areas</h3>
+          <button class="close-dropdown"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="mobile-dropdown-content">
+          <a href="artificial-intelligence.html">Artificial Intelligence</a>
+          <a href="nlp.html">NLP</a>
+          <a href="logic-design-and-spectral-technics.html"
+            >Logic Design and Spectral Technics</a
+          >
+          <a href="signal-processing.html">Signal Processing</a>
+          <a href="web-programming.html">Web Programming</a>
+        </div>
+      </div>
+      <div class="mobile-dropdown-panel-team">
+        <div class="mobile-dropdown-header">
+          <h3>Team</h3>
+          <button class="close-dropdown-team">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-dropdown-content">
+          <a href="researchers.html">Researchers</a>
+          <a href="students.html">PhD Students</a>
+        </div>
+      </div>
+      <div class="mobile-user-panel">
+        <div class="mobile-user-header">
+          <div class="user-info"></div>
+          <button class="close-user-panel"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="mobile-user-content">
+          <a href="/profile.html"> <i class="fas fa-user"></i> Profile </a>
+          <a href="#" id="mobileLogoutBtn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+      </div>
+
+      <!-- Overlay for mobile panels -->
+      <div class="mobile-overlay"></div>
     </header>
 
     <main>
       <div class="hero">
         <div class="hero-content">
-          <h1>Welcome to CIITLAB</h1>
+          <h1>C I I T L a b</h1>
           <p>
-            CIITLab (Computer Intelligence and Information Technologies Lab) is a part of the Department of Computer Science at the Faculty of Electronic Engineering, University of Niš.
+            CIITLab (Computational Intelligence and Information Technologies
+            Lab) is a part of the Department of Computer Science at the Faculty
+            of Electronic Engineering, University of Niš.
           </p>
-          <a href="#featured-research" class="btn btn-primary"
-            >Explore Our Research</a
-          >
         </div>
       </div>
 
-      <section id="featured-research" class="featured-research">
+      <section class="featured-text">
+        <h1>About CIITLab</h1>
+
+        <p>
+          The CIITLab Laboratory conducts research across several key domains
+          within information technology, including Natural Language Processing,
+          Spectral Techniques, Web Development, and Computer Chess.
+        </p>
+
+        <p>
+          The Laboratory has actively participated in the implementation of
+          numerous research projects financed by the Ministry of Science and
+          Technological Development, as well as in internationally funded
+          programs such as DAAD and TEMPUS.
+        </p>
+
+        <p>
+          CIITLab has developed strong international collaborations, which are
+          reflected in the organization of multiple summer schools in the field
+          of Computational Intelligence, along with numerous seminars and
+          workshops featuring a significant number of distinguished
+          international professors.
+        </p>
+
+        <p>
+          Of particular note is the international meeting "Dyadic Walsh and
+          Analysis", held at the Faculty of Electronic Engineering in Niš in
+          2007, which led to the publication of a monograph of the same title.
+        </p>
+
+        <p>
+          CIITLab also initiated electronic publishing at the Faculty of
+          Electronic Engineering, within which several electronic publications
+          registered with the National Library of Serbia were published.
+        </p>
+      </section>
+      <!-- <section id="featured-research" class="featured-research">
         <h2>Featured Research Areas</h2>
         <div class="research-grid">
           <div class="research-card">
@@ -164,7 +202,7 @@
           </div>
           
         </div>
-      </section>
+      </section> -->
 
       <section class="latest-news">
         <h2>Latest News</h2>
@@ -179,7 +217,10 @@
         <div class="footer-section">
           <h3>Contact Us</h3>
           <p>Phone: +381 18 529 523</p>
-          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +381 18 529 530</p>
+          <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            +381 18 529 530
+          </p>
         </div>
         <div class="footer-section">
           <h3>Quick Links</h3>
@@ -190,17 +231,16 @@
             <li><a href="contact.html">Contact Us</a></li>
           </ul>
         </div>
-        </div>
       </div>
       <div class="footer-bottom">
-        <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
+        <p class="footer-text">
+          &copy;<span id="currentYear"></span> CIITLAB. All rights reserved.
+        </p>
       </div>
     </footer>
     <script>
       // This minimal JavaScript is only for toggling the mobile panels
       // You can implement this with CSS-only solutions if preferred
-      
-      
     </script>
     <script src="js/auth.js"></script>
     <script src="js/main.js"></script>

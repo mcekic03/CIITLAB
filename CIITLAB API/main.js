@@ -9,6 +9,8 @@ const specs = require('./config/swagger');
 const path = require('path');
 const fs = require('fs');
 
+const Sentence = require('./models/Sentence');
+
 dotenv.config();
 
 
@@ -53,6 +55,10 @@ app.use('/users/resources',express.json(), resourcesRoutes);
 const sentencesRoutes = require("./routes/sentences")
 app.use('/sentences',express.json(), sentencesRoutes);
 
+//blogs
+const blogsRoutes = require("./routes/blogs")
+app.use('/blogs',express.json(), blogsRoutes);
+
 //studentsWorks
 const studentsWorkRoutes = require("./routes/studentsWork")
 app.use('/studentsWork',express.json(), studentsWorkRoutes);
@@ -82,6 +88,19 @@ const clearServerLog = () => {
         }
     }
 };
+
+const checkSentencesTask = async () => {
+    try {
+        await Sentence.checkSentences();
+        console.log('Provera rečenica izvršena:', new Date().toLocaleString('sr-RS'));
+    } catch (error) {
+        console.error('Greška pri proveri rečenica:', error);
+    }
+};
+// Pokrećemo prvi put odmah
+checkSentencesTask();
+// Postavljamo interval za izvršavanje svakih 24h
+setInterval(checkSentencesTask, 24 * 60 * 60 * 1000);
 
 // Postavi interval za čišćenje na 10 dana (10 * 24 * 60 * 60 * 1000 milisekundi)
 setInterval(clearServerLog, 10 * 24 * 60 * 60 * 1000);

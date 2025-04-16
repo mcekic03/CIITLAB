@@ -16,102 +16,96 @@
             <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
           </a>
         </div>
-       
-        </div>
         <div class="nav-links">
-          <a href="index.html">Home</a>
+          <a href="index.html" >Home</a>
           <div class="dropdown" id="dropdown">
-            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Topics</a>
+            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Research Areas</a>
             <div class="dropdown-content"  id="dropdownContent">
-              <a href="comingsoon.html">Artifical Intelligence</a>
+              <a href="artificial-intelligence.html">Artifical Intelligence</a>
               <a href="nlp.html">NLP</a>
-              <a href="comingsoon.html">Logic Design and Spectral Technics</a>
-              <a href="comingsoon.html">Signal Processing</a>
-              <a href="comingsoon.html">Web Programming</a>
+              <a href="logic-design.html">Logic Design and Spectral Technics</a>
+              <a href="signal-processing.html">Signal Processing</a>
+              <a href="web-programming.html">Web Programming</a>
               
             </div>
           </div>
-          
-          <a href="comingsoon.html">News</a>
+          <a href="news.html">News</a>
           <a href="researchers.html">Researchers</a>
           <a href="students.html">PhD Students</a>
-          <a href="contact.html">Contact Us</a>
+          <a href="contact.html" class="active">Contact Us</a>
         </div>
       </nav>
 
-       <nav class="mobile-bottom-nav">
-      <a href="index.html" class="mobile-nav-item">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </a>
-      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
-        <i class="fas fa-book"></i>
-        <span>Topics</span>
-      </a>
-      <a href="comingsoon.html" class="mobile-nav-item">
-        <i class="fas fa-newspaper"></i>
-        <span>News</span>
-      </a>
-      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
-        <i class="fas fa-users"></i>
-        <span>Team</span>
-      </a>
-      <a href="#" class="mobile-nav-item user-menu">
-        <i class="fas fa-user-circle"></i>
-        <span>Profile</span>
-      </a>
-    </nav>
-    
-    <!-- Mobile Topics Dropdown -->
-    <div class="mobile-dropdown-panel-topics">
-      <div class="mobile-dropdown-header">
-        <h3>Topics</h3>
-        <button class="close-dropdown"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="mobile-dropdown-content">
-        <a href="comingsoon.html">Artificial Intelligence</a>
-        <a href="nlp.html">NLP</a>
-        <a href="comingsoon.html">Logic Design and Spectral Technics</a>
-        <a href="comingsoon.html">Signal Processing</a>
-        <a href="comingsoon.html">Web Programming</a>
-      </div>
-    </div>
-    <div class="mobile-dropdown-panel-team">
-      <div class="mobile-dropdown-header">
-        <h3>Team</h3>
-        <button class="close-dropdown-team"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="mobile-dropdown-content">
-        <a href="researchers.html">Researchers</a>
-        <a href="students.html">PhD Students</a>
-      </div>
-    </div>
-    <div class="mobile-user-panel">
-      <div class="mobile-user-header">
-        <div class="user-info">
+      <nav class="mobile-bottom-nav">
+        <a href="#" class="mobile-nav-item active" data-section="dashboard">
+          <i class="fas fa-home"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" class="mobile-nav-item mobile-dropdown-trigger-content">
+          <i class="fas fa-folder-open"></i>
+          <span>Content</span>
+        </a>
+        <a href="#" class="mobile-nav-item mobile-dropdown-trigger-users">
+          <i class="fas fa-book"></i>
+          <span>Users</span>
+        </a>
+        <a href="#" class="mobile-nav-item" data-section="applications">
+          <i class="fas fa-cube"></i>
+          <span>Apps</span>
+        </a>
+        
+        <a href="#" class="mobile-nav-item user-menu">
+          <i class="fas fa-user-circle"></i>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <!-- Mobile Topics Dropdown -->
+      <div class="mobile-dropdown-panel-content">
+        <div class="mobile-dropdown-header">
+          <h3>Content</h3>
+          <button class="close-dropdown-content"><i class="fas fa-times"></i>
+          </button>
         </div>
-        <button class="close-user-panel"><i class="fas fa-times"></i></button>
+        <div class="mobile-dropdown-content">
+          <a href="#" data-section="researchers">Publications</a>
+          <a href="#" data-section="resources">Resources</a>
+          <a href="#" data-section="blogs">Blog Posts</a>
+        </div>
       </div>
-      <div class="mobile-user-content">
-        <a href="/profile.html">
-          <i class="fas fa-user"></i> Profile
-        </a>
-        <a href="#" id="mobileLogoutBtn">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
+      <div class="mobile-dropdown-panel-users">
+        <div class="mobile-dropdown-header">
+          <h3>Users</h3>
+          <button class="close-dropdown-users"><i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-dropdown-content">
+          <a href="#" data-section="researchers">Researchers</a>
+          <a href="#" data-section="students">PhD Students</a>
+          <a href="#" data-section="users">User Management</a>
+        </div>
       </div>
-    </div>
-    
-    <!-- Overlay for mobile panels -->
-    <div class="mobile-overlay"></div>
-  </header>
+      <div class="mobile-user-panel">
+        <div class="mobile-user-header">
+          <div class="user-info"></div>
+          <button class="close-user-panel"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="mobile-user-content">
+          <a href="/profile.html"> <i class="fas fa-user"></i> Profile </a>
+          <a href="#" id="mobileLogoutBtn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+      </div>
+
+      <!-- Overlay for mobile panels -->
+      <div class="mobile-overlay"></div>
+    </header>
   </head>
   <body>
-
     <div class="modalLoading" id="modalLoading">
-      <div class="loader">
-      </div>
-  </div>
+      <div class="loader"></div>
+    </div>
     <div class="admin-dashboard">
       <!-- Admin Sidebar -->
       <div class="admin-sidebar">
@@ -219,19 +213,30 @@
         <section id="researchers" class="admin-section">
           <div class="admin-header">
             <h1>CIITLAB Researchers</h1>
-            <div class="admin-actions">
-            </div>
+            <div class="admin-actions"></div>
           </div>
           <div class="table-container">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th id="defaultSort" onclick="sortTable(0, this)">User ID <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(1, this)">Name<span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(2, this)">Email<span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(3, this)">Status<span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(4, this)">Publications<span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(5, this)">Resources<span class="sort-indicator"></span></th>
+                  <th id="defaultSort" onclick="sortTable(0, this)">
+                    User ID <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(1, this)">
+                    Name<span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(2, this)">
+                    Email<span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(3, this)">
+                    Status<span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(4, this)">
+                    Publications<span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(5, this)">
+                    Resources<span class="sort-indicator"></span>
+                  </th>
                 </tr>
               </thead>
               <tbody id="researchers-list"></tbody>
@@ -241,17 +246,24 @@
         <section id="students" class="admin-section">
           <div class="admin-header">
             <h1>CIITLAB PhD Students</h1>
-            <div class="admin-actions">
-            </div>
+            <div class="admin-actions"></div>
           </div>
           <div class="table-container">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th id="defaultSort" onclick="sortTable(0, this)">User ID <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(1, this)">Name <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(2, this)">Email <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(3, this)">Status <span class="sort-indicator"></span></th>
+                  <th id="defaultSort" onclick="sortTable(0, this)">
+                    User ID <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(1, this)">
+                    Name <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(2, this)">
+                    Email <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(3, this)">
+                    Status <span class="sort-indicator"></span>
+                  </th>
                 </tr>
               </thead>
               <tbody id="students-list"></tbody>
@@ -263,17 +275,24 @@
         <section id="publications" class="admin-section">
           <div class="admin-header">
             <h1>Manage Publications</h1>
-            <div class="admin-actions">
-            </div>
+            <div class="admin-actions"></div>
           </div>
           <div class="table-container">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th onclick="sortTable(0, this)">Publication ID <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(1, this)">Author Name <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(2, this)">Created <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(3, this)">Link <span class="sort-indicator"></span></th>
+                  <th onclick="sortTable(0, this)">
+                    Publication ID <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(1, this)">
+                    Author Name <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(2, this)">
+                    Created <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(3, this)">
+                    Link <span class="sort-indicator"></span>
+                  </th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -286,17 +305,24 @@
         <section id="resources" class="admin-section">
           <div class="admin-header">
             <h1>Manage Resources</h1>
-            <div class="admin-actions">
-            </div>
+            <div class="admin-actions"></div>
           </div>
           <div class="table-container">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th onclick="sortTable(0, this)">User <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(1, this)">Title <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(2, this)">Description <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(3, this)">Link <span class="sort-indicator"></span></th>
+                  <th onclick="sortTable(0, this)">
+                    User <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(1, this)">
+                    Title <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(2, this)">
+                    Description <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(3, this)">
+                    Link <span class="sort-indicator"></span>
+                  </th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -319,13 +345,27 @@
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th onclick="sortTable(0, this)">Blog ID <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(1, this)">Author Name <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(2, this)">Title <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(3, this)">Published <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(4, this)">Updated <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(5, this)">Blog Text <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(6, this)">Keywords <span class="sort-indicator"></span></th>
+                  <th onclick="sortTable(0, this)">
+                    Blog ID <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(1, this)">
+                    Author Name <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(2, this)">
+                    Title <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(3, this)">
+                    Published <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(4, this)">
+                    Updated <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(5, this)">
+                    Blog Text <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(6, this)">
+                    Keywords <span class="sort-indicator"></span>
+                  </th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -348,10 +388,18 @@
             <table class="admin-table" id="adminTable">
               <thead>
                 <tr>
-                  <th id="defaultSort" onclick="sortTable(0, this)">Name <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(1, this)">Email <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(2, this)">Role <span class="sort-indicator"></span></th>
-                  <th onclick="sortTable(3, this)">Status <span class="sort-indicator"></span></th>
+                  <th id="defaultSort" onclick="sortTable(0, this)">
+                    Name <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(1, this)">
+                    Email <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(2, this)">
+                    Role <span class="sort-indicator"></span>
+                  </th>
+                  <th onclick="sortTable(3, this)">
+                    Status <span class="sort-indicator"></span>
+                  </th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -365,7 +413,9 @@
             <div class="app-actions">
               <select name="app-select" id="app-select">
                 <option value="none">Select Application</option>
-                <option value="sentimentAnalysis">Sentiment Analysis App</option>
+                <option value="sentimentAnalysis">
+                  Sentiment Analysis App
+                </option>
                 <option value="posTagging">Pos Tagging Annotation</option>
               </select>
             </div>
@@ -386,7 +436,7 @@
               </div>
               <div class="app-stat-card card-three">
                 <i class="fas fa-tasks"></i>
-              <div class="stat-info">
+                <div class="stat-info">
                   <h3>Total Sentences Left</h3>
                   <p id="total-left-sentences">0</p>
                 </div>
@@ -398,47 +448,60 @@
                   <p id="total-neutral-sentences">0</p>
                 </div>
               </div>
-            </div> 
+            </div>
           </div>
           <div class="app-stats-sentiment-download">
             <div class="app-stat-card card-five">
               <i class="fas fa-file"></i>
               <div class="stat-info-download">
                 <h3>Completed Annotations</h3>
-                <span>Fully annotated dataset, finalized and ready for use.</span>
+                <span
+                  >Fully annotated dataset, finalized and ready for use.</span
+                >
               </div>
               <div class="download-icon">
-                <button id="downloadButtonDone" class="download-btn"><i class="fa fa-download" aria-hidden="true"></i></button>
+                <button id="downloadButtonDone" class="download-btn">
+                  <i class="fa fa-download" aria-hidden="true"></i>
+                </button>
               </div>
             </div>
             <div class="app-stat-card card-six">
               <i class="fas fa-file"></i>
               <div class="stat-info-download">
                 <h3>User-Flagged for Review</h3>
-                <span>Dataset entries marked as "Not Sure" by users - requires admin validation.</span>
+                <span
+                  >Dataset entries marked as "Not Sure" by users - requires
+                  admin validation.</span
+                >
               </div>
               <div class="download-icon">
-                <button id="downloadButtonFlag" class="download-btn"><i class="fa fa-download" aria-hidden="true"></i></button>
+                <button id="downloadButtonFlag" class="download-btn">
+                  <i class="fa fa-download" aria-hidden="true"></i>
+                </button>
               </div>
             </div>
             <div class="app-stat-card card-seven">
               <i class="fas fa-file"></i>
               <div class="stat-info-download">
                 <h3>Unprocessed Entries</h3>
-                <span>Unprocessed sentences that haven't been reviewed or annotated yet.</span>
+                <span
+                  >Unprocessed sentences that haven't been reviewed or annotated
+                  yet.</span
+                >
               </div>
               <div class="download-icon">
-                <button id="downloadButtonUnprocessed" class="download-btn"><i class="fa fa-download" aria-hidden="true"></i></button>
+                <button id="downloadButtonUnprocessed" class="download-btn">
+                  <i class="fa fa-download" aria-hidden="true"></i>
+                </button>
               </div>
             </div>
-          </div> 
+          </div>
           <div class="table-container">
             <table class="admin-table" id="app-table">
               <tbody id="app-list"></tbody>
             </table>
           </div>
         </section>
-        
       </div>
     </div>
 
@@ -448,21 +511,23 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2>Add/Edit Researcher</h2>
-          <button class="close-btn" onclick="closeModal('researcher-modal')">&times;</button>
+          <button class="close-btn" onclick="closeModal('researcher-modal')">
+            &times;
+          </button>
         </div>
         <form id="researcher-form" onsubmit="handleResearcherSubmit(event)">
-          <input type="hidden" id="researcher-id">
+          <input type="hidden" id="researcher-id" />
           <div class="form-group">
             <label for="firstName">First Name</label>
-            <input type="text" id="firstName" required>
+            <input type="text" id="firstName" required />
           </div>
           <div class="form-group">
             <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" required>
+            <input type="text" id="lastName" required />
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" required>
+            <input type="email" id="email" required />
           </div>
           <div class="form-group">
             <label for="bio">Biography</label>
@@ -470,17 +535,25 @@
           </div>
           <div class="form-group">
             <label for="profileImage">Profile Image</label>
-            <input type="url" id="profileImage" accept="url">
+            <input type="url" id="profileImage" accept="url" />
           </div>
           <div class="form-group">
             <label>Education</label>
             <div id="education-list"></div>
-            <button type="button" class="btn-secondary" onclick="addEducationField()">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="addEducationField()"
+            >
               Add Education
             </button>
           </div>
           <div class="form-actions">
-            <button type="button" class="btn-secondary" onclick="closeModal('researcher-modal')">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeModal('researcher-modal')"
+            >
               Cancel
             </button>
             <button type="submit" class="btn-primary">Save</button>
@@ -494,32 +567,38 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2>Add/Edit Publication</h2>
-          <button class="close-btn" onclick="closeModal('publication-modal')">&times;</button>
+          <button class="close-btn" onclick="closeModal('publication-modal')">
+            &times;
+          </button>
         </div>
         <form id="publication-form" onsubmit="handlePublicationSubmit(event)">
-          <input type="hidden" id="publication-id">
+          <input type="hidden" id="publication-id" />
           <div class="form-group">
             <label for="title">Title</label>
-            <input type="text" id="title" required>
+            <input type="text" id="title" required />
           </div>
           <div class="form-group">
             <label for="authors">Authors</label>
             <div id="authors-list"></div>
-            <button type="button" class="btn-secondary" onclick="addAuthorField()">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="addAuthorField()"
+            >
               Add Author
             </button>
           </div>
           <div class="form-group">
             <label for="venue">Venue</label>
-            <input type="text" id="venue" required>
+            <input type="text" id="venue" required />
           </div>
           <div class="form-group">
             <label for="year">Year</label>
-            <input type="number" id="year" required min="1900" max="2024">
+            <input type="number" id="year" required min="1900" max="2024" />
           </div>
           <div class="form-group">
             <label for="doi">DOI</label>
-            <input type="text" id="doi">
+            <input type="text" id="doi" />
           </div>
           <div class="form-group">
             <label for="abstract">Abstract</label>
@@ -527,14 +606,18 @@
           </div>
           <div class="form-group">
             <label for="pdf">PDF File</label>
-            <input type="file" id="pdf" accept=".pdf">
+            <input type="file" id="pdf" accept=".pdf" />
           </div>
           <div class="form-group">
             <label for="researcher">Researcher</label>
             <select id="researcher" required></select>
           </div>
           <div class="form-actions">
-            <button type="button" class="btn-secondary" onclick="closeModal('publication-modal')">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeModal('publication-modal')"
+            >
               Cancel
             </button>
             <button type="submit" class="btn-primary">Save</button>
@@ -548,13 +631,15 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2>Add/Edit Resource</h2>
-          <button class="close-btn" onclick="closeModal('resource-modal')">&times;</button>
+          <button class="close-btn" onclick="closeModal('resource-modal')">
+            &times;
+          </button>
         </div>
         <form id="resource-form" onsubmit="handleResourceSubmit(event)">
-          <input type="hidden" id="resource-id">
+          <input type="hidden" id="resource-id" />
           <div class="form-group">
             <label for="resource-title">Title</label>
-            <input type="text" id="resource-title" required>
+            <input type="text" id="resource-title" required />
           </div>
           <div class="form-group">
             <label for="description">Description</label>
@@ -571,11 +656,11 @@
           </div>
           <div class="form-group">
             <label for="resource-url">URL</label>
-            <input type="text" id="resource-url" required>
+            <input type="text" id="resource-url" required />
           </div>
           <div class="form-group">
             <label for="resource-file">File</label>
-            <input type="file" id="resource-file">
+            <input type="file" id="resource-file" />
           </div>
           <div class="form-group">
             <label for="resource-researcher">Researcher</label>
@@ -583,14 +668,18 @@
           </div>
           <div class="form-group">
             <label for="version">Version</label>
-            <input type="text" id="version">
+            <input type="text" id="version" />
           </div>
           <div class="form-group">
             <label for="license">License</label>
-            <input type="text" id="license">
+            <input type="text" id="license" />
           </div>
           <div class="form-actions">
-            <button type="button" class="btn-secondary" onclick="closeModal('resource-modal')">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeModal('resource-modal')"
+            >
               Cancel
             </button>
             <button type="submit" class="btn-primary">Save</button>
@@ -604,13 +693,15 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2>Add/Edit Blog Post</h2>
-          <button class="close-btn" onclick="closeModal('blog-modal')">&times;</button>
+          <button class="close-btn" onclick="closeModal('blog-modal')">
+            &times;
+          </button>
         </div>
         <form id="blog-form" onsubmit="handleBlogSubmit(event)">
-          <input type="hidden" id="blog-id">
+          <input type="hidden" id="blog-id" />
           <div class="form-group">
             <label for="blog-title">Title</label>
-            <input type="text" id="blog-title" required>
+            <input type="text" id="blog-title" required />
           </div>
           <div class="form-group">
             <label for="content">Content</label>
@@ -634,14 +725,18 @@
           </div>
           <div class="form-group">
             <label for="blog-image">Image</label>
-            <input type="file" id="blog-image" accept="image/*">
+            <input type="file" id="blog-image" accept="image/*" />
           </div>
           <div class="form-group">
             <label for="category">Category</label>
-            <input type="text" id="category">
+            <input type="text" id="category" />
           </div>
           <div class="form-actions">
-            <button type="button" class="btn-secondary" onclick="closeModal('blog-modal')">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeModal('blog-modal')"
+            >
               Cancel
             </button>
             <button type="submit" class="btn-primary">Save</button>
@@ -655,25 +750,27 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2>Add/Edit User</h2>
-          <button class="close-btn" onclick="closeModal('user-modal')">&times;</button>
+          <button class="close-btn" onclick="closeModal('user-modal')">
+            &times;
+          </button>
         </div>
         <form id="user-form" onsubmit="handleUserSubmit(event)">
-          <input type="hidden" id="user-id">
+          <input type="hidden" id="user-id" />
           <div class="form-group">
             <label for="user-firstName">First Name</label>
-            <input type="text" id="user-firstName" required>
+            <input type="text" id="user-firstName" required />
           </div>
           <div class="form-group">
             <label for="user-lastName">Last Name</label>
-            <input type="text" id="user-lastName" required>
+            <input type="text" id="user-lastName" required />
           </div>
           <div class="form-group">
             <label for="user-email">Email</label>
-            <input type="email" id="user-email" required>
+            <input type="email" id="user-email" required />
           </div>
           <div class="form-group">
             <label for="user-password">Password</label>
-            <input type="password" id="user-password">
+            <input type="password" id="user-password" />
             <small>Leave blank to keep current password</small>
           </div>
           <div class="form-group">
@@ -698,7 +795,11 @@
             </select>
           </div>
           <div class="form-actions">
-            <button type="button" class="btn-secondary" onclick="closeModal('user-modal')">
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="closeModal('user-modal')"
+            >
               Cancel
             </button>
             <button type="submit" class="btn-primary">Save</button>
@@ -706,7 +807,7 @@
         </form>
       </div>
     </div>
-
+    <script src="js/main.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/auth.js"></script>
   </body>

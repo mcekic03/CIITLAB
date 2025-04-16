@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Researchers - CIITLAB</title>
+    <link rel="preload" href="css/style.css" as="style" />
+    <link rel="preload" href="js/auth.js" as="script" />
+    <link rel="preload" href="js/main.js" as="script" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
     <link
@@ -19,110 +22,98 @@
             <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
           </a>
         </div>
-       
-        </div>
         <div class="nav-links">
           <a href="index.html">Home</a>
           <div class="dropdown" id="dropdown">
-            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Topics</a>
+            <a href="research-areas.html" class="dropdown-trigger" id="dropdownTrigger">Research Areas</a>
             <div class="dropdown-content"  id="dropdownContent">
-              <a href="comingsoon.html">Artifical Intelligence</a>
+              <a href="artificial-intelligence.html">Artifical Intelligence</a>
               <a href="nlp.html">NLP</a>
-              <a href="comingsoon.html">Logic Design and Spectral Technics</a>
-              <a href="comingsoon.html">Signal Processing</a>
-              <a href="comingsoon.html">Web Programming</a>
-              
+              <a href="logic-design.html">Logic Design and Spectral Technics</a>
+              <a href="signal-processing.html">Signal Processing</a>
+              <a href="web-programming.html">Web Programming</a>
             </div>
           </div>
-          
-          <a href="comingsoon.html">News</a>
+          <a href="news.html">News</a>
           <a href="researchers.html" class="active">Researchers</a>
           <a href="students.html">PhD Students</a>
           <a href="contact.html">Contact Us</a>
         </div>
       </nav>
 
-       <nav class="mobile-bottom-nav">
-      <a href="index.html" class="mobile-nav-item ">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </a>
-      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
-        <i class="fas fa-book"></i>
-        <span>Topics</span>
-      </a>
-      <a href="comingsoon.html" class="mobile-nav-item">
-        <i class="fas fa-newspaper"></i>
-        <span>News</span>
-      </a>
-      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team active">
-        <i class="fas fa-users"></i>
-        <span>Team</span>
-      </a>
-      <a href="#" class="mobile-nav-item user-menu">
-        <i class="fas fa-user-circle"></i>
-        <span>Profile</span>
-      </a>
-    </nav>
-    
-    <!-- Mobile Topics Dropdown -->
-    <div class="mobile-dropdown-panel-topics">
-      <div class="mobile-dropdown-header">
-        <h3>Topics</h3>
-        <button class="close-dropdown"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="mobile-dropdown-content">
-        <a href="comingsoon.html">Artificial Intelligence</a>
-        <a href="nlp.html">NLP</a>
-        <a href="comingsoon.html">Logic Design and Spectral Technics</a>
-        <a href="comingsoon.html">Signal Processing</a>
-        <a href="comingsoon.html">Web Programming</a>
-      </div>
-    </div>
-    <div class="mobile-dropdown-panel-team">
-      <div class="mobile-dropdown-header">
-        <h3>Team</h3>
-        <button class="close-dropdown-team"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="mobile-dropdown-content">
-        <a href="researchers.html" class="active">Researchers</a>
-        <a href="students.html">PhD Students</a>
-      </div>
-    </div>
-    <div class="mobile-user-panel">
-      <div class="mobile-user-header">
-        <div class="user-info">
+      <nav class="mobile-bottom-nav">
+        <a href="index.html" class="mobile-nav-item">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </a>
+        <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
+          <i class="fas fa-book"></i>
+          <span>Areas</span>
+        </a>
+        <a href="news.html" class="mobile-nav-item">
+          <i class="fas fa-newspaper"></i>
+          <span>News</span>
+        </a>
+        <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
+          <i class="fas fa-users"></i>
+          <span>Team</span>
+        </a>
+        <a href="#" class="mobile-nav-item user-menu">
+          <i class="fas fa-user-circle"></i>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <!-- Mobile Topics Dropdown -->
+      <div class="mobile-dropdown-panel-topics">
+        <div class="mobile-dropdown-header">
+          <h3>Topics</h3>
+          <button class="close-dropdown"><i class="fas fa-times"></i></button>
         </div>
-        <button class="close-user-panel"><i class="fas fa-times"></i></button>
+        <div class="mobile-dropdown-content">
+          <a href="artificial-intelligence.html">Artificial Intelligence</a>
+          <a href="nlp.html">NLP</a>
+          <a href="logic-design-and-spectral-technics.html">Logic Design and Spectral Technics</a>
+          <a href="signal-processing.html">Signal Processing</a>
+          <a href="web-programming.html">Web Programming</a>
+        </div>
       </div>
-      <div class="mobile-user-content">
-        <a href="/profile.html">
-          <i class="fas fa-user"></i> Profile
-        </a>
-        <a href="#" id="mobileLogoutBtn">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
+      <div class="mobile-dropdown-panel-team">
+        <div class="mobile-dropdown-header">
+          <h3>Team</h3>
+          <button class="close-dropdown-team">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-dropdown-content">
+          <a href="researchers.html" class="active">Researchers</a>
+          <a href="students.html">PhD Students</a>
+        </div>
       </div>
-    </div>
-    
-    <!-- Overlay for mobile panels -->
-    <div class="mobile-overlay"></div>
-  </header>
+      <div class="mobile-user-panel">
+        <div class="mobile-user-header">
+          <div class="user-info"></div>
+          <button class="close-user-panel"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="mobile-user-content">
+          <a href="/profile.html"> <i class="fas fa-user"></i> Profile </a>
+          <a href="#" id="mobileLogoutBtn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+      </div>
+
+      <!-- Overlay for mobile panels -->
+      <div class="mobile-overlay"></div>
+    </header>
     <main>
       <div class="hero">
         <div class="hero-content">
-          <h1>Meet the CIITLAB Researchers</h1>
-          <p>
-            Discover the experts behind CIITLAB’s innovations.<br>Our researchers are shaping the future of IT<br>with cutting-edge projects and groundbreaking ideas.
-          </p>
-          <a href="#featured-research" class="btn btn-primary"
-            >Explore Our Research</a
-          >
+          <h1>CIITLAB Researchers</h1>
         </div>
       </div>
       <section class="page-header">
-        <h1>Our Researchers</h1>
-        <p>Meet the talented team behind our research initiatives</p>
+        <h1>Active Researchers</h1>
       </section>
 
       <section class="researchers-grid">
@@ -131,7 +122,6 @@
       <br>
       <section class="page-header">
         <h1>Former Researchers</h1>
-        <p>Meet the researchers whose work laid the foundation for our success</p>
       </section>
       <section class="former-researchers-grid">
         <div class="researcher-card">

@@ -3,13 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CIITLAB - Contact Us</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <title>Contact Us - CIITLAB</title>
+    <link rel="preload" href="css/style.css" as="style" />
+    <link rel="preload" href="js/auth.js" as="script" />
+    <link rel="preload" href="js/main.js" as="script" />
+    <link rel="stylesheet" href="css/style.css" />
     <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
   <body>
-    <!-- Header -->
     <header>
       <nav class="navbar">
         <div class="logo">
@@ -17,172 +22,155 @@
             <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
           </a>
         </div>
-       
-        </div>
         <div class="nav-links">
           <a href="index.html">Home</a>
           <div class="dropdown" id="dropdown">
-            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Topics</a>
-            <div class="dropdown-content"  id="dropdownContent">
-              <a href="comingsoon.html">Artifical Intelligence</a>
+            <a href="#" class="dropdown-trigger" id="dropdownTrigger"
+              >Research Areas</a
+            >
+            <div class="dropdown-content" id="dropdownContent">
+              <a href="artificial-intelligence.html">Artifical Intelligence</a>
               <a href="nlp.html">NLP</a>
-              <a href="comingsoon.html">Logic Design and Spectral Technics</a>
-              <a href="comingsoon.html">Signal Processing</a>
-              <a href="comingsoon.html">Web Programming</a>
-              
+              <a href="logic-design.html">Logic Design and Spectral Technics</a>
+              <a href="signal-processing.html">Signal Processing</a>
+              <a href="web-programming.html">Web Programming</a>
             </div>
           </div>
-          
-          <a href="comingsoon.html">News</a>
+          <a href="news.html">News</a>
           <a href="researchers.html">Researchers</a>
           <a href="students.html">PhD Students</a>
           <a href="contact.html" class="active">Contact Us</a>
         </div>
       </nav>
 
-       <nav class="mobile-bottom-nav">
-      <a href="index.html" class="mobile-nav-item">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </a>
-      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
-        <i class="fas fa-book"></i>
-        <span>Topics</span>
-      </a>
-      <a href="comingsoon.html" class="mobile-nav-item">
-        <i class="fas fa-newspaper"></i>
-        <span>News</span>
-      </a>
-      <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
-        <i class="fas fa-users"></i>
-        <span>Team</span>
-      </a>
-      <a href="#" class="mobile-nav-item user-menu">
-        <i class="fas fa-user-circle"></i>
-        <span>Profile</span>
-      </a>
-    </nav>
-    
-    <!-- Mobile Topics Dropdown -->
-    <div class="mobile-dropdown-panel-topics">
-      <div class="mobile-dropdown-header">
-        <h3>Topics</h3>
-        <button class="close-dropdown"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="mobile-dropdown-content">
-        <a href="comingsoon.html">Artificial Intelligence</a>
-        <a href="nlp.html">NLP</a>
-        <a href="comingsoon.html">Logic Design and Spectral Technics</a>
-        <a href="comingsoon.html">Signal Processing</a>
-        <a href="comingsoon.html">Web Programming</a>
-      </div>
-    </div>
-    <div class="mobile-dropdown-panel-team">
-      <div class="mobile-dropdown-header">
-        <h3>Team</h3>
-        <button class="close-dropdown-team"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="mobile-dropdown-content">
-        <a href="researchers.html">Researchers</a>
-        <a href="students.html">PhD Students</a>
-      </div>
-    </div>
-    <div class="mobile-user-panel">
-      <div class="mobile-user-header">
-        <div class="user-info">
-        </div>
-        <button class="close-user-panel"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="mobile-user-content">
-        <a href="/profile.html">
-          <i class="fas fa-user"></i> Profile
+      <nav class="mobile-bottom-nav">
+        <a href="index.html" class="mobile-nav-item">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
         </a>
-        <a href="#" id="mobileLogoutBtn">
-          <i class="fas fa-sign-out-alt"></i> Logout
+        <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
+          <i class="fas fa-book"></i>
+          <span>Areas</span>
         </a>
-      </div>
-    </div>
-    
-    <!-- Overlay for mobile panels -->
-    <div class="mobile-overlay"></div>
-  </header>
+        <a href="news.html" class="mobile-nav-item">
+          <i class="fas fa-newspaper"></i>
+          <span>News</span>
+        </a>
+        <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
+          <i class="fas fa-users"></i>
+          <span>Team</span>
+        </a>
+        <a href="#" class="mobile-nav-item user-menu">
+          <i class="fas fa-user-circle"></i>
+          <span>Profile</span>
+        </a>
+      </nav>
 
-    <!-- Main Content -->
-    <main class="container">
-      <!-- Page Title -->
-      <div class="page-title">
-        <h1>Contact Us</h1>
-        <div class="title-underline"></div>
-      </div>
-      
-      <!-- Contact Section -->
-      <div class="contact-card">
-        <!-- Contact Info Banner -->
-        <div class="contact-banner">
-          <div class="banner-content">
-            <div class="banner-text">
-              <h2>Get in Touch</h2>
-              <p>We'd love to hear from you. Here's how you can reach us.</p>
-            </div>
-            <div class="banner-icons">
-              
-              <a href="tel:+381 18 529 523" class="icon-link">
-                <i class="fas fa-phone"></i>
-              </a>
-              <a href="https://maps.app.goo.gl/qzsygeRcoVK68nVE8" target="_blank" class="icon-link">
-                <i class="fas fa-map-marker-alt"></i>
-              </a>
-            </div>
-          </div>
+      <!-- Mobile Topics Dropdown -->
+      <div class="mobile-dropdown-panel-topics">
+        <div class="mobile-dropdown-header">
+          <h3>Research Areas</h3>
+          <button class="close-dropdown"><i class="fas fa-times"></i></button>
         </div>
-        
-        <!-- Contact Content -->
+        <div class="mobile-dropdown-content">
+          <a href="artificial-intelligence.html">Artificial Intelligence</a>
+          <a href="nlp.html">NLP</a>
+          <a href="logic-design-and-spectral-technics.html"
+            >Logic Design and Spectral Technics</a
+          >
+          <a href="signal-processing.html">Signal Processing</a>
+          <a href="web-programming.html">Web Programming</a>
+        </div>
+      </div>
+      <div class="mobile-dropdown-panel-team">
+        <div class="mobile-dropdown-header">
+          <h3>Team</h3>
+          <button class="close-dropdown-team">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-dropdown-content">
+          <a href="researchers.html">Researchers</a>
+          <a href="students.html">PhD Students</a>
+        </div>
+      </div>
+      <div class="mobile-user-panel">
+        <div class="mobile-user-header">
+          <div class="user-info"></div>
+          <button class="close-user-panel"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="mobile-user-content">
+          <a href="/profile.html"> <i class="fas fa-user"></i> Profile </a>
+          <a href="#" id="mobileLogoutBtn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+      </div>
 
-            
-            <!-- Contact Info & Map -->
-            <div class="contact-info-container">
-              <div class="info-card">
-                <h3>Contact Information</h3>
-                <div class="info-list">
-                  <div class="info-item">
-                    <div class="info-icon">
-                      <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div class="info-text">
-                      <h4>Address</h4>
-                      <p>Aleksandra Medvedeva 4, Niš 18000</p>
-                    </div>
+      <!-- Overlay for mobile panels -->
+      <div class="mobile-overlay"></div>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div class="hero-content">
+          <h1>Contact Us</h1>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <div class="container">
+          <div class="contact-info-container">
+            <div class="info-card">
+              <h2>Contact Information</h2>
+              <div class="info-list">
+                <div class="info-item">
+                  <div class="info-icon">
+                    <i class="fas fa-map-marker-alt"></i>
                   </div>
-                  
-                  <div class="info-item">
-                    <div class="info-icon">
-                      <i class="fas fa-phone"></i>
-                    </div>
-                    <div class="info-text">
-                      <h4>Phone</h4>
-                      <p>+381 18 529 523</p>
-                      <p>+381 18 529 530</p>
-                    </div>
+                  <div class="info-text">
+                    <h3>Address</h3>
+                    <p>Aleksandra Medvedeva 4, Niš 18000</p>
+                  </div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-icon">
+                    <i class="fas fa-phone"></i>
+                  </div>
+                  <div class="info-text">
+                    <h3>Phone</h3>
+                    <p>+381 18 529 523</p>
+                    <p>+381 18 529 530</p>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-icon">
+                    <i class="fas fa-envelope"></i>
+                  </div>
+                  <div class="info-text">
+                    <h3>Email</h3>
+                    <p>vladan.vuckovic@elfak.ni.ac.rs</p>
                   </div>
                 </div>
               </div>
-              
-              <!-- Map -->
-              <div class="map-container">
-                <h3>Our Location</h3>
-                <div class="map-wrapper">
-                  <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3571.0488920872!2d21.889947076617613!3d43.33129987319022!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4755b733e02e006f%3A0x2fd8f95c1eacfcfb!2sFaculty%20of%20Electronic%20Engineering!5e1!3m2!1sen!2srs!4v1742897080501!5m2!1sen!2srs" 
-                    allowfullscreen="" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade">
-                  </iframe>
-                </div>
+            </div>
+
+            <div class="map-container">
+              <h2>Our Location</h2>
+              <div class="map-wrapper">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3571.0488920872!2d21.889947076617613!3d43.33129987319022!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4755b733e02e006f%3A0x2fd8f95c1eacfcfb!2sFaculty%20of%20Electronic%20Engineering!5e1!3m2!1sen!2srs!4v1742897080501!5m2!1sen!2srs"
+                  allowfullscreen=""
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                >
+                </iframe>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </main>
 
     <footer>
@@ -190,7 +178,10 @@
         <div class="footer-section">
           <h3>Contact Us</h3>
           <p>Phone: +381 18 529 523</p>
-          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +381 18 529 530</p>
+          <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            +381 18 529 530
+          </p>
         </div>
         <div class="footer-section">
           <h3>Quick Links</h3>
@@ -201,46 +192,14 @@
             <li><a href="contact.html">Contact Us</a></li>
           </ul>
         </div>
-        </div>
       </div>
       <div class="footer-bottom">
-        <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
+        <p class="footer-text">
+          &copy;<span id="currentYear"></span> CIITLAB. All rights reserved.
+        </p>
       </div>
     </footer>
 
-    <!-- Scripts -->
-    <script>
-      // Set current year in footer
-      document.getElementById('currentYear').textContent = new Date().getFullYear();
-      
-      // Mobile menu toggle
-      document.getElementById('mobile-menu-button').addEventListener('click', function() {
-        document.getElementById('mobile-menu').classList.toggle('show');
-      });
-      
-      // Mobile dropdowns
-      document.querySelectorAll('.mobile-dropdown-trigger').forEach(button => {
-        button.addEventListener('click', function() {
-          const content = this.nextElementSibling;
-          content.classList.toggle('show');
-          this.querySelector('i').classList.toggle('fa-chevron-down');
-          this.querySelector('i').classList.toggle('fa-chevron-up');
-        });
-      });
-      
-      // Contact form submission
-      document.getElementById('contactForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const response = document.getElementById('response');
-        response.classList.add('show');
-        this.reset();
-        
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          response.classList.remove('show');
-        }, 5000);
-      });
-    </script>
     <script src="js/main.js"></script>
     <script src="js/auth.js"></script>
   </body>

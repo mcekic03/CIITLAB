@@ -124,6 +124,29 @@ class Sentence {
     }
   }
 
+  static async checkSentences(){
+    try {
+      const query = `SELECT id FROM sentences
+                      WHERE updated_at <= NOW() - INTERVAL 20 MINUTE and status = 1;`;
+      const [rows] = await db.promise().query(query);
+
+      if(rows.length > 0){
+        const idsString = rows.map(row => row.id).join(", ");
+        await db.promise().query(`UPDATE sentences SET status = 0 WHERE id IN (${idsString})`);
+         console.log("isteklo vreme za resavanje");
+        return "isteklo vreme za resavanje";
+      }
+      else{
+        console.log("nema recenica");
+        return "nema recenica";
+      }
+
+      return rows;
+    } catch (error) {
+      throw new Error('Greška pri proveri rečenica: ' + error.message);
+    }
+  }
+
   static async insertSentimentAnalysis(id,user_id){
     try {
       const query = `INSERT INTO sentiment_analysis (annotator_id, sentence_id,created_at) 

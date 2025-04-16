@@ -23,12 +23,25 @@ class User {
     try {
       const query = `SELECT * FROM users WHERE email = ?`;
       const [rows] = await db.promise().query(query, [email]);
-
       return rows[0]; // Vraća prvi korisnik koji odgovara
     } catch (error) {
       throw new Error('Error finding user by email: ' + error.message);
     }
   }
+
+  static async updateIsLoggedIn(id,isLoggedIn) {
+    try {
+      const query = `UPDATE users SET is_logged_in = ? WHERE id = ?`;
+      const [result] = await db.promise().query(query, [isLoggedIn, id]);
+      return result;
+    } catch (error) {   
+      console.log("error: ",error);
+      throw new Error('Error updating is_logged_in: ' + error.message);
+    }
+  }
+
+    
+  
 
   // Pronalazak korisnika po ID-u
   static async findUserById(id) {

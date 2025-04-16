@@ -13,11 +13,20 @@ const authState = {
   init() {
     this.token = sessionStorage.getItem('authToken');
     const userId = sessionStorage.getItem('userId');
-    
+
     // Proveri da li je userId validan
     const isValidId = userId && userId !== 'undefined' && userId !== 'null';
-    console.log('Auth init - Token present:', !!this.token, 'userId present:', !!userId, 'userId valid:', isValidId, 'Raw userId value:', userId);
-    
+    console.log(
+      'Auth init - Token present:',
+      !!this.token,
+      'userId present:',
+      !!userId,
+      'userId valid:',
+      isValidId,
+      'Raw userId value:',
+      userId
+    );
+
     // Ако нема токена или userId, нема смисла даље проверавати
     if (!this.token || !isValidId) {
       console.warn('No auth token or valid userId found in sessionStorage');
@@ -33,7 +42,7 @@ const authState = {
       }
       return;
     }
-    
+
     // Ако постоји токен и userId, учитај најновије податке о кориснику са сервера
     this.loadUserData(userId);
   },
@@ -49,13 +58,13 @@ const authState = {
       this.updateMobileAuth();
       return;
     }
-    
+
     try {
       console.log('Loading user data for userId:', userId);
       const response = await fetch(`${AUTH_CONFIG.API_BASE_URL}/me/${userId}`, {
         headers: {
-          Authorization: `Bearer ${this.token}`
-        }
+          Authorization: `Bearer ${this.token}`,
+        },
       });
 
       if (!response.ok) {
@@ -70,10 +79,10 @@ const authState = {
       const userData = await response.json();
       this.user = userData;
       this.isAuthenticated = true;
-      
+
       // Ažuriraj lokalno skladište
       sessionStorage.setItem('user', JSON.stringify(userData));
-      
+
       this.updateNavbar();
       this.updateMobileAuth();
     } catch (error) {
@@ -85,27 +94,27 @@ const authState = {
 
   setAuth(user, token) {
     console.log('SetAuth called with user:', user);
-    
+
     // Check if user has ID
     if (!user || (!user._id && !user.id)) {
       console.error('Error: User has no valid ID', user);
       return;
     }
-    
+
     // Save user and token
     this.user = user;
     this.token = token;
     this.isAuthenticated = true;
-    
+
     // Save data in sessionStorage
     sessionStorage.setItem('authToken', token);
-    
+
     // Use _id or id, whichever is available
     const userId = user.id;
     console.log('Saving userId in sessionStorage:', userId);
     sessionStorage.setItem('userId', userId);
     sessionStorage.setItem('user', JSON.stringify(user));
-    
+
     // Check if saving was successful
     setTimeout(() => {
       console.log('Checking sessionStorage after setAuth:');
@@ -113,7 +122,7 @@ const authState = {
       console.log('userId:', sessionStorage.getItem('userId'));
       console.log('user object:', sessionStorage.getItem('user'));
     }, 100);
-    
+
     this.updateNavbar();
     this.updateMobileAuth();
   },
@@ -148,6 +157,7 @@ const authState = {
     this.updateMobileAuth();
   },
 
+
   // Pripremi URL profilne slike
   getProfileImageUrl() {
     if (!this.user) return AUTH_CONFIG.DEFAULT_PROFILE_IMAGE;
@@ -168,6 +178,27 @@ const authState = {
     return AUTH_CONFIG.DEFAULT_PROFILE_IMAGE;
   },
 
+
+  // Pripremi URL profilne slike
+  getProfileImageUrl() {
+    if (!this.user) return AUTH_CONFIG.DEFAULT_PROFILE_IMAGE;
+
+    // Ako profil ima punu URL putanju (http://...)
+    if (this.user.profileImage && this.user.profileImage.startsWith('http')) {
+      return this.user.profileImage;
+    }
+
+    // Ako profil ima relativnu putanju (/uploads/...)
+    if (this.user.profileImage && this.user.profileImage.startsWith('/')) {
+      // Preuzmi domen iz API_BASE_URL (npr. http://localhost:3000)
+      const apiBase = AUTH_CONFIG.API_BASE_URL.replace('/users', '');
+      return `${apiBase}${this.user.profileImage}`;
+    }
+
+    // Ako nema profilne slike
+    return AUTH_CONFIG.DEFAULT_PROFILE_IMAGE;
+  },
+
   updateNavbar() {
     const navbar = document.querySelector('.nav-links');
     if (!navbar) return;
@@ -182,18 +213,24 @@ const authState = {
     const authSection = document.createElement('div');
     authSection.className = 'auth-section';
 
-    if (this.isAuthenticated && this.user && (this.user?.role === 'researcher' || this.user?.role === 'student')) {
+    if (
+      this.isAuthenticated &&
+      this.user &&
+      (this.user?.role === 'researcher' || this.user?.role === 'student')
+    ) {
       // Pripremi putanju slike
       const profileImageUrl = this.getProfileImageUrl();
       console.log('Navbar profile image URL:', profileImageUrl);
-      
+
       // Kreiraj dropdown za autentifikovanog korisnika
       authSection.innerHTML = `
         <div class="user-dropdown">
           <button class="user-dropdown-trigger">
             <img src="${profileImageUrl}" alt="Profile" class="profile-image" 
                  onerror="this.src='${AUTH_CONFIG.DEFAULT_PROFILE_IMAGE}'">
-            <span>${this.user.firstName || ''} ${this.user.lastName || ''}</span>
+            <span>${this.user.firstName || ''} ${
+        this.user.lastName || ''
+      }</span>
             <i class="fas fa-chevron-down"></i>
           </button>
           <div class="user-dropdown-content">
@@ -207,23 +244,25 @@ const authState = {
         </div>
       `;
       setTimeout(() => {
-        const logoutBtn = authSection.querySelector("#logoutBtn")
+        const logoutBtn = authSection.querySelector('#logoutBtn');
         if (logoutBtn) {
-          logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault()
-            this.clearAuth()
-            window.location.href = "/index.html"
-          })
+          logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.clearAuth();
+            window.location.href = '/index.html';
+          });
         }
-      }, 0)
+      }, 0);
     } else if (
       this.isAuthenticated &&
-      (this.user.role === "anotator1" || this.user.role === "anotator2")
+      (this.user.role === 'anotator1' || this.user.role === 'anotator2')
     ) {
       authSection.innerHTML = `
         <div class="user-dropdown">
           <button class="user-dropdown-trigger">
-            <span>${this.user.firstName || ""} ${this.user.lastName || ""}</span>
+            <span>${this.user.firstName || ''} ${
+        this.user.lastName || ''
+      }</span>
             <i class="fas fa-chevron-down"></i>
           </button>
           <div class="user-dropdown-content">
@@ -232,24 +271,26 @@ const authState = {
             </a>
           </div>
         </div>
-      `
-    
+      `;
+
       // Add the same event listener for admin logout - THIS WAS MISSING
       setTimeout(() => {
-        const logoutBtn = authSection.querySelector("#logoutBtn")
+        const logoutBtn = authSection.querySelector('#logoutBtn');
         if (logoutBtn) {
-          logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault()
-            this.clearAuth()
-            window.location.href = "/index.html"
-          })
+          logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.clearAuth();
+            window.location.href = '/index.html';
+          });
         }
-      }, 0)
-    } else if (this.isAuthenticated && this.user.role === "admin") {
+      }, 0);
+    } else if (this.isAuthenticated && this.user.role === 'admin') {
       authSection.innerHTML = `
         <div class="user-dropdown">
           <button class="user-dropdown-trigger">
-            <span>${this.user.firstName || ""} ${this.user.lastName || ""}</span>
+            <span>${this.user.firstName || ''} ${
+        this.user.lastName || ''
+      }</span>
             <i class="fas fa-chevron-down"></i>
           </button>
           <div class="user-dropdown-content">
@@ -261,22 +302,22 @@ const authState = {
             </a>
           </div>
         </div>
-      `
+      `;
       setTimeout(() => {
-        const logoutBtn = authSection.querySelector("#logoutBtn")
+        const logoutBtn = authSection.querySelector('#logoutBtn');
         if (logoutBtn) {
-          logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault()
-            this.clearAuth()
-            window.location.href = "/index.html"
-          })
+          logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.clearAuth();
+            window.location.href = '/index.html';
+          });
         }
-      }, 0)
+      }, 0);
     } else {
       // Create link for unauthenticated user
       authSection.innerHTML = `
         <a href="/login.html" class="btn btn-primary">Login</a>
-      `
+      `;
     }
 
     navbar.appendChild(authSection);
@@ -285,36 +326,38 @@ const authState = {
   updateMobileAuth() {
     const mobileUserPanel = document.querySelector('.mobile-user-panel');
     if (!mobileUserPanel) return;
-  
+
     const userInfoContainer = mobileUserPanel.querySelector('.user-info');
-    const mobileUserContent = mobileUserPanel.querySelector('.mobile-user-content');
-    
+    const mobileUserContent = mobileUserPanel.querySelector(
+      '.mobile-user-content'
+    );
+
     if (!userInfoContainer || !mobileUserContent) return;
-    
+
     // Clear existing content
     userInfoContainer.innerHTML = '';
     mobileUserContent.innerHTML = '';
-  
+
     if (this.isAuthenticated && this.user) {
       // Common user info display for all authenticated users
       userInfoContainer.innerHTML = `
         <span>${this.user.firstName || ''} ${this.user.lastName || ''}</span>
       `;
-  
+
       // Add logout button for all authenticated users
       const logoutLink = document.createElement('a');
       logoutLink.href = '#';
       logoutLink.id = 'mobileLogoutBtn';
       logoutLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
       mobileUserContent.appendChild(logoutLink);
-  
+
       // Add event listener for logout
       logoutLink.addEventListener('click', (e) => {
         e.preventDefault();
         this.clearAuth();
         window.location.href = '/index.html';
       });
-  
+
       // Role-specific content
       if (this.user.role === 'researcher' || this.user.role === 'student') {
         // Add profile image for researchers and students
@@ -325,7 +368,7 @@ const authState = {
         profileImage.className = 'mobile-profile-image';
         profileImage.onerror = `this.src='${AUTH_CONFIG.DEFAULT_PROFILE_IMAGE}'`;
         userInfoContainer.prepend(profileImage);
-  
+
         // Add profile link for researchers and students
         const profileLink = document.createElement('a');
         profileLink.href = '/profile.html';
@@ -343,35 +386,35 @@ const authState = {
       // For unauthenticated users, redirect to login page when opening mobile panel
       // or you could choose to hide the panel entirely
       userInfoContainer.innerHTML = `<span>Not logged in</span>`;
-      
+
       const loginLink = document.createElement('a');
       loginLink.href = '/login.html';
       loginLink.className = 'btn btn-primary';
       loginLink.textContent = 'Login';
       mobileUserContent.appendChild(loginLink);
     }
-  
+
     // Add event listener for close button if it doesn't already have one
     const closeButton = mobileUserPanel.querySelector('.close-user-panel');
     if (closeButton) {
       // Remove existing event listeners to prevent duplicates
       const newCloseButton = closeButton.cloneNode(true);
       closeButton.parentNode.replaceChild(newCloseButton, closeButton);
-      
+
       newCloseButton.addEventListener('click', () => {
         mobileUserPanel.classList.remove('active');
       });
     }
-  }
+  },
 };
 
 // Inicijalizacija auth state-a kada se stranica učita
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Initializing auth state...');
-  
+
   // Check if this is login page
   const isLoginPage = window.location.href.includes('login.html');
-  
+
   // If it's login page, clear sessionStorage of any incorrect data
   if (isLoginPage) {
     console.log('Login page detected - resetting sessionStorage');
@@ -379,6 +422,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sessionStorage.removeItem('userId');
     sessionStorage.removeItem('user');
   }
-  
+
   authState.init();
-}); 
+});

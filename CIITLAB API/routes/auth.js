@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const User = require('../models/User');
+const { error } = require('winston');
 
 /**
  * @swagger
@@ -66,12 +67,14 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    
+
     // Find user by email
     const user = await User.findByEmail(email);
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials (Email).' });
     }
-
+    console.log("user find");
     // Check if the password matches
     const isMatch = await User.comparePassword(password, user.password);
     if (!isMatch) {
@@ -81,15 +84,40 @@ router.post('/login', async (req, res) => {
     // Generate token
     const token = User.generateAuthToken(user.id,user.email,user.role);
 
+    if(process.env.SYSTEM_LOCKED === "true" && !JSON.parse(process.env.SYSTEM_ADMINISTATORS).includes(user.id)){
+      return res.status(403).json({ message: 'System is locked. Contact administrator.' });
+    }
+    else{
+      console.log("User logged in: ",user.email);
+      res.status(200).json({
+        user,
+        token,
+      });
+    }
+
+
     // Respond with user data and token
-    res.json({
-      user,
-      token,
-    });
+    
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
+
+router.post('/logout', async (req, res) => {
+  try {
+    const { id } = req.body;
+    console.log("izlogovan id: ",id);
+    
+    //const re = await User.updateIsLoggedIn(id, 0);
+    
+      res.status(200).json({ message: 'User logged out successfully' });
+   
+  } catch (error) { 
+    console.log("error: ",error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
 
 
 module.exports = router;

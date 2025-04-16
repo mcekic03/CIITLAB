@@ -87,9 +87,39 @@ document.querySelectorAll('.admin-nav a').forEach((link) => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const section = e.currentTarget.dataset.section;
+    console.log(section);
     showSection(section);
   });
 });
+document.querySelectorAll('.mobile-bottom-nav a').forEach((link) => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (
+      !link.classList.contains('mobile-dropdown-trigger-content') &&
+      !link.classList.contains('mobile-dropdown-trigger-users') &&
+      !link.classList.contains('user-menu')
+    ) {
+      const section = e.currentTarget.dataset.section;
+      showSection(section);
+      document.querySelector('.mobile-dropdown-panel-content').classList.remove('active');
+      document.querySelector('.mobile-dropdown-panel-users').classList.remove('active');
+      document.querySelector('.mobile-overlay').classList.remove('active');
+    }
+  });
+});
+document.querySelectorAll('.mobile-dropdown-content a, .mobile-dropdown-panel-users a').forEach((link) => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+      const section = e.currentTarget.dataset.section;
+      showSection(section);
+      document.querySelector('.mobile-dropdown-panel-content').classList.remove('active');
+      document.querySelector('.mobile-dropdown-panel-users').classList.remove('active');
+      document.querySelector('.mobile-overlay').classList.remove('active');
+  });
+});
+
+
+
 
 function showSection(sectionId) {
   // Update active nav link
@@ -99,6 +129,7 @@ function showSection(sectionId) {
       link.classList.add('active');
     }
   });
+  
 
   // Show selected section
   document.querySelectorAll('.admin-section').forEach((section) => {
@@ -870,6 +901,7 @@ function showError(message) {
 
 function refreshDashboard() {
   window.location.reload();
+  showSection('dashboard');
 }
 
 // Initialize the admin panel
@@ -878,6 +910,111 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'login.html';
     return;
   }
+
+  const mobileContentTrigger = document.querySelector(
+    '.mobile-dropdown-trigger-content'
+  );
+  const mobileUsersTrigger = document.querySelector(
+    '.mobile-dropdown-trigger-users'
+  );
+  const mobileProfileTrigger = document.querySelector('.user-menu');
+  const mobileOverlay = document.querySelector('.mobile-overlay');
+  const contentPanel = document.querySelector('.mobile-dropdown-panel-content');
+  const usersPanel = document.querySelector('.mobile-dropdown-panel-users');
+  const userPanel = document.querySelector('.mobile-user-panel');
+  const closeTeamBtn = document.querySelector('.close-dropdown-team');
+  const closeUserBtn = document.querySelector('.close-user-panel');
+  const closeContentBtn = document.querySelector('.close-dropdown-content');
+  const closeUsersBtn = document.querySelector('.close-dropdown-users');
+
+  // Helper function to close all panels
+  function closeAllPanels() {
+    contentPanel.classList.remove('active');
+    usersPanel.classList.remove('active');
+    userPanel.classList.remove('active');
+    mobileOverlay.classList.remove('active');
+  }
+
+  // Content panel handler
+  if (mobileContentTrigger) {
+    mobileContentTrigger.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (userPanel.classList.contains('active')) {
+        userPanel.classList.remove('active');
+      } else if (usersPanel.classList.contains('active')) {
+        usersPanel.classList.remove('active');
+      }
+      contentPanel.classList.toggle('active');
+      mobileOverlay.classList.toggle('active');
+    });
+  }
+  if (mobileUsersTrigger) {
+    mobileUsersTrigger.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (userPanel.classList.contains('active')) {
+        userPanel.classList.remove('active');
+      } else if (contentPanel.classList.contains('active')) {
+        contentPanel.classList.remove('active');
+      }
+      usersPanel.classList.toggle('active');
+      mobileOverlay.classList.toggle('active');
+    });
+  }
+
+  // Profile panel handler
+  if (mobileProfileTrigger) {
+    mobileProfileTrigger.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (contentPanel.classList.contains('active')) {
+        contentPanel.classList.remove('active');
+      } else if (usersPanel.classList.contains('active')) {
+        usersPanel.classList.remove('active');
+      }
+      userPanel.classList.toggle('active');
+      mobileOverlay.classList.toggle('active');
+    });
+  }
+
+  
+
+  contentPanel.addEventListener('click', function (e) {
+    e.preventDefault();
+    if (userPanel.classList.contains('active')) {
+      userPanel.classList.remove('active');
+    } else if (usersPanel.classList.contains('active')) {
+      usersPanel.classList.remove('active');
+    }
+  });
+
+  usersPanel.addEventListener('click', function (e) {
+    e.preventDefault();
+    if (userPanel.classList.contains('active')) {
+      userPanel.classList.remove('active');
+    } else if (contentPanel.classList.contains('active')) {
+      contentPanel.classList.remove('active');
+    }
+  });
+
+  // Close buttons handlers
+  if (closeTeamBtn) {
+    closeTeamBtn.addEventListener('click', closeAllPanels);
+  }
+  if (closeUserBtn) {
+    closeUserBtn.addEventListener('click', closeAllPanels);
+  }
+  if (closeContentBtn) {
+    closeContentBtn.addEventListener('click', closeAllPanels);
+  }
+  if (closeUsersBtn) {
+    closeUsersBtn.addEventListener('click', closeAllPanels);
+  }
+
+
+  // Overlay click handler
+  if (mobileOverlay) {
+    mobileOverlay.addEventListener('click', closeAllPanels);
+  }
+
 
   // Show dashboard by default
   showSection('dashboard');

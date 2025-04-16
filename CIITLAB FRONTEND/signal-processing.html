@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PhD Students - CIITLAB</title>
+    <title>Signal Processing - CIITLAB</title>
     <link rel="preload" href="css/style.css" as="style" />
     <link rel="preload" href="js/auth.js" as="script" />
     <link rel="preload" href="js/main.js" as="script" />
@@ -25,18 +25,22 @@
         <div class="nav-links">
           <a href="index.html">Home</a>
           <div class="dropdown" id="dropdown">
-            <a href="#" class="dropdown-trigger" id="dropdownTrigger">Research Areas</a>
-            <div class="dropdown-content"  id="dropdownContent">
+            <a href="#" class="dropdown-trigger" id="dropdownTrigger"
+              >Research Areas</a
+            >
+            <div class="dropdown-content" id="dropdownContent">
               <a href="artificial-intelligence.html">Artifical Intelligence</a>
               <a href="nlp.html">NLP</a>
               <a href="logic-design.html">Logic Design and Spectral Technics</a>
-              <a href="signal-processing.html">Signal Processing</a>
+              <a href="signal-processing.html" class="active"
+                >Signal Processing</a
+              >
               <a href="web-programming.html">Web Programming</a>
             </div>
           </div>
           <a href="news.html">News</a>
           <a href="researchers.html">Researchers</a>
-          <a href="students.html" class="active">PhD Students</a>
+          <a href="students.html">PhD Students</a>
           <a href="contact.html">Contact Us</a>
         </div>
       </nav>
@@ -73,8 +77,10 @@
         <div class="mobile-dropdown-content">
           <a href="artificial-intelligence.html">Artificial Intelligence</a>
           <a href="nlp.html">NLP</a>
-          <a href="logic-design-and-spectral-technics.html">Logic Design and Spectral Technics</a>
-          <a href="signal-processing.html">Signal Processing</a>
+          <a href="logic-design-and-spectral-technics.html"
+            >Logic Design and Spectral Technics</a
+          >
+          <a href="signal-processing.html" class="active">Signal Processing</a>
           <a href="web-programming.html">Web Programming</a>
         </div>
       </div>
@@ -87,7 +93,7 @@
         </div>
         <div class="mobile-dropdown-content">
           <a href="researchers.html">Researchers</a>
-          <a href="students.html" class="active">PhD Students</a>
+          <a href="students.html">PhD Students</a>
         </div>
       </div>
       <div class="mobile-user-panel">
@@ -110,14 +116,41 @@
     <main>
       <div class="hero">
         <div class="hero-content">
-          <h1>CIITLAB PhD Students</h1>
+          <h1>Signal Processing</h1>
+          <p>
+            Advancing signal processing techniques for modern communication
+            systems
+          </p>
         </div>
       </div>
-      <section class="page-header">
-        <h1>Active PhD Students</h1>
 
-      <section class="researchers-grid">
-        <!-- Researchers will be loaded dynamically via JavaScript -->
+      <section class="content-section">
+        <div class="container">
+          <h2>About Our Signal Processing Research</h2>
+          <p>
+            Our Signal Processing research focuses on developing advanced
+            techniques for signal analysis, filtering, and transformation. We
+            work on both analog and digital signal processing applications.
+          </p>
+
+          <h3>Key Research Areas</h3>
+          <ul>
+            <li>Digital Signal Processing</li>
+            <li>Signal Analysis and Filtering</li>
+            <li>Communication Systems</li>
+            <li>Image and Video Processing</li>
+            <li>Adaptive Signal Processing</li>
+          </ul>
+
+          <h3>Current Projects</h3>
+          <p>Our ongoing research projects include:</p>
+          <ul>
+            <li>Advanced signal filtering algorithms</li>
+            <li>Real-time signal processing systems</li>
+            <li>Multimedia signal processing</li>
+            <li>Wireless communication systems</li>
+          </ul>
+        </div>
       </section>
     </main>
 
@@ -126,7 +159,10 @@
         <div class="footer-section">
           <h3>Contact Us</h3>
           <p>Phone: +381 18 529 523</p>
-          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +381 18 529 530</p>
+          <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            +381 18 529 530
+          </p>
         </div>
         <div class="footer-section">
           <h3>Quick Links</h3>
@@ -137,15 +173,15 @@
             <li><a href="contact.html">Contact Us</a></li>
           </ul>
         </div>
-        </div>
       </div>
       <div class="footer-bottom">
-        <p class="footer-text">&copy;<span id="currentYear"></span> CIITLAB. All rights reserved.</p>
+        <p class="footer-text">
+          &copy;<span id="currentYear"></span> CIITLAB. All rights reserved.
+        </p>
       </div>
     </footer>
 
-    <script src="js/auth.js"></script>
-    <script src="js/students.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
   </body>
 </html>

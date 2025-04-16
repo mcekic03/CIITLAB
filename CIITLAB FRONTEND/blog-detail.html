@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog Post - CIITLAB</title>
+    <link rel="preload" href="js/auth.js" as="script" />
+    <link rel="preload" href="js/main.js" as="script" />
+    <link rel="preload" href="css/style.css" as="style" />
+    <link rel="preload" href="js/blog-detail.js" as="script" />
+    <link rel="preload" href="js/blogs.js" as="script" />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <link rel="icon" type="image/x-icon" href="uploads/favico.jpg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">
+            <img src="uploads/ciitlab.jpg" alt="CIITLAB Logo" />
+          </a>
+        </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <div class="dropdown" id="dropdown">
+            <a href="research-areas.html" class="dropdown-trigger" id="dropdownTrigger">Research Areas</a>
+            <div class="dropdown-content"  id="dropdownContent">
+              <a href="artificial-intelligence.html">Artifical Intelligence</a>
+              <a href="nlp.html">NLP</a>
+              <a href="logic-design.html">Logic Design and Spectral Technics</a>
+              <a href="signal-processing.html">Signal Processing</a>
+              <a href="web-programming.html">Web Programming</a>
+            </div>
+          </div>
+          <a href="news.html" class="active">News</a>
+          <a href="researchers.html">Researchers</a>
+          <a href="students.html">PhD Students</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+      </nav>
+
+      <nav class="mobile-bottom-nav">
+        <a href="index.html" class="mobile-nav-item">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </a>
+        <a href="#" class="mobile-nav-item mobile-dropdown-trigger-topics">
+          <i class="fas fa-book"></i>
+          <span>Areas</span>
+        </a>
+        <a href="news.html" class="mobile-nav-item active">
+          <i class="fas fa-newspaper"></i>
+          <span>News</span>
+        </a>
+        <a href="#" class="mobile-nav-item mobile-dropdown-trigger-team">
+          <i class="fas fa-users"></i>
+          <span>Team</span>
+        </a>
+        <a href="#" class="mobile-nav-item user-menu">
+          <i class="fas fa-user-circle"></i>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <!-- Mobile Topics Dropdown -->
+      <div class="mobile-dropdown-panel-topics">
+        <div class="mobile-dropdown-header">
+          <h3>Research Areas</h3>
+          <button class="close-dropdown"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="mobile-dropdown-content">
+          <a href="artificial-intelligence.html">Artificial Intelligence</a>
+          <a href="nlp.html">NLP</a>
+          <a href="logic-design-and-spectral-technics.html">Logic Design and Spectral Technics</a>
+          <a href="signal-processing.html">Signal Processing</a>
+          <a href="web-programming.html">Web Programming</a>
+        </div>
+      </div>
+      <div class="mobile-dropdown-panel-team">
+        <div class="mobile-dropdown-header">
+          <h3>Team</h3>
+          <button class="close-dropdown-team">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-dropdown-content">
+          <a href="researchers.html">Researchers</a>
+          <a href="students.html">PhD Students</a>
+        </div>
+      </div>
+      <div class="mobile-user-panel">
+        <div class="mobile-user-header">
+          <div class="user-info"></div>
+          <button class="close-user-panel"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="mobile-user-content">
+          <a href="/profile.html"> <i class="fas fa-user"></i> Profile </a>
+          <a href="#" id="mobileLogoutBtn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+      </div>
+
+      <!-- Overlay for mobile panels -->
+      <div class="mobile-overlay"></div>
+    </header>
+
+    <main class="blog-container">
+      <article class="blog-post">
+        <div class="blog-header">
+          <div class="blog-meta">
+            <span class="category" id="blogCategory"></span>
+            <span class="date" id="blogDate"
+              ><i class="far fa-calendar-alt"></i></span
+            >
+          </div>
+          <h1 id="blogTitle"></h1>
+          <div class="author-info">
+            <img
+              src="uploads/default-avatar.svg"
+              alt="Author"
+              class="author-avatar"
+            />
+            <div class="author-details">
+              <span class="author-name" id="blogAuthor"></span>
+              <span class="author-role" id="blogAuthorRole"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="blog-featured-image">
+          <img
+            id="blogImage"
+            src="uploads/ciitlab.jpg"
+            alt="Blog Featured Image"
+          />
+        </div>
+
+        <div class="blog-content" id="blogContent">
+          <!-- Blog content will be loaded here -->
+        </div>
+
+        <div class="blog-tags" id="blogTags"></div>
+
+        <div class="blog-actions">
+          <button
+            class="btn btn-secondary"
+            id="editPostBtn"
+            style="display: none"
+          >
+            <i class="fas fa-edit"></i> Edit Post
+          </button>
+          <button
+            class="btn btn-danger"
+            id="deletePostBtn"
+            style="display: none"
+          >
+            <i class="fas fa-trash"></i> Delete Post
+          </button>
+        </div>
+
+        <div class="blog-comments">
+          <h3>Comments</h3>
+          <div class="comment-form">
+            <textarea
+              placeholder="Write a comment..."
+              id="commentText"
+            ></textarea>
+            <button class="btn btn-primary" id="submitComment">
+              Post Comment
+            </button>
+          </div>
+          <div class="comments-list" id="commentsList">
+            <!-- Comments will be loaded here -->
+          </div>
+        </div>
+      </article>
+
+      <!-- Sidebar -->
+      <aside class="blog-sidebar">
+        <!-- Categories Section -->
+        <div class="sidebar-section category-section">
+          <h3>Research Areas</h3>
+          <a href="artificial-intelligence.html" class="category-item">
+            <span class="category-icon ai">
+              <i class="fas fa-robot"></i>
+            </span>
+            <span class="category-name">Artificial Intelligence</span>
+          </a>
+          <a href="nlp.html" class="category-item">
+            <span class="category-icon nlp">
+              <i class="fas fa-language"></i>
+            </span>
+            <span class="category-name">Natural Language Processing</span>
+          </a>
+          <a href="logic-design.html" class="category-item">
+            <span class="category-icon logic">
+              <i class="fas fa-microchip"></i>
+            </span>
+            <span class="category-name">Logic Design</span>
+          </a>
+          <a href="signal-processing.html" class="category-item">
+            <span class="category-icon signal">
+              <i class="fas fa-signal"></i>
+            </span>
+            <span class="category-name">Signal Processing</span>
+          </a>
+          <a href="web-programming.html" class="category-item">
+            <span class="category-icon web">
+              <i class="fas fa-code"></i>
+            </span>
+            <span class="category-name">Web Programming</span>
+          </a>
+        </div>
+
+        <!-- Related Posts Section -->
+        <div class="sidebar-section">
+          <h3>Related Posts</h3>
+          <div class="related-post" id="relatedPosts">
+            <img
+              src="uploads/ciitlab.jpg"
+              alt="Related post"
+              class="related-post-image"
+            />
+            <div class="related-post-content">
+              <h4 class="related-post-title" id="relatedPostTitle"></h4>
+              <div class="related-post-date" id="relatedPostDate">
+                <i class="far fa-calendar-alt"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About CIITLAB</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="research-areas.html">Research Areas</a></li>
+            <li><a href="researchers.html">Researchers</a></li>
+            <li><a href="students.html">PhD Students</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact</h3>
+          <ul>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="#">Location</a></li>
+            <li><a href="#">Email</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Follow Us</h3>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-text">
+          &copy;<span id="currentYear"></span> CIITLAB. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/blog-modal.js"></script>
+    <script src="js/blogs.js"></script>
+    <script src="js/blog-detail.js"></script>
+  </body>
+</html>
